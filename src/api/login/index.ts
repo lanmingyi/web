@@ -1,27 +1,19 @@
-import { request } from "@/utils/service"
+// import { request } from "@/utils/service"
+import  request  from "@/utils/axios/index"
 import type * as Login from "./types/login"
 
 /** 获取登录验证码 */
-export function getLoginCodeApi(param: any) {
+export function getLoginCodeApi(param: any){
   let url = `/sys/randomImage/${param}`
-  return request<Login.LoginCodeResponseData>({
-    url: url,
-    method: "get",
-  })
+  return request.get<Login.LoginCodeResponseData>({url: url,})
 }
 
 /** 登录并返回 Token 、用户信息、部门、字典*/
-export function loginApi(data: Login.ILoginRequestData) {
-  return request<Login.LoginResponseData>({
-    url: "sys/login",
-    method: "post",
-    data
-  })
+export function loginApi(data: Login.LoginRequestData) {
+  return request.post<Login.LoginResponseData>({url: "sys/login", data})
 }
-/** 获取用户详情 */
-export function getUserInfoApi() {
-  return request<Login.UserInfoResponseData>({
-    url: "sys/permission/getUserPermissionByToken",
-    method: "get"
-  })
+
+/** 获取用户权限 */
+export function getUserPermissionByToken() {
+  return request.get<Login.UserPermissionResponseData>({url: "sys/permission/getUserPermissionByToken",})
 }

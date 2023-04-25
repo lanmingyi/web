@@ -70,7 +70,7 @@ import {User, Lock, Key, Picture, Loading} from "@element-plus/icons-vue"
 import ThemeSwitch from "@/components/ThemeSwitch/index.vue"
 import {type FormInstance, FormRules} from "element-plus"
 import {getLoginCodeApi} from "@/api/login"
-import {type ILoginRequestData} from "@/api/login/types/login"
+import {type LoginRequestData} from "@/api/login/types/login"
 
 const router = useRouter()
 const loginFormRef = ref<FormInstance | null>(null)
@@ -79,9 +79,10 @@ const loginFormRef = ref<FormInstance | null>(null)
 const loading = ref(false)
 /** 验证码图片 URL */
 const codeUrl = ref(new URL('@/assets/checkcode.png', import.meta.url).href)
-const currdatetime = ref()
+// 当前时间
+const currentTime = ref(new Date().getTime())
 /** 登录表单数据 */
-const loginForm: ILoginRequestData = reactive({
+const loginForm: LoginRequestData = reactive({
   username: "admin",
   password: "123456",
   captcha: "",
@@ -92,10 +93,24 @@ const loginFormRules: FormRules = {
   username: [{required: true, message: "请输入用户名", trigger: "blur"}],
   password: [
     {required: true, message: "请输入密码", trigger: "blur"},
-    {min: 6, max: 16, message: "长度在 8 到 16 个字符", trigger: "blur"}
+    {min: 6, max: 16, message: "长度在 6 到 16 个字符", trigger: "blur"}
   ],
   captcha: [{required: true, message: "请输入验证码", trigger: "blur"}]
 }
+/** 创建验证码 */
+const createCode = () => {
+  // currentTime.value = new Date().getTime()
+  // 先清空验证码的输入
+  loginForm.captcha = ""
+  // 获取验证码
+  getLoginCodeApi(currentTime.value).then((res) => {
+    codeUrl.value = res.result
+  })
+}
+
+/** 初始化验证码 */
+createCode()
+
 /** 登录逻辑 */
 const handleLogin = () => {
   loginFormRef.value?.validate((valid: boolean) => {
@@ -106,7 +121,7 @@ const handleLogin = () => {
             username: loginForm.username,
             password: loginForm.password,
             captcha: loginForm.captcha,
-            checkKey: currdatetime.value,
+            checkKey: currentTime.value,
           })
           .then(() => {
             router.push({path: "/"})
@@ -123,19 +138,6 @@ const handleLogin = () => {
     }
   })
 }
-/** 创建验证码 */
-const createCode = () => {
-  currdatetime.value = new Date().getTime()
-  // 先清空验证码的输入
-  loginForm.captcha = ""
-  // 获取验证码
-  getLoginCodeApi(currdatetime.value).then((res) => {
-    codeUrl.value = res.result
-  })
-}
-
-/** 初始化验证码 */
-createCode()
 </script>
 
 <style lang="scss" scoped>

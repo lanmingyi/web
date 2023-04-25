@@ -1,15 +1,15 @@
-export interface ILoginRequestData {
-  /** admin 或 editor */
-  username: "admin" | "editor"
-  /** 密码 */
-  password: string
-  /** 验证码 */
-  captcha: string,
-  checkKey: number
+export interface LoginRequestData {
+    /** admin 或 editor */
+    username: "admin" | "editor"
+    /** 密码 */
+    password: string
+    /** 验证码 */
+    captcha: string,
+    checkKey: number
 }
 
-export type LoginCodeResponseData = IApiResponseData<string>
+export type LoginCodeResponseData = ApiResponseData<string>
 
-export type LoginResponseData = IApiResponseData<{ token: string }>
+export type LoginResponseData = ApiResponseData<{ token: string, username: string, userInfo: object }>
 
-export type UserInfoResponseData = IApiResponseData<{ username: string; menu: string[]; roles: string[] }>
+export type UserPermissionResponseData = ApiResponseData<{ menu: string[]; roles: string[] }>

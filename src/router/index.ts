@@ -52,6 +52,22 @@ export const constantRoutes: RouteRecordRaw[]=[
           svgIcon: 'dashboard',
           affix: true
         }
+      },
+    ]
+  },
+  {
+    path: "/menu",
+    component: Layout,
+    redirect: "/menu/index",
+    children: [
+      {
+        path: "index",
+        component: () => import("@/views/system/menu/index.vue"),
+        name: "menu",
+        meta: {
+          title: "菜单",
+          svgIcon: "dashboard"
+        }
       }
     ]
   },

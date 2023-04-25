@@ -5,8 +5,8 @@ import { usePermissionStore } from "./permission"
 import { useTagsViewStore } from "./tags-view"
 import { getToken, removeToken, setToken } from "@/utils/cache/cookies"
 import router, { resetRouter } from "@/router"
-import { loginApi, getUserInfoApi } from "@/api/login"
-import { type ILoginRequestData } from "@/api/login/types/login"
+import { loginApi, getUserPermissionByToken } from "@/api/login"
+import { type LoginRequestData } from "@/api/login/types/login"
 import { type RouteRecordRaw } from "vue-router"
 import asyncRouteSettings from "@/config/async-route"
 
@@ -15,6 +15,7 @@ export const useUserStore = defineStore("user", () => {
   const roles = ref<string[]>([])
   const menus = ref<any[]>([])
   const username = ref<string>("")
+  const userInfo = ref<object>({})
 
   const permissionStore = usePermissionStore()
   const tagsViewStore = useTagsViewStore()
@@ -23,8 +24,8 @@ export const useUserStore = defineStore("user", () => {
   const setRoles = (value: string[]) => {
     roles.value = value
   }
-  /** 登录 */
-  const login = (loginData: ILoginRequestData) => {
+  /** 登录，获取用户详情 */
+  const login = (loginData: LoginRequestData) => {
     return new Promise((resolve, reject) => {
       loginApi({
         username: loginData.username,
@@ -35,6 +36,9 @@ export const useUserStore = defineStore("user", () => {
         .then((res) => {
           setToken(res.result.token)
           token.value = res.result.token
+          username.value = res.result.userInfo.username
+          userInfo.value = res.result.userInfo
+          // console.log(username, userInfo)
           resolve(true)
         })
         .catch((error) => {
@@ -42,13 +46,12 @@ export const useUserStore = defineStore("user", () => {
         })
     })
   }
-  /** 获取用户详情 */
+  /** 获取用户权限 */
   const getInfo = () => {
     return new Promise((resolve, reject) => {
-      getUserInfoApi()
+      getUserPermissionByToken()
         .then((res) => {
           const data = res.result
-          // username.value = data.username
           // 验证返回的 roles 是否是一个非空数组 roles: ["admin", "editor"],
           // if (data.roles && data.roles.length > 0) {
           //   roles.value = data.roles

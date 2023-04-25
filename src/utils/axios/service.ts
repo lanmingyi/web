@@ -11,6 +11,7 @@ import qs from 'qs'
 import {config} from './config'
 
 import {ElMessage} from 'element-plus'
+import {getToken} from "@/utils/cache/cookies";
 
 const {result_code, base_url} = config
 
@@ -26,11 +27,11 @@ const service: AxiosInstance = axios.create({
 // request拦截器
 service.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
-        if (
-            config.method === 'post' &&
-            (config.headers as AxiosRequestHeaders)['Content-Type'] ===
-            'application/x-www-form-urlencoded'
-        ) {
+        const token = getToken()
+        if(token){
+            config.headers['X-Access-Token'] = token  // 让每个请求携带自定义token，请根据实际情况自行修改
+        }
+        if (config.method === 'post' && (config.headers as AxiosRequestHeaders)['Content-Type'] === 'application/x-www-form-urlencoded') {
             config.data = qs.stringify(config.data)
         }
         // ;(config.headers as AxiosRequestHeaders)['Token'] = 'test test'
@@ -53,7 +54,7 @@ service.interceptors.request.use(
     (error: AxiosError) => {
         // Do something with request error
         console.log(error) // for debug
-        Promise.reject(error)
+        return Promise.reject(error)
     }
 )
 
