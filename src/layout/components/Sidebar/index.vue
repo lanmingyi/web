@@ -12,6 +12,7 @@
           :collapse-transition="false"
           mode="vertical"
       >
+<!--        v-for="route in permissionStore.routes"  dynamicRoutes-->
         <SidebarItem
             v-for="route in permissionStore.routes"
             :key="route.path"

@@ -29,10 +29,8 @@ router.beforeEach(async (to, _from, next) => {
             // 注意：角色必须是一个数组！ 例如: ['admin'] 或 ['developer', 'editor']
             await userStore.getInfo()
             // const roles = userStore.roles
-            let menus = userStore.menus
-            menus = getMenu(menus)
-            console.log('menus',menus)
-            // let menus = getMenu(userStore.menus)
+            const menus = userStore.menus
+            // menus = getMenu(menus)
             // 根据角色生成可访问的 Routes（可访问路由 = 常驻路由 + 有访问权限的动态路由）
             // permissionStore.setRoutes(roles)
             permissionStore.setRoutes(menus)
@@ -43,6 +41,7 @@ router.beforeEach(async (to, _from, next) => {
           }
           // 将'有访问权限的动态路由' 添加到 Router 中
           permissionStore.dynamicRoutes.forEach((route) => {
+            console.log(route)
             router.addRoute(route)
           })
           // 确保添加路由已完成
