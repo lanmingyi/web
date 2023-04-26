@@ -51,7 +51,7 @@ function generateIndexRouter(data) {
 
 // 生成嵌套路由（子路由）
 function generateChildRouters(data) {
-    const routers:any[] = [];
+    const routers: any[] = [];
     data.map(item => {
         if (item.component === 'Layout') {
             item.component = () => import("@/layout/index.vue")
@@ -105,9 +105,12 @@ function generateChildRouters(data) {
 export const usePermissionStore = defineStore("permission", () => {
     const routes = ref<RouteRecordRaw[]>([])
     const dynamicRoutes = ref<RouteRecordRaw[]>([])
+    const menu = ref()
+
 
     // const setRoutes = (roles: string[]) => {
     const setRoutes = (route: any) => {
+        menu.value = route
         let accessedRoutes
         if (!asyncRouteSettings.open) {
             accessedRoutes = asyncRoutes
@@ -121,7 +124,7 @@ export const usePermissionStore = defineStore("permission", () => {
         console.log('routes.value', routes.value)
         console.log('dynamicRoutes.value', dynamicRoutes.value)
     }
-    return {routes, dynamicRoutes, setRoutes}
+    return {routes, dynamicRoutes, menu, setRoutes}
 })
 
 /** 在 setup 外使用 */

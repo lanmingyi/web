@@ -14,7 +14,7 @@
       >
 <!--        v-for="route in permissionStore.routes"  dynamicRoutes-->
         <SidebarItem
-            v-for="route in permissionStore.routes"
+            v-for="route in permissionStore.menu"
             :key="route.path"
             :item="route"
             :base-path="route.path"
