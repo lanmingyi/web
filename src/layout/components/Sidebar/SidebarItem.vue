@@ -74,7 +74,7 @@ const childrenNumber = computed(() => {
   return 0
 })
 
-// 一级菜单
+// 只有一级菜单
 const firstLevelMenu = computed(() => {
   if(childrenNumber.value > 0) {
     return null
