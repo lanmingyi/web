@@ -6,7 +6,7 @@
       </router-link>
       <router-link v-else key="expand" to="/">
 <!--        <img src="@/assets/layout/logo.png" class="sidebar-logo-text" />-->
-      <div style="color:white; font-size: 30px">明成科技</div>
+<!--      <div style="color:white; font-size: 30px">明成科技</div>-->
       </router-link>
     </transition>
   </div>

@@ -4,7 +4,7 @@
     <div class="login-card">
       <div class="title">
         <img src="@/assets/layout/logo.png"/>
-        明成科技
+<!--        明成科技-->
       </div>
       <div class="content">
         <el-form ref="loginFormRef" :model="loginForm" :rules="loginFormRules" @keyup.enter="handleLogin">

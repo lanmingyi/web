@@ -63,8 +63,8 @@
 
 <script setup lang="ts" name="AccountSetting">
 import {reactive, ref} from 'vue';
-import VueCropper from 'vue-cropperjs';
-import 'cropperjs/dist/cropper.css';
+// import VueCropper from 'vue-cropperjs';
+// import 'cropperjs/dist/cropper.css';
 import avatar from '@/assets/logo.png';
 
 const name = localStorage.getItem('ms_username');
