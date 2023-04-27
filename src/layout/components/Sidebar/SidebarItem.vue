@@ -61,8 +61,6 @@ const props = defineProps({
 })
 
 const alwaysShow = computed(() => {
-  console.log('props.item', props.item)
-  // console.log('props.item', props.item)
   return props.item.meta && props.item.meta.alwaysShow
 })
 
