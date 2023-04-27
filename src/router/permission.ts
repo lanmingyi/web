@@ -41,7 +41,7 @@ router.beforeEach(async (to, _from, next) => {
           }
           // 将'有访问权限的动态路由' 添加到 Router 中
           permissionStore.dynamicRoutes.forEach((route) => {
-            console.log(route)
+            // console.log(route)
             router.addRoute(route)
           })
           // 确保添加路由已完成

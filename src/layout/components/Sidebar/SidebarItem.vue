@@ -1,12 +1,12 @@
 <template>
   <div v-if="!props.item.meta?.hidden" :class="{'simple-mode': props.isCollapse, 'first-level': props.isFirstLevel}">
-    <template v-if="!alwaysShowRootMenu && theOnlyOneChild && !theOnlyOneChild.children">
-      <SidebarItemLink v-if="theOnlyOneChild.meta" :to="resolvePath(theOnlyOneChild.path)">
-        <el-menu-item :index="resolvePath(theOnlyOneChild.path)">
-          <svg-icon v-if="theOnlyOneChild.meta.svgIcon" :name="theOnlyOneChild.meta.svgIcon"/>
-          <component v-else-if="theOnlyOneChild.meta.elIcon" :is="theOnlyOneChild.meta.elIcon" class="el-icon"/>
-          <template v-if="theOnlyOneChild.meta.title" #title>
-            {{theOnlyOneChild.meta.title}}
+    <template v-if="!alwaysShow && firstLevelMenu && !firstLevelMenu.children">
+      <SidebarItemLink v-if="firstLevelMenu.meta" :to="resolvePath(firstLevelMenu.path)">
+        <el-menu-item :index="resolvePath(firstLevelMenu.path)">
+          <svg-icon v-if="firstLevelMenu.meta.svgIcon" :name="firstLevelMenu.meta.svgIcon"/>
+          <component v-else-if="firstLevelMenu.meta.elIcon" :is="firstLevelMenu.meta.elIcon" class="el-icon"/>
+          <template v-if="firstLevelMenu.meta.title" #title>
+            {{firstLevelMenu.meta.title}}
           </template>
         </el-menu-item>
       </SidebarItemLink>
@@ -34,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import {type PropType, computed} from "vue";
+import {type PropType, computed, onMounted} from "vue";
 import {type RouteRecordRaw} from "vue-router";
 import {isExternal} from "@/utils/validate";
 import path from "path-browserify"
@@ -60,34 +60,38 @@ const props = defineProps({
 
 })
 
-const alwaysShowRootMenu = computed(() => {
+const alwaysShow = computed(() => {
+  console.log('props.item', props.item)
+  // console.log('props.item', props.item)
   return props.item.meta && props.item.meta.alwaysShow
 })
 
 const childrenNumber = computed(() => {
   if(props.item.children){
-    const showingChildren = props.item.children.filter((item) => {
+    const children = props.item.children.filter((item) => {
       return !(item.meta && item.meta.hidden)
     })
-    return showingChildren.length
+    return children.length
   }
   return 0
 })
 
-const theOnlyOneChild = computed(() => {
-  if(childrenNumber.value > 1) {
+// 一级菜单
+const firstLevelMenu = computed(() => {
+  if(childrenNumber.value > 0) {
     return null
   }
-  if(props.item.children){
-    for(const child of props.item.children){
-      if(!child.meta || !child.meta.hidden){
-        return child
-      }
-    }
-  }
+  // if(props.item.children){
+  //   for(const child of props.item.children){
+  //     if(!child.meta || !child.meta.hidden){
+  //       return child
+  //     }
+  //   }
+  // }
   // If there is no children, return itself with path removed,
   // because this.basePath already contains item's path information
-  return {...props.item, path: ""}
+  // return {...props.item, path: ""}
+  return {...props.item}
 })
 
 const resolvePath = (routePath: string) => {
