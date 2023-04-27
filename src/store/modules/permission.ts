@@ -42,7 +42,7 @@ function generateIndexRouter(data) {
     return [{
         path: '/',
         component: Layout,
-        redirect: '/dashboard',
+        redirect: '/dashboard/analysis',
         children: [
             ...generateChildRouters(data)
         ]
@@ -122,8 +122,8 @@ export const usePermissionStore = defineStore("permission", () => {
         routes.value = constantRoutes.concat(accessedRoutes)
         dynamicRoutes.value = accessedRoutes
         // console.log('routes.value', routes.value)
-        // console.log('dynamicRoutes.value', dynamicRoutes.value)
-        // console.log('menu.value', menu.value)
+        console.log('dynamicRoutes.value', dynamicRoutes.value)
+        console.log('menu.value', menu.value)
     }
     return {routes, dynamicRoutes, menu, setRoutes}
 })
