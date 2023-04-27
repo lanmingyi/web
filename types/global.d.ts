@@ -1,5 +1,13 @@
 import type { CSSProperties } from 'vue'
 declare global {
+  interface Window {
+    onBMapCallback?: T,
+    BMapGLLib?: T,
+    BMapLib?: T,
+    BMapGL?: T,
+    BMap?: T,
+    map: T,
+  }
   declare interface Fn<T = any> {
     (...arg: T[]): T
   }
@@ -36,4 +44,6 @@ declare global {
     code: string
     data: T extends any ? T : T & any
   }
+
+
 }

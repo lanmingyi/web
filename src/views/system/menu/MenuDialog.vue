@@ -40,10 +40,10 @@
       </el-form-item>
     </el-form>
     <template #footer>
-            <span>
-                <el-button @click="onCencel">取消</el-button>
-                <el-button type="primary" @click="onSubmit">提交</el-button>
-            </span>
+      <span>
+        <el-button @click="onCencel">取消</el-button>
+        <el-button type="primary" @click="onSubmit">提交</el-button>
+      </span>
     </template>
   </el-dialog>
 </template>

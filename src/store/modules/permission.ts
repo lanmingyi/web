@@ -107,7 +107,6 @@ export const usePermissionStore = defineStore("permission", () => {
     const dynamicRoutes = ref<RouteRecordRaw[]>([])
     const menu = ref()
 
-
     // const setRoutes = (roles: string[]) => {
     const setRoutes = (route: any) => {
         menu.value = route
@@ -122,8 +121,8 @@ export const usePermissionStore = defineStore("permission", () => {
         routes.value = constantRoutes.concat(accessedRoutes)
         dynamicRoutes.value = accessedRoutes
         // console.log('routes.value', routes.value)
-        console.log('dynamicRoutes.value', dynamicRoutes.value)
-        console.log('menu.value', menu.value)
+        // console.log('dynamicRoutes.value', dynamicRoutes.value)
+        // console.log('menu.value', menu.value)
     }
     return {routes, dynamicRoutes, menu, setRoutes}
 })

@@ -55,38 +55,14 @@ onMounted(() => {
   getData();
 });
 
-const getData = (pid = null) => {
-  if (pid && resolveMap.has(pid)) {
-    const {row, resolve} = resolveMap.get(pid);
-    row && resolve && loadExpand(row, null, resolve);
-  } else {
-    request.get({url: url.getListByLevel, params: {levelId}}).then(res => {
-      const data = addHasChildrenAttribute(res.result);
-      tableData.length = 0;
-      tableData.push(...data);
-    })
-  }
-}
-
-const loadExpand = (row, node, resolve) => {
-  const pid = row.id;
-  resolveMap.set(row.id, {row, resolve})
-  request.post<any>({url: url.getListByPid, data: {pid}}).then(res => {
-    const children = addHasChildrenAttribute(res.data);
-    if (children.length === 0) children.length = 1;
-    resolve(children);
+const getData = () => {
+  request.get({url: url.getListByLevel}).then(res => {
+    const data = res.result;
+    tableData.length = 0;
+    tableData.push(...data);
   })
 }
 
-const addHasChildrenAttribute = (menuList) => {
-  const data = menuList.map((menu) => {
-    return {
-      ...menu,
-      // hasChildren: menu.hasChildren ?? true,
-    }
-  })
-  return data;
-}
 
 const handleDeleteNode = (row) => {
   const {uuid, pid} = row;
