@@ -1,6 +1,6 @@
 <template>
   <el-button-group>
-    <el-tooltip class="item" effect="dark" title="保存" placement="top">
+    <el-tooltip class="box-item" effect="dark" title="保存" placement="top">
       <el-button type="primary" size="default" @click="deploy"><i class="fa fa-save">保存</i></el-button>
     </el-tooltip>
     <el-tooltip effect="dark" titile="打开流程文件" placement="top">
@@ -8,38 +8,38 @@
         <el-button type="primary" size="default"><i class="fa fa-folder-open"></i></el-button>
       </el-upload>
     </el-tooltip>
-    <el-tooltip class="item" effect="dark" title="创建新流程图" placement="top">
+    <el-tooltip class="box-item" effect="dark" title="创建新流程图" placement="top">
       <el-button type="primary" size="default" @click="reset"><i class="fa fa-plus-circle"></i></el-button>
     </el-tooltip>
-    <el-tooltip class="item" effect="dark" title="下载流程图" placement="top">
+    <el-tooltip class="box-item" effect="dark" title="下载流程图" placement="top">
       <el-button type="primary" size="default" @click="downloadSvg"><i class="fa fa-picture-o"></i></el-button>
     </el-tooltip>
-    <el-tooltip class="item" effect="dark" title="下载流程文件" placement="top">
+    <el-tooltip class="box-item" effect="dark" title="下载流程文件" placement="top">
       <el-button type="primary" size="default" @click="downloadBpmn"><i class="fa fa-download"></i></el-button>
     </el-tooltip>
-    <el-tooltip class="item" effect="dark" title="撤销" placement="top">
+    <el-tooltip class="box-item" effect="dark" title="撤销" placement="top">
       <el-button type="primary" size="default" @click="undo"><i class="fa fa-rotate-left"></i></el-button>
     </el-tooltip>
-    <el-tooltip class="item" effect="dark" title="恢复" placement="top">
-      <el-button type="primary" size="default" @click="redo"><i class="fa fa-rotate-right"
-                                                                :class="!canRedo ? 'default-undo' : ''"></i></el-button>
+    <el-tooltip class="box-item" effect="dark" title="恢复" placement="top">
+      <el-button type="primary" size="default" @click="redo">
+        <i class="fa fa-rotate-right" :class="!canRedo ? 'default-undo' : ''"></i>
+      </el-button>
     </el-tooltip>
 
-    <el-tooltip class="item" effect="dark" title="放大" placement="top">
+    <el-tooltip class="box-item" effect="dark" title="放大" placement="top">
       <el-button type="primary" size="default" @click="zoom(0.05)"><i class="fa fa-search-plus"></i></el-button>
     </el-tooltip>
-    <el-tooltip class="item" effect="dark" title="缩小" placement="top">
+    <el-tooltip class="box-item" effect="dark" title="缩小" placement="top">
       <el-button type="primary" size="default" @click="zoom(-0.05)"><i class="fa fa-search-minus"></i></el-button>
     </el-tooltip>
-    <el-tooltip class="item" effect="dark" title="自适应屏幕" placement="top">
+    <el-tooltip class="box-item" effect="dark" title="自适应屏幕" placement="top">
       <el-button type="primary" size="default" @click="fitViewport"><i class="fa fa-hand-pointer-o"></i></el-button>
     </el-tooltip>
-    <el-tooltip class="item" effect="dark" title="关闭" placement="top" v-if="bpmnClose">
+    <el-tooltip class="box-item" effect="dark" title="关闭" placement="top" v-if="bpmnClose">
       <el-button type="primary" size="default" @click="() => {emit('close')}"><i class="fa fa-close"></i></el-button>
     </el-tooltip>
 
   </el-button-group>
-
 </template>
 
 <script setup lang="ts">
@@ -121,5 +121,8 @@ const fitViewport = () => {
 </script>
 
 <style scoped>
-
+.tooltip-base-box .box-item {
+  width: 110px;
+  margin-top: 10px;
+}
 </style>

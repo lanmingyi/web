@@ -70,7 +70,7 @@ const initData = reactive({
   permissionType: '',
 })
 const bpmnPanel = ref()
-const bpmnModeler = ref<BpmnModeler>()
+const bpmnModeler = ref()
 const bpmnViewerRef = ref()
 const bpmnPanelRef = ref()
 const initTemplate = ref('')
@@ -213,8 +213,8 @@ const handleExportSvg = async () => {
     })
     downloadFile(getProcessElement().name, svg, "image/svg+xml")
     return svg
-  } catch (err) {
-    console.log('err', err)
+  } catch (err: any) {
+    ElMessage.error(err)
   }
 }
 
@@ -226,8 +226,8 @@ const handleExportBpmn = async () => {
     xml = xml.replace(/&gt;/g, ">");
     downloadFile(`${getProcessElement().name}.xml`, xml, "application/xml")
     return xml
-  } catch (err) {
-    console.log(err)
+  } catch (err: any) {
+    ElMessage.error(err)
   }
 
 }
@@ -242,7 +242,7 @@ const processSave = (data) => {
 // 让图能自适应屏幕
 const fitViewport = () => {
   zoom.value = bpmnModeler.value.get('canvas').zoom("fit-viewport")
-  const bbox = document.querySelector('.main .viewport').getBBox()
+  const bbox =  (document.querySelector('.main .viewport') as any).getBBox()
   const currentViewBox = bpmnModeler.value.get('canvas').viewbox()
   const elementMid = {
     x: bbox.x + bbox.width / 2 - 65,
@@ -275,9 +275,9 @@ const createNewDiagram = async (data) => {
   data = data.replace(/&#34;/g, '"');
   try {
     await bpmnModeler.value.importXML(data);
-    // this.fillColor()
   } catch (err: any) {
-    console.error(err.message, err.warnings);
+    // console.error(err.message, err.warnings);
+    ElMessage.error(err)
   }
 }
 
@@ -300,5 +300,10 @@ onMounted(() => {
   display: flex;
   height: calc(100vh - 50px - 54px);
 }
-
+:deep .djs-container .djs-palette {
+  display: block !important;
+}
+:deep .djs-context-pad {
+  display: block !important;
+}
 </style>
