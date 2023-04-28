@@ -369,7 +369,9 @@ const handleFormData = (element, type) => {
 watch(
     () => props.process,
     val => {
-      processData = val
+      processData.id = val.id
+      processData.description = val.description
+      processData.name = val.name
     }
 )
 onMounted(() => {

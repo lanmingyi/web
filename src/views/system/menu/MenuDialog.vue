@@ -2,7 +2,11 @@
   <el-dialog :title="title">
     <el-form :model="ruleForm" ref="ruleFormRef" :rules="rules">
       <el-form-item label="资源类型" :label-width="formLabelWidth" prop="menuType">
-        <BaseSelect v-model="ruleForm.menuType" dataType="code" dictCode="ResourceType"/>
+        <el-radio-group v-model="ruleForm.menuType">
+          <el-radio :label="0">一级菜单</el-radio>
+          <el-radio :label="1">子菜单</el-radio>
+          <el-radio :label="2">按钮/权限</el-radio>
+        </el-radio-group>
       </el-form-item>
       <el-form-item label="资源名称" :label-width="formLabelWidth" prop="name">
         <el-input v-model="ruleForm.name" autocomplete="off"/>
@@ -19,17 +23,17 @@
       <el-form-item label="资源图标" :label-width="formLabelWidth">
         <el-input disabled v-model="ruleForm.iconCls" autocomplete="off"/>
       </el-form-item>
+      <el-form-item label="是否路由菜单" :label-width="formLabelWidth">
+        <el-switch v-model="ruleForm.route"
+                   active-text="是"
+                   inactive-text="否"
+                   :active-value="true"
+                   :inactive-value="false"/>
+      </el-form-item>
       <el-form-item label="开启缓存该路由" :label-width="formLabelWidth">
         <el-switch v-model="ruleForm.keepAlive"
                    active-text="开启"
                    inactive-text="关闭"/>
-      </el-form-item>
-      <el-form-item label="开启节点" :label-width="formLabelWidth">
-        <el-switch v-model="ruleForm.status"
-                   active-text="开启"
-                   inactive-text="关闭"
-                   :active-value="1"
-                   :inactive-value="0"/>
       </el-form-item>
       <el-form-item label="开启子节点" :label-width="formLabelWidth">
         <el-switch v-model="ruleForm.state"
@@ -114,7 +118,7 @@ const defaultForm: MenuData = {
   name: '',
   keepAlive: null,
   status: 1,
-  state: 'open',
+  route: true,
   iconCls: 'apartment',
   url: '/',
   component: '',

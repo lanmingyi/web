@@ -3,8 +3,8 @@
     <template v-if="!alwaysShow && firstLevelMenu && !firstLevelMenu.children">
       <SidebarItemLink v-if="firstLevelMenu.meta" :to="resolvePath(firstLevelMenu.path)">
         <el-menu-item :index="resolvePath(firstLevelMenu.path)">
-          <svg-icon v-if="firstLevelMenu.meta.svgIcon" :name="firstLevelMenu.meta.svgIcon"/>
-          <component v-else-if="firstLevelMenu.meta.elIcon" :is="firstLevelMenu.meta.elIcon" class="el-icon"/>
+<!--          <svg-icon v-if="firstLevelMenu.meta.svgIcon" :name="firstLevelMenu.meta.svgIcon"/>-->
+<!--          <component v-else-if="firstLevelMenu.meta.elIcon " :is="firstLevelMenu.meta.elIcon" class="el-icon"/>-->
           <template v-if="firstLevelMenu.meta.title" #title>
             {{firstLevelMenu.meta.title}}
           </template>
@@ -14,9 +14,9 @@
 
     <el-sub-menu v-else :index="resolvePath(props.item.path)" teleported>
       <template #title>
-        <svg-icon v-if="props.item.meta && props.item.meta.svgIcon" :name="props.item.meta.svgIcon"/>
+<!--        <svg-icon v-if="props.item.meta && props.item.meta.svgIcon" :name="props.item.meta.svgIcon"/>-->
 <!--        <component v-else-if="props.item.meta && props.item.meta.elIcon" :is="props.item.meta.elIcon" class="el-icon" />-->
-        <component v-else-if="props.item.meta && props.item.meta.elIcon || props.item.meta && props.item.meta.icon" :is="props.item.meta.elIcon || props.item.meta.icon" class="el-icon" />
+<!--        <component v-else-if="props.item.meta && props.item.meta.elIcon || props.item.meta && props.item.meta.icon" :is="props.item.meta.elIcon || props.item.meta.icon" class="el-icon" />-->
         <span v-if="props.item.meta && props.item.meta.title">{{ props.item.meta.title }}</span>
       </template>
       <template v-if="props.item.children">

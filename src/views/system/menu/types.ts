@@ -21,7 +21,7 @@ export interface MenuData {
     modifierId?: string | null,
     modifyTime?: string | null,
     pid?: number | null,
-    state?: string | null
+    route?: boolean
     status?: number
     textColour?: null
 

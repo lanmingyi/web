@@ -54,7 +54,7 @@ function generateChildRouters(data) {
     const routers: any[] = [];
     data.map(item => {
         if (item.component === 'Layout') {
-            item.component = () => import("@/layout/index.vue")
+            item.component = undefined
         } else if (item.component) {
             item.component = modules[`/src/views/${item.component}.vue`]
         }
@@ -120,9 +120,9 @@ export const usePermissionStore = defineStore("permission", () => {
         }
         routes.value = constantRoutes.concat(accessedRoutes)
         dynamicRoutes.value = accessedRoutes
-        // console.log('routes.value', routes.value)
-        // console.log('dynamicRoutes.value', dynamicRoutes.value)
-        // console.log('menu.value', menu.value)
+        console.log('routes.value', routes.value)
+        console.log('dynamicRoutes.value', dynamicRoutes.value)
+        console.log('menu.value', menu.value)
     }
     return {routes, dynamicRoutes, menu, setRoutes}
 })
