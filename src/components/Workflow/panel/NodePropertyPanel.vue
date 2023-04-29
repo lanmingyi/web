@@ -14,10 +14,10 @@
         <el-input v-model="formData.name" @change="(e) =>{ updateName(e.target.value) }"></el-input>
       </el-form-item>
       <el-form-item label="节点人员" v-if="formData.type === 'bpmn:UserTask'">
-        <el-select v-model="formData.userType" placement="请选择" @change="changeUserType">
+        <el-select v-model="formData.userType" placeholder="请选择" @change="changeUserType">
           <el-option
               v-for="(item, index) in userTypeOptions"
-              :key="item.value"
+              :key="index"
               :value="item.value"
               :label="item.label"
           ></el-option>
@@ -25,30 +25,44 @@
         </el-select>
       </el-form-item>
       <el-form-item label="指定人员" v-if="formData.type === 'bpmn:UserTask' && formData.userType==='assignee'">
-        <el-input v-model="formData.assigneeName" placeholder="请选择" @change="(e) => {
-          setUser({assignee: formData.assigneeName, assigneeName: formData.assigneeName,})
-        }">
+        <el-input
+            key="1"
+            v-model="formData.assigneeName"
+            placeholder="请选择"
+            @change="(e) => {setUser({assignee: formData.assigneeName, assigneeName: formData.assigneeName,})}"
+        >
           <el-icon #append @click="() => (isUserSelect.value = true)">
             <User/>
           </el-icon>
         </el-input>
         <!--        <user-select :visible="isUserSelect" @change="(value) => addUser(value, 1)" @close="() => (isUserSelect = false)" ></user-select>-->
       </el-form-item>
-      <el-form-item lael="候选人员"
-                    v-else-if="formData.type == 'bpmn:UserTask' &&formData.userType === 'candidateUsers'">
-        <el-input v-model="formData.candidateUsersName" placeholder="请选择" @change="(e) => {
-          setUser({candidateUsers: formData.candidateUsersName, candidateUsersName: formData.candidateUsersName,})
-        }">
+      <el-form-item
+          label="候选人员"
+          v-else-if="formData.type == 'bpmn:UserTask' && formData.userType === 'candidateUsers'"
+      >
+        <el-input
+            key="2"
+            v-model="formData.candidateUsersName"
+            placeholder="请选择"
+            @change="(e) => {setUser({candidateUsers: formData.candidateUsersName, candidateUsersName: formData.candidateUsersName,})}"
+        >
           <el-icon #append @click="() => (isUserSelect1.value = true)">
             <User/>
           </el-icon>
         </el-input>
         <!--        <user-select :visible="isUserSelect1" @change="(value) => addUser(value, 1)" @close="() => (isUserSelect1 = false)" ></user-select>-->
       </el-form-item>
-      <el-form-item label="指定角色"
-                    v-else-if="formData.type == 'bpmn:UserTask' &&formData.userType === 'candidateGroups'">
-        <el-input key="3" v-model="formData.candidateGroupsName" placeholder="请选择" @change="(e) =>{
-          setUser({candidateGroups: formData.candidateGroupsName,candidateGroupsName: formData.candidateGroupsName,})}">
+      <el-form-item
+          label="指定角色"
+          v-else-if="formData.type == 'bpmn:UserTask' &&formData.userType === 'candidateGroups'"
+      >
+        <el-input
+            key="3"
+            v-model="formData.candidateGroupsName"
+            placeholder="请选择"
+            @change="(e) =>{setUser({candidateGroups: formData.candidateGroupsName,candidateGroupsName: formData.candidateGroupsName,})}"
+        >
           <el-icon #append @click="() => (isUserSelect1.value = true)">
             <User/>
           </el-icon>
@@ -61,9 +75,8 @@
         <el-input v-model="formData.processInitiator" :default-value="'${startUserNameId}'" disabled></el-input>
       </el-form-item>
       <el-form-item label="岗位" v-else-if="formData.type == 'bpmn:UserTask' && formData.userType === 'department'">
-        <el-input key="3" v-model="formData.candidateGroupsName" placeholder="请选择" @change="(e) =>{
-          setUser({candidateGroups: formData.candidateGroupsName,candidateGroupsName: formData.candidateGroupsName,})
-        }">
+        <el-input key="3" v-model="formData.candidateGroupsName" placeholder="请选择"
+                  @change="(e) =>{setUser({candidateGroups: formData.candidateGroupsName,candidateGroupsName: formData.candidateGroupsName,})}">
           <el-icon #append @click="() => (isUserSelect1 = true)">
             <User/>
           </el-icon>
@@ -91,9 +104,6 @@
           </div>
         </div>
         <div style="margin-left: 20px;">
-          <!-- <a-button style="padding-bottom: 0" icon="plus-circle" type="link" @click="setButtonGroupItem()">
-  添加选项
-</a-button> -->
           <el-button style="padding-bottom: 0" :icon="CirclePlusFilled" link @click="openButtonSelect()">
             快速添加
           </el-button>
@@ -104,11 +114,10 @@
       </template>
     </el-form>
   </div>
-
 </template>
 
 <script setup lang="ts">
-import {ref} from 'vue'
+import {ref, toRefs} from 'vue'
 import {CirclePlusFilled} from '@element-plus/icons-vue'
 
 defineOptions({
@@ -135,7 +144,7 @@ const props = defineProps({
     type: Array
   }
 })
-const {modeler, nodeElement, formData} = props
+const {modeler, nodeElement, formData} = toRefs(props)
 
 const emit = defineEmits(['modifyFormData', 'setFormBtnData'])
 
@@ -149,11 +158,11 @@ const userTypeOptions = [
 const isUserSelect = ref(false)
 const isUserSelect1 = ref(false)
 const isButtonSelect = ref(false)
-let buttonGroup: any[] = []
+const buttonGroup = ref<any>([])
 const buttonRef = ref()
 
 const updateProperties = (properties) => {
-  modeler.get('modeling').updateProperties(nodeElement, properties)
+  modeler.value.get('modeling').updateProperties(nodeElement.value, properties)
 }
 const updateId = (id) => {
   updateProperties({id: id})
@@ -183,13 +192,13 @@ const setUser = (properties) => {
 
 // 设置节点处理人
 const addUser = (properties, type) => {
-  if (nodeElement.businessObject?.processInitiator) delete nodeElement.businessObject.processInitiator
-  if (nodeElement.businessObject?.assignee) delete nodeElement.businessObject.assignee
-  if (nodeElement.businessObject?.assigneeName) delete nodeElement.businessObject.assigneeName
-  if (nodeElement.businessObject?.candidateUsers) delete nodeElement.businessObject.candidateUsers
-  if (nodeElement.businessObject?.candidateUsersName) delete nodeElement.businessObject.candidateUsersName
-  if (nodeElement.businessObject?.candidateGroups) delete nodeElement.businessObject.candidateGroups
-  if (nodeElement.businessObject?.candidateGroupsName) delete nodeElement.businessObject.candidateGroupsName
+  if (nodeElement.value.businessObject?.processInitiator) delete nodeElement.value.businessObject.processInitiator
+  if (nodeElement.value.businessObject?.assignee) delete nodeElement.value.businessObject.assignee
+  if (nodeElement.value.businessObject?.assigneeName) delete nodeElement.value.businessObject.assigneeName
+  if (nodeElement.value.businessObject?.candidateUsers) delete nodeElement.value.businessObject.candidateUsers
+  if (nodeElement.value.businessObject?.candidateUsersName) delete nodeElement.value.businessObject.candidateUsersName
+  if (nodeElement.value.businessObject?.candidateGroups) delete nodeElement.value.businessObject.candidateGroups
+  if (nodeElement.value.businessObject?.candidateGroupsName) delete nodeElement.value.businessObject.candidateGroupsName
 
   if (properties === 'processInitiator') {
     properties = {
@@ -228,11 +237,11 @@ const addUser = (properties, type) => {
 
 // 按钮数据处理
 const setButtonGroupItem = (index, type) => {
-  let businessObject = nodeElement.businessObject
+  let businessObject = nodeElement.value.businessObject
   if (type === 'list') {
-    buttonGroup = []
+    buttonGroup.value = []
     index.forEach(e => {
-      buttonGroup.push({
+      buttonGroup.value.push({
         nodeButtonCode: e.buttonCode,
         nodeButtonName: e.buttonName,
         id: businessObject.id,
@@ -245,10 +254,10 @@ const setButtonGroupItem = (index, type) => {
       })
     })
   } else if (index >= 0) {
-    buttonGroup.splice(index, 1)
+    buttonGroup.value.splice(index, 1)
   } else {
-    if (!buttonGroup) buttonGroup = []
-    buttonGroup.push({
+    if (!buttonGroup.value) buttonGroup.value = []
+    buttonGroup.value.push({
       nodeButtonCode: '',
       nodeButtonName: '',
       id: businessObject.id,
@@ -261,16 +270,16 @@ const setButtonGroupItem = (index, type) => {
     })
   }
   updateProperties({
-    buttonGroup: JSON.stringify(buttonGroup)
+    buttonGroup: JSON.stringify(buttonGroup.value)
   });
-  emit('setFormBtnData', 'buttonGroup', buttonGroup)
+  emit('setFormBtnData', 'buttonGroup', buttonGroup.value)
 
 }
 
 // 按钮配置
 const openButtonSelect = () => {
   isButtonSelect.value = true
-  buttonRef.value.getBtnList(buttonGroup)
+  buttonRef.value.getBtnList(buttonGroup.value)
 
 }
 

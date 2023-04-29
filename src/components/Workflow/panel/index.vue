@@ -1,7 +1,7 @@
 <template>
   <div class="bpmn-panel">
-    <el-tabs v-model="current">
-      <el-tab-pane label="节点属性" name="1">
+    <el-tabs v-model="activeName">
+      <el-tab-pane label="节点属性" name="first">
         <node-property-panel
             :form-data="formData"
             :node-element="nodeElement"
@@ -11,7 +11,7 @@
             :updateList="updateList"
         ></node-property-panel>
       </el-tab-pane>
-      <el-tab-pane label="表单配置" name="2">
+      <el-tab-pane label="表单配置" name="second">
         <form-panel
             ref="formPanels"
             :node-element="nodeElement"
@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import {ref, reactive, onMounted, watch} from 'vue'
+import {ref, reactive, onMounted, watch, toRefs} from 'vue'
 import NodePropertyPanel from "@/components/Workflow/panel/NodePropertyPanel.vue";
 import FormPanel from "@/components/Workflow/panel/FormPanel.vue";
 
@@ -45,8 +45,16 @@ const props = defineProps({
 
 const emit = defineEmits(['updateXml',])
 
-const {modeler, process} = props
+const {modeler, process} = toRefs(props)
+const activeName = ref("first")
+const element = ref()
+const formBtnList = ref<any[]>([])
+const formFieldArray = ref<any>([])
+const formFieldLists = ref<any[]>([])
+const notificationList = ref<any>([])
+const isProcess = ref(false)
 const current = ref('1')
+const updateList = ref<any[]>([])
 const configTab = ref('node')
 const formPanels = ref()
 const formData = reactive({
@@ -85,17 +93,16 @@ const formData = reactive({
   conditionalScript: '',
   conditionalScriptType: '',
   conditionType: '',
+  timer: '',
+  timerValue: ''
 })
 const nodeElement = ref({})
-const formFieldLists = ref([])
-const updateList = ref([])
 const processData = reactive({
   description: '',
   name: '',
   id: '',
 })
-const element = ref({})
-const isProcess = ref(false)
+
 const authData = reactive({
   authType: '',
   candidateStarterGroups: '',
@@ -103,11 +110,21 @@ const authData = reactive({
   candidateStarterUsers: '',
   candidateStarterUsersName: '',
 })
-// const formBtnList = ref([])
-// const formFieldArray = ref([])
-let formBtnList: any[] = []
-let formFieldArray: any[] = []
-let notificationList: any[] = []
+
+
+// 设置按钮表单配置数据
+const getFormList = (e) => {
+  formFieldLists.value = e;
+  isProcess.value = false;
+  // this.formBtnList = [];
+  notificationList.value = [];
+  current.value = "1";
+  // this.permissionType = this.permissionType ? this.permissionType : "all";
+}
+// 获取表单更新数据
+const updateFormLists = (e) => {
+  updateList.value = e;
+}
 
 const modifyConfigTab = (element) => {
   configTab.value = 'node'
@@ -119,63 +136,60 @@ const isImplicitRoot = (element) => {
 
 const handleModeler = () => {
   modeler.value.on("shape.added", (e) => {
-    let element = e.element
-    if (isImplicitRoot(element)) return
-    element.value = element
+    const addElement = e.element
+    if (isImplicitRoot(addElement)) return
     // 初始化设置表单，按钮配置
-    let businessObjectLoad = element.businessObject
-    if (element.value.type === "bpmn:Process") {
+    const addBusinessObject = e.element.businessObject
+    if (addElement.type === "bpmn:Process") {
       isProcess.value = true
-      current.value = '3'
-      authData.authType = businessObjectLoad.authType ? businessObjectLoad.authType : "all"
-      authData.candidateStarterGroups = businessObjectLoad.candidateStarterGroups
-      authData.candidateStarterGroupsName = businessObjectLoad.candidateStarterGroupsName
-      authData.candidateStarterUsers = businessObjectLoad.candidateStarterUsers
-      authData.candidateStarterUsersName = businessObjectLoad.candidateStarterUsersName
-      processData.description = businessObjectLoad.documentation ? businessObjectLoad.documentation[0].text : "";
-      processData.name = businessObjectLoad.name;
-      processData.id = businessObjectLoad.id;
+      activeName.value = 'third'
+      authData.authType = addBusinessObject.authType ? addBusinessObject.authType : "all"
+      authData.candidateStarterGroups = addBusinessObject.candidateStarterGroups
+      authData.candidateStarterGroupsName = addBusinessObject.candidateStarterGroupsName
+      authData.candidateStarterUsers = addBusinessObject.candidateStarterUsers
+      authData.candidateStarterUsersName = addBusinessObject.candidateStarterUsersName
+      processData.description = addBusinessObject.documentation ? addBusinessObject.documentation[0].text : "";
+      processData.name = addBusinessObject.name;
+      processData.id = addBusinessObject.id;
     }
-    if (element.value.type === "bpmn:UserTask") {
+    if (addElement.type === "bpmn:UserTask") {
       /* 按钮 */
-      if (businessObjectLoad.btnGroup) {
-        let btnGroup = businessObjectLoad.btnGroup ? JSON.parse(businessObjectLoad.btnGroup) : [];
-        let formBtnList1 = formBtnList.filter((obj) => obj.id != businessObjectLoad.id);
+      if (addBusinessObject.btnGroup) {
+        let btnGroup = addBusinessObject.btnGroup ? JSON.parse(addBusinessObject.btnGroup) : [];
+        let formBtnList1 = formBtnList.value.filter((item) => item.id != addBusinessObject.id);
         btnGroup.forEach((e) => {
-          e.id = businessObjectLoad.id
-          e.modalKey = process.key
+          e.id = addBusinessObject.id
+          e.modalKey = process.value.key
           formBtnList1.push(e)
         });
-        formBtnList = formBtnList1
+        formBtnList.value = formBtnList1
       }
-      if (businessObjectLoad.formFieldList) {
+      if (addBusinessObject.formFieldList) {
         /* 表单字段 */
-        let formFieldArrays = businessObjectLoad.formFieldList ? JSON.parse(businessObjectLoad.formFieldList) : [];
-        let formFieldArray1 = formFieldArray.filter((obj) => obj.id != businessObjectLoad.id);
+        let formFieldArrays = addBusinessObject.formFieldList ? JSON.parse(addBusinessObject.formFieldList) : [];
+        formFieldArray.value.filter((obj) => obj.id != addBusinessObject.id);
         formFieldArrays.forEach((e) => {
-          e.id = businessObjectLoad.id
-          e.modalKey = process.key
-          formFieldArray1.push(e)
+          e.id = addBusinessObject.id
+          e.modalKey = process.value.key
+          formFieldArray.value.push(e)
         });
-        formFieldArray = formFieldArray1
       }
-      if (businessObjectLoad.notification) {
+      if (addBusinessObject.notification) {
         /* 通知 */
-        let notificationLists = businessObjectLoad.notification && businessObjectLoad.notification.length != 0 ? businessObjectLoad.notification.split(",") : [];
-        let notificationList1 = notificationList.filter((obj) => obj.nodeId != businessObjectLoad.id);
+        let notificationLists = addBusinessObject.notification && addBusinessObject.notification.length != 0 ? addBusinessObject.notification.split(",") : [];
+        notificationList.value.filter((obj) => obj.nodeId != addBusinessObject.id);
         notificationLists.forEach((e) => {
-          notificationList1.push({
+          notificationList.value.push({
             noticeName: e,
-            nodeId: businessObjectLoad.id,
-            actDeModelKey: process.key,
+            nodeId: addBusinessObject.id,
+            actDeModelKey: process.value.key,
           });
         });
-        notificationList = notificationList1;
       }
     }
   })
   modeler.value.on("commandStack.changed", (e) => {
-    modeler.saveXML({format: true,}, function (err, xml) {
+    modeler.value.saveXML({format: true,}, function (err, xml) {
       emit('updateXml', xml)
     })
   })
@@ -192,59 +206,58 @@ const handleModeler = () => {
   })
   // 节点点击
   modeler.value.on("element.click", e => {
-    const {element} = e;
-    let _businessObject = element.businessObject;
-
-    if (element.type == modeler.value._definitions.rootElements[0].$type) {
+    const clickElement = e.element;
+    let clickBusinessObject = clickElement.businessObject;
+    if (clickElement.type == modeler.value._definitions.rootElements[0].$type) {
       modifyConfigTab(0);
       // 流程属性
-      if (element.value.type == "bpmn:Process") {
+      if (clickElement.type == "bpmn:Process") {
         isProcess.value = true;
         element.value = element;
-        current.value = "3";
+        activeName.value = "third";
         /* 权限 */
-        authData.authType = _businessObject.authType ? _businessObject.authType : "all"
-        authData.candidateStarterGroups = _businessObject.candidateStarterGroups
-        authData.candidateStarterGroupsName = _businessObject.candidateStarterGroupsName
-        authData.candidateStarterUsers = _businessObject.candidateStarterUsers
-        authData.candidateStarterUsersName = _businessObject.candidateStarterUsersName
-        processData.description = _businessObject.documentation ? _businessObject.documentation[0].text : "";
-        processData.name = _businessObject.name;
-        processData.id = _businessObject.id;
+        authData.authType = clickBusinessObject.authType ? clickBusinessObject.authType : "all"
+        authData.candidateStarterGroups = clickBusinessObject.candidateStarterGroups
+        authData.candidateStarterGroupsName = clickBusinessObject.candidateStarterGroupsName
+        authData.candidateStarterUsers = clickBusinessObject.candidateStarterUsers
+        authData.candidateStarterUsersName = clickBusinessObject.candidateStarterUsersName
+        processData.description = clickBusinessObject.documentation ? clickBusinessObject.documentation[0].text : "";
+        processData.name = clickBusinessObject.name;
+        processData.id = clickBusinessObject.id;
       }
     } else {
-      current.value = "1";
+      activeName.value = "first";
       isProcess.value = false;
       modifyConfigTab(1);
-      if (element.value.type == "bpmn:UserTask") {
+      if (clickElement.type == "bpmn:UserTask") {
         formFieldLists.value.forEach((e) => {
           e.isEdit = false;
           e.isView = false;
         });
-        if (_businessObject.useType === "assignee") {
+        if (clickBusinessObject.useType === "assignee") {
           /* 节点处理人 */
           formData.useType = "assignee";
-          formData.assignee = _businessObject.assignee;
-          formData.assigneeName = _businessObject.assigneeName;
-        } else if (_businessObject.userType === "candidateUsers") {
+          formData.assignee = clickBusinessObject.assignee;
+          formData.assigneeName = clickBusinessObject.assigneeName;
+        } else if (clickBusinessObject.userType === "candidateUsers") {
           formData.useType = "candidateUsers";
-          formData.candidateUsers = _businessObject.candidateUsers;
-          formData.candidateUsersName = _businessObject.candidateUsersName;
-        } else if (_businessObject.userType === "processInitiator") {
+          formData.candidateUsers = clickBusinessObject.candidateUsers;
+          formData.candidateUsersName = clickBusinessObject.candidateUsersName;
+        } else if (clickBusinessObject.userType === "processInitiator") {
           formData.useType = "processInitiator";
-          formData.processInitiator = _businessObject.processInitiator;
-        } else if (_businessObject.userType === "candidateGroups" || _businessObject.userType === "department") {
-          formData.useType = _businessObject.userType === "candidateGroups" ? "candidateGroups" : "department";
-          formData.candidateGroups = _businessObject.candidateGroups;
-          formData.candidateGroupsName = _businessObject.candidateGroupsName;
+          formData.processInitiator = clickBusinessObject.processInitiator;
+        } else if (clickBusinessObject.userType === "candidateGroups" || clickBusinessObject.userType === "department") {
+          formData.useType = clickBusinessObject.userType === "candidateGroups" ? "candidateGroups" : "department";
+          formData.candidateGroups = clickBusinessObject.candidateGroups;
+          formData.candidateGroupsName = clickBusinessObject.candidateGroupsName;
         }
       }
     }
-    if (element.type == "bpmn:SequenceFlow") {
-      let _businessObject = element.businessObject;
-      // formData.sequenceFlow = _businessObject.conditionExpression ? _businessObject.conditionExpression.body : '${outcome == '同意'}'
+    if (clickElement.type == "bpmn:SequenceFlow") {
+      let clickBusinessObject = clickElement.businessObject;
+      // formData.sequenceFlow = clickBusinessObject.conditionExpression ? clickBusinessObject.conditionExpression.body : '${outcome == '同意'}'
     }
-    handleFormData(element, "el");
+    handleFormData(clickElement, "el");
   })
 }
 
@@ -264,7 +277,7 @@ const handleFormData = (element, type) => {
   /* 流程属性 */
   formData.type = element.type
   formData.id = businessObject.id
-  formData.key = process.key
+  formData.key = process.value.key
   formData.name = businessObject.name
   formData.userType = businessObject.userType
   formData.assignee = businessObject.assignee
@@ -297,71 +310,60 @@ const handleFormData = (element, type) => {
   formData.conditionalScriptType = businessObject.$attrs.conditionalScriptType
   formData.conditionType = businessObject.$attrs.conditionType
 
-  let
-      eventDefinitions = businessObject.get("eventDefinitions");
+  let eventDefinitions = businessObject.get("eventDefinitions");
   if (eventDefinitions) {
     /* 定时器 */
     eventDefinitions.forEach((item) => {
       if (item.$type === "bpmn:TimerEventDefinition") {
-        if (item["timeDate"]) this.formData.timer = "timeDate";
+        if (item["timeDate"]) formData.timer = "timeDate";
         if (item["timeDuration"])
-          this.formData.timer = "timeDuration";
+          formData.timer = "timeDuration";
         if (item["timeCycle"])
-          this.formData.timer = "timeCycle";
-        if (item[this.formData.timer])
-          this.formData.timerValue =
-              item[this.formData.timer].body;
+          formData.timer = "timeCycle";
+        if (item[formData.timer])
+          formData.timerValue =
+              item[formData.timer].body;
       }
     });
   }
-  this.nodeElement = element;
+  nodeElement.value = element;
   if (type === "el" && businessObject.$type === "bpmn:UserTask") {
     /* 按钮 */
     if (businessObject.btnGroup) {
       let btnGroup = JSON.parse(businessObject.btnGroup);
-      let formBtnList = this.formBtnList.filter(
-          (obj) => obj.id != businessObject.id
-      );
+      formBtnList.value.filter((obj) => obj.id != businessObject.id);
       btnGroup.forEach((e) => {
-        (e.id = this.formData.id),
-            (e.modalKey = this.formData.key);
-        formBtnList.push(e);
+        e.id = formData.id
+        e.modalKey = formData.key
+        formBtnList.value.push(e);
       });
-      this.formBtnList = formBtnList;
+      // formBtnList = formBtnList;
     }
     if (businessObject.formFieldList) {
       /* 表单字段 */
-      let formFieldArray = JSON.parse(
-          businessObject.formFieldList
-      );
-      let formFieldArray1 = this.formFieldArray.filter(
-          (obj) => obj.id != businessObject.id
-      );
-      formFieldArray.forEach((e) => {
-        (e.id = this.formData.id),
-            (e.modalKey = this.formData.key);
-        formFieldArray1.push(e);
+      let formFieldArrays = JSON.parse(businessObject.formFieldList);
+      formFieldArray.value.filter((obj) => obj.id != businessObject.id);
+      formFieldArrays.forEach((e) => {
+        e.id = formData.id
+        e.modalKey = formData.key
+        formFieldArray.value.push(e);
       });
-      this.formFieldArray = formFieldArray1;
     }
     if (businessObject.notification) {
       /* 通知 */
-      let notificationList =
+      let notificationLists =
           businessObject.notification &&
           businessObject.notification.length != 0
               ? businessObject.notification.split(",")
               : [];
-      let notificationList1 = this.notificationList.filter(
-          (obj) => obj.nodeId != businessObject.id
-      );
-      notificationList.forEach((e) => {
-        notificationList1.push({
+      notificationList.value.filter((obj) => obj.nodeId != businessObject.id);
+      notificationLists.forEach((e) => {
+        notificationList.value.push({
           noticeName: e,
-          nodeId: this.formData.id,
-          actDeModelKey: this.formData.key,
+          nodeId: formData.id,
+          actDeModelKey: formData.key,
         });
       });
-      this.notificationList = notificationList1;
     }
   }
 }
@@ -372,7 +374,8 @@ watch(
       processData.id = val.id
       processData.description = val.description
       processData.name = val.name
-    }
+    },
+    // {deep: true, immediate: true}
 )
 onMounted(() => {
   handleModeler()
