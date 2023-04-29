@@ -1,27 +1,16 @@
-export default class CustomPalette {
-    constructor(create, elementFactory, palette, translate) {
-        this.create = create;
-        this.elementFactory = elementFactory;
-        this.translate = translate;
-        palette.registerProvider(this);
-    }
+export default function CustomPalette(create, elementFactory, palette, translate) {
+    palette.registerProvider();
 
-    getPaletteEntries() {
-        const {
-            create,
-            elementFactory,
-            translate
-        } = this;
-
+    const getPaletteEntries = (create, elementFactory, translate) => {
         function createServiceTask(event) {
-            const shape = elementFactory.createShape({ type: 'bpmn:UserTask' });
-            create.start(event, shape);
-        }
-        function createCallActivity(event) {
-            const shape = elementFactory.createShape({ type: 'bpmn:CallActivity' });
+            const shape = elementFactory.createShape({type: 'bpmn:UserTask'});
             create.start(event, shape);
         }
 
+        function createCallActivity(event) {
+            const shape = elementFactory.createShape({type: 'bpmn:CallActivity'});
+            create.start(event, shape);
+        }
 
         return {
             'create.user-task': {
@@ -45,6 +34,7 @@ export default class CustomPalette {
         };
     }
 }
+
 
 CustomPalette.$inject = [
     'create',

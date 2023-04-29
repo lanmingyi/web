@@ -10,6 +10,6 @@ export interface LoginRequestData {
 
 export type LoginCodeResponseData = ApiResponseData<string>
 
-export type LoginResponseData = ApiResponseData<{ token: string, username: string, userInfo: object }>
+export type LoginResponseData = ApiResponseData<{ token: string, username: string, userInfo: Record<string, any> }>
 
 export type UserPermissionResponseData = ApiResponseData<{ menu: string[]; roles: string[] }>

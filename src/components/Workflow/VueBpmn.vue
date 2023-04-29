@@ -23,20 +23,20 @@
     </div>
 
     <!--    设计面板属性配置-->
-<!--    <bpmn-panel-->
-<!--        ref="bpmnPanel"-->
-<!--        v-if="bpmnModeler"-->
-<!--        :modeler="bpmnModeler"-->
-<!--        :process="initData"-->
-<!--        :isEdit="isEdit"-->
-<!--        @updateProcesName="updateProcesName"-->
-<!--    ></bpmn-panel>-->
+    <bpmn-panel
+        ref="bpmnPanel"
+        v-if="bpmnModeler"
+        :modeler="bpmnModeler"
+        :process="initData"
+        :isEdit="isEdit"
+        @updateProcesName="updateProcesName"
+    ></bpmn-panel>
   </div>
 </template>
 
 <script setup lang="ts">
 import {onMounted, reactive, ref} from 'vue'
-import { ElMessage } from "element-plus"
+import {ElMessage} from "element-plus"
 import BpmnModeler from "bpmn-js/lib/Modeler";
 import BpmnHeader from "@/components/Workflow/BpmnHeader.vue";
 import BpmnPanel from './panel/index.vue'
@@ -242,7 +242,7 @@ const processSave = (data) => {
 // 让图能自适应屏幕
 const fitViewport = () => {
   zoom.value = bpmnModeler.value.get('canvas').zoom("fit-viewport")
-  const bbox =  (document.querySelector('.main .viewport') as any).getBBox()
+  const bbox = (document.querySelector('.main .viewport') as any).getBBox()
   const currentViewBox = bpmnModeler.value.get('canvas').viewbox()
   const elementMid = {
     x: bbox.x + bbox.width / 2 - 65,
@@ -296,13 +296,16 @@ onMounted(() => {
 @import "bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css";
 @import "./assets/css/vue-bmpn.css";
 @import "./assets/css/font-awesome.min.css";
+
 .main {
   display: flex;
   height: calc(100vh - 50px - 54px);
 }
+
 :deep .djs-container .djs-palette {
   display: block !important;
 }
+
 :deep .djs-context-pad {
   display: block !important;
 }

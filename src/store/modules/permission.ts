@@ -52,8 +52,10 @@ function generateIndexRouter(data) {
 // 生成嵌套路由（子路由）
 function generateChildRouters(data) {
     const routers: any[] = [];
+
     data.map(item => {
         if (item.component === 'Layout') {
+            // TODO 有点问题，菜单、路由、权限有点乱
             item.component = undefined
         } else if (item.component) {
             item.component = modules[`/src/views/${item.component}.vue`]

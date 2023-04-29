@@ -5,7 +5,7 @@ import {getToken} from "@/utils/cache/cookies"
 const {default_headers} = config
 const token = getToken()
 
-const request = (option: any) => {
+const request = <T>(option: any): Promise<T> => {
     const {url, method, params, data, headersType, responseType} = option
     return service({
         url: url,
@@ -20,11 +20,11 @@ const request = (option: any) => {
     })
 }
 export default {
-    get: <T = any>(option: any) => {
-        return request({method: 'get', ...option}) as unknown as T
+    get: <T = any>(option: any): Promise<T> => {
+        return request({method: 'get', ...option})
     },
-    post: <T = any>(option: any) => {
-        return request({method: 'post', ...option}) as unknown as T
+    post: <T = any>(option: any): Promise<T> => {
+        return request({method: 'post', ...option})
     },
     delete: <T = any>(option: any) => {
         return request({method: 'delete', ...option}) as unknown as T

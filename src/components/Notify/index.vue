@@ -35,14 +35,14 @@ import { ref, computed } from "vue"
 import { ElMessage } from "element-plus"
 import { Bell } from "@element-plus/icons-vue"
 import NotifyList from "./NotifyList.vue"
-import { type IListItem, notifyData, messageData, todoData } from "./data"
+import { type ListItem, notifyData, messageData, todoData } from "./data"
 
 type TabNameType = "通知" | "消息" | "待办"
 
 interface IDataItem {
   name: TabNameType
   type: "primary" | "success" | "warning" | "danger" | "info"
-  list: IListItem[]
+  list: ListItem[]
 }
 
 /** 角标当前值 */

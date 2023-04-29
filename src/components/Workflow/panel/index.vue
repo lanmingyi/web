@@ -380,6 +380,39 @@ onMounted(() => {
 
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+.bpmn-panel {
+  width: 350px;
+  border: 1px solid #eeeeee;
+  padding: 0 5px;
+  overflow-y: auto;
 
+  .ant-tabs-nav {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+
+    div:not(.ant-tabs-ink-bar) {
+      width: 100% !important;
+      display: flex !important;
+      justify-content: center !important;
+    }
+  }
+}
+
+.config-tab {
+  height: 43px;
+  line-height: 43px;
+  display: inline-block;
+  width: 50%;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  position: relative;
+  cursor: pointer;
+}
+
+.config-tab.active {
+  border-bottom: solid 2px #409eff;
+}
 </style>

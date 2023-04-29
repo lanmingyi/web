@@ -15,5 +15,5 @@ export function loginApi(data: Login.LoginRequestData) {
 
 /** 获取用户权限 */
 export function getUserPermissionByToken() {
-  return request.get<Login.UserPermissionResponseData>({url: "sys/permission/getUserPermissionByToken",})
+  return request.get<Login.UserPermissionResponseData>({url: "sys/permission/getUserPermissionByToken"})
 }

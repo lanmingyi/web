@@ -1,14 +1,12 @@
 /**
  * 存储流程设计相关参数
  */
-export default class BpmData {
-  constructor () {
-    this.controls = [] // 设计器控件
-    this.init()
-  }
+import {ref} from 'vue'
+export default function BpmData() {
+  const controls =ref<any[]>([])  // 设计器控件
 
-  init () {
-    this.controls = [
+  const init = () => {
+    controls.value = [
       {
         action: 'create.hand-tool',
         title: '拖拽'
@@ -68,8 +66,8 @@ export default class BpmData {
   }
 
   //  获取控件配置信息
-  getControl (action) {
-    const result = this.controls.filter(item => item.action === action)
+  function getControl (action) {
+    const result = controls.value.filter(item => item.action === action)
     return result[0] || {}
   }
 }
