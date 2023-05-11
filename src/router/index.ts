@@ -1,7 +1,47 @@
 import {type RouteRecordRaw, createRouter, createWebHashHistory, createWebHistory} from "vue-router";
 
+/**
+ * 导航守卫
+ * 正如其名，vue-router 提供的导航守卫主要用来通过跳转或取消的方式守卫导航。这里有很多方式植入路由导航中：全局的，单个路由独享的，或者组件级的。
+ *
+ * 1.全局前置守卫
+ * 你可以使用 router.beforeEach 注册一个全局前置守卫
+ * 当一个导航触发时，全局前置守卫按照创建顺序调用。守卫是异步解析执行，此时导航在所有守卫 resolve 完之前一直处于等待中。
+ *
+ * 2.全局解析守卫
+ * 你可以用 router.beforeResolve 注册一个全局守卫。这和 router.beforeEach 类似，因为它在每次导航时都会触发，不同的是，解析守卫刚好会在导航被确认之前、所有组件内守卫和异步路由组件被解析之后调用。
+ *
+ * 3.全局后置钩子
+ * 你也可以注册全局后置钩子 router.afterEach，然而和守卫不同的是，这些钩子不会接受 next 函数也不会改变导航本身
+ * 它们对于分析、更改页面标题、声明页面等辅助功能以及许多其他事情都很有用。
+ *
+ * 4.路由独享的守卫
+ * 你可以直接在路由配置上定义 beforeEnter 守卫
+ *
+ * 5.组件内的守卫
+ * 最后，你可以在路由组件内直接定义路由导航守卫(传递给路由配置的)
+ * 可用的配置 API，你可以为路由组件添加以下配置：
+ * beforeRouteEnter
+ * beforeRouteUpdate
+ * beforeRouteLeave
+ *
+ *
+ * 完整的导航解析流程
+ * 导航被触发。
+ * 在失活的组件里调用 beforeRouteLeave 守卫。
+ * 调用全局的 beforeEach 守卫。
+ * 在重用的组件里调用 beforeRouteUpdate 守卫(2.2+)。
+ * 在路由配置里调用 beforeEnter。
+ * 解析异步路由组件。
+ * 在被激活的组件里调用 beforeRouteEnter。
+ * 调用全局的 beforeResolve 守卫(2.5+)。
+ * 导航被确认。
+ * 调用全局的 afterEach 钩子。
+ * 触发 DOM 更新。
+ * 调用 beforeRouteEnter 守卫中传给 next 的回调函数，创建好的组件实例会作为回调函数的参数传入。
+ *
+ * */
 const  Layout = () => import('@/layout/index.vue')
-
 export const constantRoutes: RouteRecordRaw[]=[
   {
     path: "/redirect",
