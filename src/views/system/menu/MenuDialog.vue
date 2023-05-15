@@ -1,42 +1,42 @@
 <template>
   <el-dialog :title="title">
-    <el-form :model="ruleForm" ref="ruleFormRef" :rules="rules">
+    <el-form :model="formData" ref="ruleFormRef" :rules="rules">
       <el-form-item label="资源类型" :label-width="formLabelWidth" prop="menuType">
-        <el-radio-group v-model="ruleForm.menuType">
+        <el-radio-group v-model="formData.menuType">
           <el-radio :label="0">一级菜单</el-radio>
           <el-radio :label="1">子菜单</el-radio>
           <el-radio :label="2">按钮/权限</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="资源名称" :label-width="formLabelWidth" prop="name">
-        <el-input v-model="ruleForm.name" autocomplete="off"/>
+        <el-input v-model="formData.name" autocomplete="off"/>
       </el-form-item>
       <el-form-item label="菜单路径" :label-width="formLabelWidth" prop="url">
-        <el-input v-model="ruleForm.url" autocomplete="off"/>
+        <el-input v-model="formData.url" autocomplete="off"/>
       </el-form-item>
       <el-form-item label="前端组件" :label-width="formLabelWidth" prop="component">
-        <el-input v-model="ruleForm.component" autocomplete="off"/>
+        <el-input v-model="formData.component" autocomplete="off"/>
       </el-form-item>
       <el-form-item label="资源排序" :label-width="formLabelWidth" prop="sortNo">
-        <el-input v-model="ruleForm.sortNo" autocomplete="off"/>
+        <el-input v-model="formData.sortNo" autocomplete="off"/>
       </el-form-item>
       <el-form-item label="资源图标" :label-width="formLabelWidth">
-        <el-input disabled v-model="ruleForm.iconCls" autocomplete="off"/>
+        <el-input disabled v-model="formData.icon" autocomplete="off"/>
       </el-form-item>
       <el-form-item label="是否路由菜单" :label-width="formLabelWidth">
-        <el-switch v-model="ruleForm.route"
+        <el-switch v-model="formData.route"
                    active-text="是"
                    inactive-text="否"
                    :active-value="true"
                    :inactive-value="false"/>
       </el-form-item>
       <el-form-item label="开启缓存该路由" :label-width="formLabelWidth">
-        <el-switch v-model="ruleForm.keepAlive"
+        <el-switch v-model="formData.keepAlive"
                    active-text="开启"
                    inactive-text="关闭"/>
       </el-form-item>
       <el-form-item label="开启子节点" :label-width="formLabelWidth">
-        <el-switch v-model="ruleForm.state"
+        <el-switch v-model="formData.state"
                    active-text="开启"
                    inactive-text="关闭"
                    active-value="closed"
@@ -61,23 +61,44 @@ import {ref, computed, toRefs, reactive, watch} from 'vue';
 import {rules} from './utils';
 import BaseSelect from '@/components/BaseSelect/index.vue';
 
-interface MenuEditDialogProps {
-  menuData: MenuData | null,
-}
+const props = defineProps({
+  menuData: {
+    type: Object,
+    default: ()=>{
+      return {}
+    }
+  }
+})
 
 const ruleFormRef = ref<FormInstance>();
 const formLabelWidth = 120;
-const props = defineProps<MenuEditDialogProps>();
 const emit = defineEmits(['close']);
 const {menuData} = toRefs(props);
+const defaultForm: MenuData = {
+  id: '',
+  menuType: 0,
+  name: '',
+  keepAlive: null,
+  status: 1,
+  route: true,
+  icon: 'Menu',
+  url: '/',
+  component: '',
+  sortNo: 1,
+  codeSetId: 'menu',
+};
+const formData = ref({...defaultForm});
 
-watch(menuData, (newValue) => {
-  const newRuleForm = newValue ? {
-    ...defaultForm,
-    ...newValue
-  } : defaultForm
-  ruleForm.value = newRuleForm;
-}, {flush: 'post'})
+watch(() => menuData,
+    (newValue) => {
+      const newRuleForm = newValue ? {
+        ...defaultForm,
+        ...newValue
+      } : defaultForm
+      formData.value = newRuleForm;
+    },
+    {flush: 'post'}
+)
 
 const title = computed(() => {
   return menuData.value && menuData.value.id ? '编辑菜单节点' : '新增菜单节点'
@@ -91,12 +112,12 @@ const onSubmit = async () => {
   if (!ruleFormRef.value) return
   await ruleFormRef.value.validate((valid, fields) => {
     if (valid) {
-      const isEdit = ruleForm.value.id;
+      const isEdit = formData.value.id;
       const url = isEdit ? '/sys/permission/edit' : '/sys/permission/add';
-      request.post({url: url, data: ruleForm.value}).then((res) => {
+      request.post({url: url, data: formData.value}).then((res) => {
         if (res.code === 200) {
           ElMessage({type: 'success', message: res.message});
-          emit('close', ruleForm.value.pid || 1);
+          emit('close', );
           //输入pid参数，刷新pid
         } else {
           ElMessage({type: 'error', message: res.message})
@@ -111,22 +132,6 @@ const onSubmit = async () => {
 
 };
 
-const defaultForm: MenuData = {
-  id: '',
-  pid: null,
-  menuType: 'menu',
-  name: '',
-  keepAlive: null,
-  status: 1,
-  route: true,
-  iconCls: 'apartment',
-  url: '/',
-  component: '',
-  sortNo: 1,
-  codeSetId: 'menu',
-};
-
-const ruleForm = ref({...defaultForm});
 
 
 </script>

@@ -16,7 +16,7 @@
 <!--            <a target="_blank" href="">-->
 <!--              <el-dropdown-item>中文文档</el-dropdown-item>-->
 <!--            </a>-->
-            <a target="_blank" href="https://github.com/lanmingyi/cv-vue3">
+            <a target="_blank" href="https://github.com/lanmingyi/web">
               <el-dropdown-item>GitHub</el-dropdown-item>
             </a>
             <el-dropdown-item divided @click="logout">

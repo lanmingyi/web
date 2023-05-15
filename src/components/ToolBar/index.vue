@@ -18,8 +18,6 @@
 </template>
 
 <script setup lang="ts">
-import {defineOptions} from "unplugin-vue-define-options/macros";
-
 defineOptions({
   name: 'ToolBar'
 })

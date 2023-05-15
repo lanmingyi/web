@@ -12,20 +12,20 @@ export const constantRoutes: RouteRecordRaw[]=[
     children: [
       {
         path: "/redirect/:path(.*)",
-        component: () => import("@/views/redirect/index.vue")
+        component: () => import("@/views/system/redirect/index.vue")
       }
     ]
   },
   {
     path: "/403",
-    component: () => import("@/views/error-page/403.vue"),
+    component: () => import("@/views/system/error-page/403.vue"),
     meta: {
       hidden: true
     }
   },
   {
     path: "/404",
-    component: () => import("@/views/error-page/404.vue"),
+    component: () => import("@/views/system/error-page/404.vue"),
     meta: {
       hidden: true
     },
@@ -33,7 +33,7 @@ export const constantRoutes: RouteRecordRaw[]=[
   },
   {
     path: "/login",
-    component: () => import("@/views/login/index.vue"),
+    component: () => import("@/views/system/login/index.vue"),
     meta: {
       hidden: true
     }
@@ -133,9 +133,9 @@ export const constantRoutes: RouteRecordRaw[]=[
   //   ]
   // },
   // {
-  //   path: "/hook-demo",
+  //   path: "/demo",
   //   component: Layout,
-  //   redirect: "/hook-demo/use-fetch-select",
+  //   redirect: "/demo/use-fetch-select",
   //   name: "HookDemo",
   //   meta: {
   //     title: "hook 示例",
@@ -145,7 +145,7 @@ export const constantRoutes: RouteRecordRaw[]=[
   //   children: [
   //     {
   //       path: "use-fetch-select",
-  //       component: () => import("@/views/hook-demo/use-fetch-select.vue"),
+  //       component: () => import("@/views/demo/use-fetch-select.vue"),
   //       name: "UseFetchSelect",
   //       meta: {
   //         title: "useFetchSelect"
@@ -153,7 +153,7 @@ export const constantRoutes: RouteRecordRaw[]=[
   //     },
   //     {
   //       path: "use-fullscreen-loading",
-  //       component: () => import("@/views/hook-demo/use-fullscreen-loading.vue"),
+  //       component: () => import("@/views/demo/use-fullscreen-loading.vue"),
   //       name: "UseFullscreenLoading",
   //       meta: {
   //         title: "useFullscreenLoading"
@@ -179,7 +179,7 @@ export const asyncRoutes: RouteRecordRaw[] = [
     children: [
       {
         path: "page",
-        component: () => import("@/views/permission/page.vue"),
+        component: () => import("@/views/system/permission/page.vue"),
         name: "PagePermission",
         meta: {
           title: "页面权限",
@@ -188,7 +188,7 @@ export const asyncRoutes: RouteRecordRaw[] = [
       },
       {
         path: "directive",
-        component: () => import("@/views/permission/directive.vue"),
+        component: () => import("@/views/system/permission/directive.vue"),
         name: "DirectivePermission",
         meta: {
           title: "指令权限" // 如果未设置角色，则表示：该页面不需要权限，但会继承根路由的角色

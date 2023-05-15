@@ -1,10 +1,10 @@
 export interface MenuData {
     // uuid?: string,
-    id?: string,
+    id?: string | null,
     name?: string,
     component?: string,
     url?: string,
-    menuType?: string
+    menuType?: number
     sortNo?: number,
     children?: null,
     code?: string | null,
@@ -13,14 +13,13 @@ export interface MenuData {
     creator?: string | null,
     creatorId?: string | null,
     creatorOrgId?: number | null,
-    iconCls?: string | null,
+    icon?: string | null,
     iconClsColour?: string | null,
     keepAlive?: boolean | null
     levelId?: number | null,
     modifier?: string | null,
     modifierId?: string | null,
     modifyTime?: string | null,
-    pid?: number | null,
     route?: boolean
     status?: number
     textColour?: null

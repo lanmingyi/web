@@ -2,21 +2,41 @@
   <div class="menu-container">
     <ToolBar>
       <template #toolBtn>
-        <el-button type="primary" @click="handleAddNode()">新增根节点</el-button>
+<!--        <el-button type="primary" @click="handleAdd()">新增根节点</el-button>-->
+        <el-dropdown style="margin-right: 10px" @command="handleCommand">
+          <el-button type="primary">新增
+            <el-icon class="el-icon--right">
+              <arrow-down/>
+            </el-icon>
+          </el-button>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item command="root">新增根节点</el-dropdown-item>
+              <el-dropdown-item command="children">新增子节点</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
       </template>
     </ToolBar>
     <!--    lazy :load="loadExpand" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"-->
     <Table :data="tableData" style="width: 100%" row-key="id" border :selection="true" :autoHeight="true">
       <el-table-column prop="name" label="名称"/>
-      <el-table-column prop="menuType" label="资源类型"/>
-      <el-table-column prop="component" label="组件名"/>
+      <el-table-column prop="menuType" label="菜单类型">
+        <template #default="{ row }">
+          <span>{{row.menuType===0 || row.menuType===1 ? '菜单' : '按钮/权限'}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="icon" label="图标"/>
+      <el-table-column prop="url" label="路径"/>
+      <el-table-column prop="component" label="组件"/>
+      <el-table-column prop="sortNo" label="排序"/>
       <el-table-column prop="action" label="操作" :width="250">
         <template #default="{ row }">
-          <span class="action-btn" @click="handleAddNode(row)">添加节点</span>
+          <span class="blue" @click="handleAdd(row)">添加节点</span>
           <el-divider direction="vertical"/>
-          <span class="action-btn" @click="handleEditNode(row)">编辑</span>
+          <span class="blue" @click="handleEditNode(row)">编辑</span>
           <el-divider direction="vertical"/>
-          <span class="action-btn-danger" @click="handleDeleteNode(row)">删除</span>
+          <span class="red" @click="handleDelete(row)">删除</span>
         </template>
       </el-table-column>
     </Table>
@@ -34,29 +54,27 @@ import {ElMessage, ElMessageBox} from 'element-plus';
 import Table from '@/components/Table/index.vue';
 import ToolBar from "@/components/ToolBar/index.vue";
 import type {MenuData} from './types';
-import {ref, reactive, onMounted} from 'vue';
+import {onMounted, reactive, ref} from 'vue';
 import request from '@/utils/axios';
 import MenuDialog from './MenuDialog.vue';
 import {pick} from 'lodash';
 
 const url = {
-  getListByLevel: '/sys/permission/list',
-  getListByPid: '/system/menu/getListByPid',
+  getList: '/sys/permission/list',
   delete: '/sys/permission/delete',
 };
 
 const levelId = 1;
 const dialogToggle = ref<boolean>(false);
-const dialogUsingData = ref<MenuData | null>(null);
+const dialogUsingData = ref<MenuData | null>();
 const tableData: Array<MenuData> = reactive<Array<MenuData>>([]);
-const resolveMap = new Map();
 
 onMounted(() => {
   getData();
 });
 
 const getData = () => {
-  request.get({url: url.getListByLevel}).then(res => {
+  request.get({url: url.getList}).then(res => {
     const data = res.result;
     tableData.length = 0;
     tableData.push(...data);
@@ -64,8 +82,8 @@ const getData = () => {
 }
 
 
-const handleDeleteNode = (row) => {
-  const {uuid, pid} = row;
+const handleDelete = (row) => {
+  const {id} = row;
   ElMessageBox.confirm('删除操作将不可逆，确认要删除吗?', '警告',
       {
         closeOnClickModal: true,
@@ -74,28 +92,19 @@ const handleDeleteNode = (row) => {
         type: 'warning',
       }
   ).then(() => {
-    request.post<any>({url: url.delete, data: {uuid}}).then((res) => {
+    request.delete<any>({url: url.delete, params: {id}}).then((res) => {
       if (res.statusCode === 200 || res === 1) {
-        ElMessage({
-          type: 'success',
-          message: res.message,
-        })
-        //输入pid参数，刷新pid
-        getData(pid);
+        ElMessage({type: 'success', message: res.message,})
+        getData();
       } else {
-        ElMessage({
-          type: 'error',
-          message: res.message,
-        })
+        ElMessage({type: 'error', message: res.message,})
       }
     })
   });
 }
 
-const handleAddNode = (row = null as MenuData | null) => {
-  const pid = row ? row.id : 1;
-  const usingData = {pid};
-  dialogUsingData.value = usingData;
+const handleCommand = (commond: string | number | object) => {
+  // dialogUsingData.value!.id = row ? row.id : '';
   dialogToggle.value = true;
 }
 
@@ -105,7 +114,7 @@ const handleEditNode = (row) => {
 }
 
 const closeDialog = (pid = null) => {
-  pid && getData(pid);
+  pid && getData();
   dialogToggle.value = false;
   dialogUsingData.value = null;
 }
@@ -116,4 +125,12 @@ const closeDialog = (pid = null) => {
 .menu-container {
   width: 100%;
 }
+.blue {
+  color: #6ca3f5;
+}
+
+.red {
+  color: #F56C6C;
+}
+
 </style>
