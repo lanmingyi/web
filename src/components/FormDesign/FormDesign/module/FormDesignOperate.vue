@@ -28,7 +28,7 @@
       <!-- 按钮右侧插槽 -->
       <slot name="right-action"></slot>
       <a-tooltip title="关闭">
-        <a v-if="toolbars.includes('close')" @click="$emit('handleClose')">
+        <a v-if="toolbar.includes('close')" @click="$emit('handleClose')">
           <a-icon type="close"/>
         </a>
       </a-tooltip>
@@ -44,7 +44,7 @@ defineOptions({
 })
 
 const props = defineProps({
-  toolbars: {
+  toolbar: {
     type: Array,
     default: () => [
       "save",
@@ -55,6 +55,10 @@ const props = defineProps({
       "reset",
       "close",
     ],
+  },
+  showToolbarText: {
+    type: Boolean,
+    default: false,
   },
   emptyElement: {
     type: Boolean,

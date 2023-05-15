@@ -1,9 +1,14 @@
 <!--表单设计器-->
 <template>
   <el-config-provider :local="local">
-    <div>
+    <div :class="['form-designer-container', ]">
       <!-- 操作区域-->
-      <form-design-operate v-if="!toolbarsTop" :toolbars="toolbars" :emptyElement="true">
+      <form-design-operate v-if="!toolbarTop" :showToolbarText="showToolbarText" :toolbar="toolbar" :emptyElement="true"
+                           @handleSave="handleSave" @handlePreview="handlePreview"
+                           @handleOpenImportJsonModal="handleOpenImportJsonModal"
+                           @handleOpenCodeModal="handleOpenCodeModal"
+                           @handleOpenJsonModal="handleOpenJsonModal" @handleClose="handleClose"
+      >
         <template slot="left-action">
           <slot name="left-action"></slot>
         </template>
@@ -13,8 +18,8 @@
       </form-design-operate>
       <div class="content" :class="{
               'show-head': showHead,
-              'toolbars-top': toolbarsTop,
-              'show-head-and-toolbars-top': toolbarsTop && showHead,
+              'toolbar-top': toolbarTop,
+              'show-head-and-toolbar-top': toolbarTop && showHead,
             }">
         <!-- 左侧控件区域  -->
         <aside class="left">
@@ -24,26 +29,25 @@
               @generateKey="generateKey"
               @handleListPush="handleListPush"
               @start="handleStart"/>
-
-          <draggable-item
-              title="布局控件"
-              :list="layoutArray"
-              @generateKey="generateKey"
-              @handleListPush="handleListPush"
-              @start="handleStart"/>
-          <draggable-item
-              title="自定义组件"
-              :list="customComponents"
-              @generateKey="generateKey"
-              @handleListPush="handleListPush"
-              @start="handleStart"/>
+<!--          <draggable-item-->
+<!--              title="布局控件"-->
+<!--              :list="layoutArray"-->
+<!--              @generateKey="generateKey"-->
+<!--              @handleListPush="handleListPush"-->
+<!--              @start="handleStart"/>-->
+<!--          <draggable-item-->
+<!--              title="自定义组件"-->
+<!--              :list="customComponents"-->
+<!--              @generateKey="generateKey"-->
+<!--              @handleListPush="handleListPush"-->
+<!--              @start="handleStart"/>-->
         </aside>
 
         <!-- 中间面板区域 -->
         <section>
           <form-design-operate
-              v-if="!toolbarsTop"
-              :toolbars="toolbars"
+              v-if="!toolbarTop"
+              :toolbar="toolbar"
               :emptyElement="true" @handleSave="handleSave" @handlePreview="handlePreview"
               @handleOpenImportJsonModal="handleOpenImportJsonModal"
               @handleOpenCodeModal="handleOpenCodeModal" @handleOpenJsonModal="handleOpenJsonModal"
@@ -57,8 +61,8 @@
             </template>
           </form-design-operate>
           <form-design-panel
-              ref="KFCP"
-              :class="{ 'no-toolbars-top': !toolbarsTop }"
+              ref="formDesignPanelRef"
+              :class="{ 'no-toolbar-top': !toolbarTop }"
               :data="data"
               :selectItem="selectItem"
               :noModel="noModel"
@@ -81,7 +85,7 @@
                   class="form-item-properties"
                   :selectItem="selectItem"
                   :hideModel="hideModel"
-                  @handleHide="showPropertie = false"
+                  @handleHide="showProperties = false"
               />
             </el-tab-pane>
             <el-tab-pane name="2" label="表单属性">
@@ -96,8 +100,9 @@
 </template>
 
 <script setup lang="ts">
-import {reactive, computed, toRefs} from 'vue'
+import {ref, reactive, computed, toRefs} from 'vue'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
+import {ElMessageBox, ElMessage} from "element-plus";
 import FormDesignOperate from "@/components/FormDesign/FormDesign/module/FormDesignOperate.vue";
 import DraggableItem from "@/components/FormDesign/FormDesign/module/DraggableItem.vue";
 import ImportJson from "@/components/FormDesign/FormDesign/module/ImportJson.vue";
@@ -105,7 +110,7 @@ import ViewJson from "@/components/FormDesign/FormDesign/module/ViewJson.vue";
 import ViewCode from "@/components/FormDesign/FormDesign/module/ViewCode.vue";
 import FormItemProperties from "@/components/FormDesign/FormDesign/module/FormItemProperties.vue";
 import FormProperties from "@/components/FormDesign/FormDesign/module/FormProperties.vue";
-
+import FormPreview from "@/components/FormDesign/FormPreview/index";
 import {
   basicsList,
   // highList,
@@ -118,11 +123,15 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
-  toolbarsTop: {
+  toolbarTop: {
     type: Boolean,
     default: false,
   },
-  toolbars: {
+  showToolbarText: {
+    type: Boolean,
+    default: false,
+  },
+  toolbar: {
     type: Array,
     default: () => [
       "save",
@@ -165,11 +174,17 @@ const props = defineProps({
       "table",
     ],
   },
+  hideModel: {
+    // 隐藏数据字段
+    type: Boolean,
+    default: false,
+  },
 })
 const local = zhCn
 
+const emit = defineEmits(['save', 'close'])
 const {fields} = toRefs(props)
-const data = reactive({
+const data = reactive<any>({
   list: [],
   config: {
     layout: "horizontal",
@@ -183,10 +198,118 @@ const data = reactive({
     width: 850,
   },
 })
+const formPreviewRef = ref()
+const formDesignPanelRef = ref()
+const noModel = reactive(["button", "divider", "card", "grid", "table", "alert", "text", "html",])
+const selectItem = reactive({key: ""})
+const updateTime = ref(0)
+const startType = ref('')
+const showProperties = ref(false)
 
 const basicsArray = computed(() => {
   return basicsList.filter((item) => fields.value.includes(item.type));
 })
+const layoutArray = computed(() => {
+  return layoutList.filter((item) => fields.value.includes(item.type))
+})
+
+const handleDownload = () =>{}
+const generateKey = (list, index) => {
+  // 生成key值
+  const key = list[index].type + '_' + new Date().getTime()
+  list[index] = {
+    ...list[index],
+    key,
+    model: key,
+  }
+  if (noModel.includes(list[index].type)) {
+    // 删除不需要的model属性
+    delete list[index].model
+  }
+}
+
+const handleListPush = (item) => {
+  // 双击控件按钮push到list
+  if (!selectItem.key) {
+    // 在没有选择表单时，将数据push到data.list
+    const key = item.type + "_" + new Date().getTime();
+    item = {
+      ...item,
+      key,
+      model: key,
+    };
+    if (noModel.includes(item.type)) {
+      // 删除不需要的model属性
+      delete item.model;
+    }
+    const itemString = JSON.stringify(item);
+    const record = JSON.parse(itemString);
+    // 删除icon及component属性
+    delete record.icon;
+    delete record.component;
+    data.list.push(record);
+    handleSetSelectItem(record);
+    return false;
+  }
+  formDesignPanelRef.value.handleCopy(false, item)
+}
+
+const handleSetSelectItem = (record) => {
+  // 操作间隔不能低于100毫秒
+  let newTime = new Date().getTime();
+  if (newTime - updateTime.value < 100) {
+    return false;
+  }
+  updateTime.value = newTime;
+  // 设置selectItem的值
+  selectItem.key = record;
+  // 判断是否选中控件，如果选中则弹出属性面板，否则关闭属性面板
+  if (record.key) {
+    startType.value = record.type;
+    showProperties.value = true;
+  } else {
+    showProperties.value = false;
+  }
+}
+
+const handleReset = () => {
+  ElMessageBox.confirm("是否确认清空内容?", "警告", {
+    confirmButtonText: '是',
+    cancelButtonText: '否',
+    type: 'warning'
+  }).then(res => {
+    data.list = [];
+    handleSetSelectItem({key: ""});
+    ElMessage({type: 'success', message: '已清空'})
+  }).catch(() => {
+    ElMessage({type: 'info', message: '失败'})
+  })
+}
+
+const handlePreview = () => {
+  formPreviewRef.value.formDesignData = data
+  formPreviewRef.value.previewWidth = data.config.width
+  formPreviewRef.value.visible = true
+}
+
+const handleOpenImportJsonModal = () => {
+}
+const handleOpenCodeModal = () => {
+}
+const handleOpenJsonModal = () => {
+}
+
+const handleStart = (type) => {
+  console.log('type', type)
+  startType.value = type
+}
+const handleSave = () => {
+  emit('save', JSON.stringify(data))
+}
+
+const handleClose = () => {
+  emit('close')
+}
 
 </script>
 <style scoped>

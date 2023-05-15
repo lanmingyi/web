@@ -1,5 +1,10 @@
 <template>
-  <el-dialog>
+  <el-dialog
+      title="预览"
+      :v-model="visible"
+      :destroyOnClose="true"
+      :width="`${width}px`"
+  >
     <form-build
         ref="formBuildRef"
         :value="formDesignData"
@@ -14,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import {onMounted, ref} from "vue";
+import {onMounted, ref, computed} from "vue";
 
 const props = defineProps({
   formDesign:{
@@ -34,10 +39,14 @@ const props = defineProps({
   }
 })
 const emit = defineEmits(['getJsonData'])
-
+const visible = ref(false)
 const {formDesign} = props
 const formBuildRef = ref()
 const formDesignData = ref()
+const previewWidth = ref(850)
+const width = computed(()=>{
+  return previewWidth.value ? previewWidth.value : 850
+})
 
 const setData =(e) => {
   formDesignData.value = e

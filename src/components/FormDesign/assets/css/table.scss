@@ -1,0 +1,67 @@
+// 表单设计器-表格样式
+.kk-table-9136076486841527 {
+  width: 100%;
+  box-sizing: border-box;
+  transition: all 0.3s;
+  border-collapse: collapse;
+  // min-width: 800px;
+  tr {
+    transition: all 0.3s;
+    border-collapse: collapse;
+    td {
+      box-sizing: border-box;
+      transition: all 0.3s;
+      padding: 12px 12px;
+      border-collapse: collapse;
+      vertical-align:top;
+    }
+  }
+  &.bordered {
+    // 添加边框
+    tr {
+      td {
+        border: 1px solid rgba(0,0,0,.65);
+        
+      }
+    }
+  }
+  &.formBorder{
+     .ant-input,.ant-input-number,.ant-select,.ant-time-picker,.ant-select-selection{
+      border: none !important;
+      // border-bottom: 1px solid @primary-color !important;
+      outline: none !important;
+      border-radius: 0 !important;
+    }
+    input:focus {
+      border-color: none !important;
+      outline: none !important;
+      // border-bottom: 1px solid @primary-color !important;
+      box-shadow: none;
+    }
+    .has-error .ant-input-affix-wrapper .ant-input:focus{
+      box-shadow: none !important;
+    }
+    .ant-calendar-picker-icon,.ant-select-arrow,.ant-time-picker-icon{
+      display: none;
+    }
+  }
+  &.bright {
+    // 点亮行
+    tr {
+      &:hover > td {
+        background: #e6f7ff;
+      }
+    }
+  }
+  &.small {
+    // 紧凑型
+    tr {
+      td {
+        padding: 8px 8px;
+      }
+    }
+  }
+  .ant-row.ant-form-item{
+    margin: 0 !important;
+  }
+}

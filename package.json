@@ -29,7 +29,7 @@
     "vitest": "^0.29.2",
     "vue": "^3.2.45",
     "vue-router": "^4.1.6",
-    "vuedraggable": "^2.24.3",
+    "vuedraggable": "^4.1.0",
     "vxe-table": "^4.3.10",
     "vxe-table-plugin-element": "^3.0.6",
     "xe-utils": "^3.5.7"

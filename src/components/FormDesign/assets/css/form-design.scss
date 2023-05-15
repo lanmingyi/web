@@ -1,0 +1,1220 @@
+// 表单设计器样式
+//$primary-color: $primary-color;
+$primary-2: #000000;
+$primary-3: #ffffff;
+$primary-color: #1890ff;
+$layout-color: #9867f7;
+
+$primary-background-color: fade($primary-color, 6%);
+$primary-hover-bg-color: fade($primary-color, 20%);
+$primary-light-bg-color: fade($primary-color, 8%);
+$layout-background-color: fade($layout-color, 12%);
+$layout-hover-bg-color: fade($layout-color, 24%);
+
+$title-text-color: #fff;
+$border-color: #e8e8e8;
+
+$left-right-width: 270px;
+$header-height: 56px;
+$operating-area-height: 45px;
+@import "./table.scss";
+@import "./editor.scss";
+
+// 最小尺寸的表格分页样式
+.ant-pagination.mini .ant-pagination-next .ant-pagination-item-link,
+.ant-pagination.mini .ant-pagination-prev .ant-pagination-item-link,
+.ant-pagination.mini .ant-pagination-item {
+  // border-color: #d9d9d9 !important;
+  background: #f4f4f5 !important;
+}
+
+.ant-pagination.mini .ant-pagination-prev, .ant-pagination.mini .ant-pagination-item {
+  margin-right: 6px !important;
+}
+
+.ant-pagination.mini .ant-pagination-item-active {
+  // border-color: #1890ff !important;
+  background: $primary-color !important;
+
+}
+
+.ant-pagination.mini .ant-pagination-item:not(.ant-pagination-item-active) {
+  background: #f4f4f5 !important;
+}
+
+// .ant-pagination-item-active a{
+//  color: #fff !important;
+// }
+.ant-table-pagination.ant-pagination, .ant-table-pagination.ant-pagination .ant-select-selection, .ant-pagination-options-quick-jumper input {
+  font-size: 13px;
+}
+
+
+.ant-menu.ant-menu-dark .ant-menu-item.ant-menu-item-active > a {
+  color: $primary-color !important;
+}
+
+.ant-menu.ant-menu-dark .ant-menu-sub.ant-menu-inline > .ant-menu-item, .ant-menu-sub.ant-menu-inline > .ant-menu-submenu > .ant-menu-submenu-title:hover {
+  color: $primary-color !important;
+}
+
+.ant-menu.ant-menu-dark .ant-menu-submenu-active {
+  color: $primary-color !important;
+}
+
+.ant-menu.ant-menu-dark .ant-menu-sub.ant-menu-inline > .ant-menu-item, .ant-menu-sub.ant-menu-inline > .ant-menu-submenu > .ant-menu-submenu-title:hover {
+  color: $primary-color !important;
+}
+
+.ant-breadcrumb .ant-breadcrumb-link a {
+  color: $primary-color;
+}
+
+.ant-breadcrumb .ant-breadcrumb-link a:hover {
+  //color: spin(lighten($primary-color, 20%), 8);
+  color: $primary-color;
+}
+
+.left-btn-box .ant-btn-link {
+  border: none !important;
+}
+
+// 表单设计器样式
+.ant-form-item-label > label:after {
+  content: '' !important;
+}
+
+.form-designer-container {
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+
+  .ant-divider-horizontal.ant-divider-with-text-center:after, .ant-divider-horizontal.ant-divider-with-text-center:before, .ant-divider-horizontal.ant-divider-with-text-left:after, .ant-divider-horizontal.ant-divider-with-text-left:before, .ant-divider-horizontal.ant-divider-with-text-right:after, .ant-divider-horizontal.ant-divider-with-text-right:before {
+    top: 2px !important;
+  }
+
+
+  // header样式
+  .header {
+    width: 100%;
+    height: $header-height;
+    text-align: center;
+    background: $primary-color;
+    color: $title-text-color;
+    // margin-bottom: 6px;
+    // border-bottom: 1px solid $border-color;
+    line-height: $header-height;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  // 头部操作按钮区域
+  .operating-area {
+    border-bottom: 1px solid $border-color;
+    font-size: 16px;
+    text-align: left;
+    height: 37.5px;
+    line-height: 37.5px;
+    padding: 0px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+
+    a {
+      color: #666;
+      margin-left: 10px;
+
+      &:hover {
+        color: $primary-color;
+      }
+
+      > span {
+        font-size: 14px;
+        padding-left: 2px;
+      }
+    }
+  }
+
+  // iconfont 样式
+  .icon {
+    width: 1em;
+    height: 1em;
+    vertical-align: -0.15em;
+    fill: currentColor;
+    overflow: hidden;
+    margin-right: 5px;
+  }
+
+  // 设计器内容样式
+  .content {
+    display: flex;
+    height: 100%;
+    flex: 1;
+
+    &.show-head {
+      // margin-top: 6px;
+      margin: 0 !important;
+      height: calc(100%);
+    }
+
+    &.toolbar-top {
+      margin-top: 6px;
+      height: calc(100% - $operating-area-height);
+    }
+
+    &.show-head-and-toolbar-top {
+      margin-top: 6px;
+      height: calc(100% - $header-height - $operating-area-height);
+    }
+
+    // 左右栏
+    aside {
+      box-shadow: 0px 0px 1px 1px $border-color;
+      width: $left-right-width;
+      height: 100%;
+      // >.left-title {
+      //   padding    : 12px 10px 8px;
+      //   user-select: none;
+      // }
+
+      &.left {
+        // border-right: 1px solid @aside-border-color;
+        height: 100%;
+        overflow: auto;
+        user-select: none;
+
+        .ant-collapse-content-box {
+          padding: 0;
+        }
+
+        .ant-collapse {
+          border: 0;
+
+          > .ant-collapse-item {
+            border-color: $border-color;
+
+            > .ant-collapse-header {
+              padding: 7px 0 7px 40px;
+            }
+
+            > .ant-collapse-content {
+              border-color: $border-color;
+            }
+          }
+        }
+
+        .com-content {
+          padding: 10px;
+
+          .com-title {
+            font-size: 14px;
+            color: #043254;
+            line-height: 30px;
+            margin-bottom: 10px;
+            font-weight: 700;
+          }
+        }
+
+        ul {
+          padding: 0px;
+          list-style: none;
+          display: flex;
+          margin-bottom: 0;
+          flex-wrap: wrap;
+          // background: #efefef;
+
+          li {
+            border-radius: 0;
+            border: 0;
+            font-size: 13px;
+            // box-shadow   : 1px 0 0 0 $border-color, 0 1px 0 0 $border-color, 1px 1px 0 0 $border-color, 1px 0 0 0 $border-color inset, 0 1px 0 0 $border-color inset;
+            padding: 8px;
+            transition: all 0.3s;
+            width: calc(50% - 6px);
+            margin: 0 0 10px 0;
+            height: 36px;
+            line-height: 20px;
+            cursor: move;
+            // border       : 1px solid transparent;
+            border-radius: 3px;
+            transition: all .3s;
+            background: $primary-light-bg-color;
+
+            &:nth-child(odd) {
+              margin-right: 10px;
+            }
+
+            &:hover {
+              // border    : 1px dashed darkgray;
+              // color     : $primary-color;
+              border: 1px dashed $primary-color;
+              position: relative;
+              z-index: 1;
+              // box-shadow: 0 2px 6px $primary-color;
+            }
+          }
+        }
+      }
+
+      // 右侧区域
+      &.right {
+        width: 400px !important;
+        height: 100%;
+        // border-left: 1px solid @aside-border-color;
+        // border-top : 1px solid @aside-border-color;
+        color: #fff;
+        // overflow      : hidden;
+        position: relative;
+
+        .ant-tabs-nav {
+          width: 100%;
+        }
+
+        .ant-tabs-bar {
+          margin: 0 !important;
+        }
+
+        .ant-tabs-tabpane {
+          height: 100%;
+          // overflow-y: scroll;
+          // margin: 10px 0;
+        }
+
+        .ant-tabs-tab, .ant-tabs-ink-bar {
+          text-align: center;
+          width: 50% !important;
+        }
+
+        // 控件属性设置
+        .code-item-properties,
+        .form-item-properties {
+          width: 100%;
+          height: 100%;
+          z-index: 12;
+          // box-shadow: 0 0px 3px 3px #aaa;
+          transition: all .5s;
+
+          &.show-properties {
+            left: 0px;
+
+            .close-box {
+              right: 400 - 1px;
+              opacity: .7;
+            }
+          }
+
+          // 关闭控件属性面板按钮
+          .close-box {
+            opacity: 0;
+            transition: all .5s;
+            position: fixed;
+            background: $primary-color;
+            // background   : fade($primary-color,70%);
+            padding: 8px 10px;
+            cursor: pointer;
+            user-select: none;
+            border-radius: 5px 0 0 5px;
+            font-size: 16px;
+            color: #fff;
+            bottom: 10px;
+            right: 0px;
+
+          }
+        }
+
+        .code-item-properties {
+          position: absolute;
+          left: 100%;
+          top: 0;
+        }
+
+        .properties-centent {
+          height: 100%;
+          overflow: hidden;
+          background: #fff;
+
+          .head-title {
+            height: 37.5px;
+            line-height: 37.5px;
+            padding: 0 24px;
+            font-size: 16px;
+            border-bottom: 1px solid $border-color;
+            color: rgba(0, 0, 0, 0.85);
+          }
+
+          .properties-body {
+            overflow-y: auto;
+            height: calc(100vh - 40px);
+            padding: 8px 16px;
+          }
+
+
+          .ant-form-item {
+            margin-bottom: 0;
+            // padding      : 6px 0;
+            // border-bottom: 1px solid $border-color;
+
+            .ant-form-item-label {
+              // line-height: 2;
+            }
+          }
+        }
+
+        .hint-box {
+          color: #aaa;
+          height: 75vh;
+          line-height: 75vh;
+          text-align: center;
+          font-size: 20px;
+        }
+      }
+    }
+
+    // 中间内容区域
+    section {
+      flex: 1;
+      max-width: calc(100% - $left-right-width - $left-right-width);
+      user-select: none;
+      margin: 0 1px 0;
+      // box-shadow : 0px 0px 1px 1px $border-color;
+
+
+      // 内容操作区域
+      .form-panel {
+        // height       : calc(100% - 50px);
+        height: 100%;
+        background: #eee;
+        // border       : 1px solid #ccc;
+        position: relative;
+
+        &.no-toolbar-top {
+          height: calc(100% - 35px);
+        }
+
+        > .hint-text {
+          position: absolute;
+          left: 0;
+          top: 45%;
+          width: 100%;
+          text-align: center;
+          font-size: 20px;
+          color: #aaa;
+          z-index: 16;
+        }
+
+        .a-form-box {
+          height: 100%;
+          // box-shadow: 0px 1px 5px 1px #ccc;
+        }
+
+        .draggable-box {
+          height: 100%;
+          overflow: auto;
+
+          .list-main {
+            min-height: 100%;
+            padding: 12px;
+            position: relative;
+            background: #fff;
+            // border    : 1px #ccc dashed;
+
+            .moving {
+              // 拖放移动中
+              // outline-width: 0;
+              min-height: 35px;
+              box-sizing: border-box;
+              overflow: hidden;
+              padding: 0 !important;
+              // margin       : 3px 0;
+              position: relative;
+
+              &::before {
+                content: '';
+                height: 5px;
+                width: 100%;
+                // background: $primary-color;
+                position: absolute;
+                top: 0;
+                right: 0;
+              }
+            }
+
+            .drag-move-box {
+              position: relative;
+              box-sizing: border-box;
+              padding: 8px;
+              transition: all .3s;
+              min-height: 36px;
+              border: 1px dashed #e2e0e0;
+              margin-bottom: 10px;
+              cursor: pointer;
+              // overflow: inherit;
+
+              &:hover {
+                background: $primary-light-bg-color;
+              }
+
+              // 选择时 start
+              &::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                right: -100%;
+                transition: all .3s;
+              }
+
+              &.active {
+                &::before {
+                  right: 0;
+                }
+
+                background: $primary-light-bg-color;
+                border: 1px solid $primary-color;
+                outline-offset: 0;
+              }
+
+              // 选择时 end
+              .form-item-box {
+                position: relative;
+                box-sizing: border-box;
+                word-wrap: break-word;
+
+                &::before {
+                  content: "";
+                  position: absolute;
+                  width: 100%;
+                  height: 100%;
+                  top: 0;
+                  left: 0;
+                  z-index: 888;
+                }
+
+                .ant-form-item {
+                  margin: 0 !important;
+                }
+              }
+
+              .show-key-box {
+                // 显示key
+                position: absolute;
+                bottom: 2px;
+                right: 5px;
+                font-size: 14px;
+                z-index: 999;
+                color: $primary-color;
+              }
+
+              > .copy,
+              > .delete {
+                position: absolute;
+                top: -12px;
+                width: 24px;
+                height: 24px;
+                line-height: 24px;
+                text-align: center;
+                color: #fff;
+                z-index: 999;
+                transition: all .3s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                &.unactivated {
+                  opacity: 0 !important;
+                  pointer-events: none;
+                }
+
+                &.active {
+                  opacity: 1 !important;
+                }
+              }
+
+              > .copy {
+                border-radius: 50%;
+                right: 50px;
+                color: $primary-color;
+                border: 1px solid $primary-color;
+                // background   : $primary-color;
+                background: #fff;
+
+                &:hover {
+                  color: #fff;
+                  background: $primary-color;
+                }
+              }
+
+              > .delete {
+                border-radius: 50%;
+                right: 20px;
+                color: #f56c6c;
+                border: 1px solid #f56c6c;
+                // background   : $primary-color;
+                background: #fff;
+                // background: $primary-color;
+                &:hover {
+                  color: #fff;
+                  background: #f56c6c;
+                }
+              }
+
+            }
+
+            // 动态表格设计面板样式
+            .batch-box {
+              > .batch-label {
+                font-size: 16px;
+                font-weight: 500;
+                padding: 10px 10px;
+              }
+
+              //  &:hover{
+              //   background: $primary-light-bg-color;
+              // }
+
+              .draggable-box {
+                min-height: 60px;
+                width: 100%;
+                // border    : 1px #ccc dashed;
+                background: #fff;
+
+                .list-main {
+                  min-height: 60px;
+                  position: relative;
+                  border: 1px #ccc dashed;
+                  overflow-x: auto;
+                  overflow-y: auto;
+                  white-space: nowrap;
+
+                  .moving {
+                    // 拖放移动中
+                    width: 175px;
+                    min-height: 94px;
+                    display: inline-block;
+                  }
+
+                  > div {
+                    min-width: 185px;
+                    display: inline-block;
+                    vertical-align: top;
+
+                    .ant-form-item > .ant-form-item-label,
+                    .ant-form-item > .ant-form-item-control-wrapper {
+                      text-align: left;
+                      display: block;
+                    }
+
+                    .ant-col {
+                      width: 100%;
+                    }
+
+                  }
+                }
+              }
+            }
+
+            .batch-box,
+            .grid-box,
+            .table-box {
+              position: relative;
+              box-sizing: border-box;
+              padding: 5px;
+              width: 100%;
+              transition: all .3s;
+              border: 1px dashed #e2e0e0;
+              margin-bottom: 10px;
+              cursor: pointer;
+              overflow: inherit;
+
+              &:hover {
+                background: $primary-light-bg-color;
+              }
+
+              .form-item-box {
+                position: relative;
+                box-sizing: border-box;
+
+                .ant-form-item {
+                  // 修改ant form-item的margin为padding
+                  margin: 0;
+                  padding-bottom: 15px;
+                }
+              }
+
+              .grid-row,
+              .table-layout {
+                &.active {
+                  background: $primary-light-bg-color;
+                  border: 1px solid $primary-color;
+                  outline-offset: 0;
+                }
+
+                .grid-col,
+                .table-td {
+                  .draggable-box {
+                    min-height: 60px;
+                    min-width: 50px;
+                    // border    : 1px #ccc dashed;
+                    background: #fff;
+
+                    .list-main {
+                      min-height: 60px;
+                      position: relative;
+                      border: 1px #ccc dashed;
+                    }
+                  }
+                }
+
+                // &.active {
+                //   background    : $primary-light-bg-color;
+                //   border: 1px solid $primary-color;
+                //   outline-offset: 0;
+                // }
+              }
+
+              // 选择时 start
+              &::before {
+                content: '';
+                height: 5px;
+                width: 100%;
+                background: transparent;
+                position: absolute;
+                top: 0;
+                right: -100%;
+                transition: all .3s;
+              }
+
+              &.active {
+                &::before {
+                  right: 0;
+                }
+
+                background: $primary-light-bg-color;
+                border: 1px solid $primary-color;
+                outline-offset: 0;
+                //  .grid-row{
+                //   background    : $primary-light-bg-color;
+                //   outline-offset: 0;
+                //  }
+              }
+
+              > .copy,
+              > .delete {
+                position: absolute;
+                top: -12px;
+                width: 24px;
+                height: 24px;
+                line-height: 24px;
+                text-align: center;
+                color: #fff;
+                z-index: 999;
+                transition: all .3s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                &.unactivated {
+                  opacity: 0 !important;
+                  pointer-events: none;
+                }
+
+                &.active {
+                  opacity: 1 !important;
+                }
+              }
+
+              > .copy {
+                border-radius: 50%;
+                right: 50px;
+                color: $primary-color;
+                border: 1px solid $primary-color;
+                // background   : $primary-color;
+                background: #fff;
+
+                &:hover {
+                  color: #fff;
+                  background: $primary-color;
+                }
+              }
+
+              > .delete {
+                border-radius: 50%;
+                right: 20px;
+                color: #f56c6c;
+                border: 1px solid #f56c6c;
+                // background   : $primary-color;
+                background: #fff;
+                // background: $primary-color;
+                &:hover {
+                  color: #fff;
+                  background: #f56c6c;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // 表格右键菜单样式
+  .right-menu {
+    width: 190px;
+    background: #fff;
+    border: 1px solid #ccc;
+    position: fixed;
+    transition: all 0s;
+    box-shadow: 3px 3px 5px #999;
+    padding: 8px 0;
+    z-index: 999;
+
+    ul {
+      padding: 0;
+      margin: 0;
+      list-style: none;
+
+      li {
+        cursor: pointer;
+        user-select: none;
+        padding: 0 15px;
+        height: 30px;
+        line-height: 30px;
+        font-size: 14px;
+
+        &:hover {
+          background: #eee;
+        }
+      }
+    }
+  }
+
+  // 控件属性复选组件样式
+  .kk-checkbox {
+    .ant-checkbox-wrapper {
+      margin-left: 0 !important;
+      margin-right: 8px;
+    }
+  }
+
+  // 列表动画
+  .list-enter-active {
+    transition: all .5s;
+  }
+
+  .list-leave-active {
+    transition: all .3s;
+  }
+
+  .list-enter,
+  .list-leave-to
+
+    /* .list-leave-active for below version 2.1.8 */
+  {
+    opacity: 0;
+    transform: translateX(-100px);
+  }
+
+  .list-enter {
+    height: 30px;
+  }
+
+  scrollbar-color: $primary-color $primary-2;
+  scrollbar-width: thin;
+  -ms-overflow-style: none;
+
+  ::-webkit-scrollbar {
+    width: 3px;
+    height: 1px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: 3px;
+    background: $primary-color;
+  }
+
+  ::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 1px rgba(0, 0, 0, 0);
+    border-radius: 3px;
+    background: $primary-3;
+  }
+
+  // 行内组件宽度默认175px
+  .ant-form-inline {
+    .list-main {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      align-content: flex-start;
+
+      .layout-width {
+        width: 100%;
+      }
+    }
+
+    .ant-form-item-control-wrapper {
+      width: 175px !important;
+    }
+  }
+
+  &.mobile {
+    min-width: 800px;
+    overflow-x: auto;
+
+    .content aside.left ul li {
+      width: calc(100% - 6px);
+    }
+  }
+
+
+}
+
+
+// code盒子样式
+.json-box-9136076486841527 {
+  // height  : 570px;
+  overflow: auto;
+
+  .vue-codemirror-wrap {
+    height: 100%;
+
+    .CodeMirror-wrap {
+      height: 100%;
+      background: #f6f6f6;
+
+      .CodeMirror-scroll {
+        height: 100%;
+        width: 100%;
+      }
+
+      pre.CodeMirror-line,
+      .CodeMirror-linenumber {
+        min-height: 21px;
+        line-height: 21px;
+      }
+    }
+  }
+}
+
+// code-modal盒子样式
+.code-modal-9136076486841527 {
+  .ant-modal-body {
+    padding: 12px;
+  }
+}
+
+// modal复制按钮样式
+.copy-btn-box-9136076486841527 {
+  padding-top: 8px;
+  text-align: center;
+
+  .copy-btn {
+    margin-right: 8px;
+  }
+}
+
+// k-form-build
+.k-form-build-9136076486841527 {
+  .ant-form-item {
+    margin-bottom: 18px;
+  }
+
+  // 防止报错信息占位
+  .ant-form-item-control {
+    position: relative;
+
+    .ant-form-explain {
+      bottom: -16px;
+      position: absolute;
+      z-index: 10;
+    }
+  }
+
+  &.ant-form-inline {
+    .ant-form-item-control-wrapper {
+      width: 175px !important;
+    }
+  }
+
+  // 动态表格样式
+  .batch-table {
+    .ant-form-item {
+      margin: 0;
+    }
+
+    .ant-form-item-full {
+      .ant-form-item-control-wrapper {
+        min-width: 170px;
+        width: 100% !important;
+      }
+    }
+
+
+    .ant-form-item-control-wrapper {
+      width: 170px !important;
+    }
+
+    .ant-table-thead > tr > th {
+
+      padding: 12px;
+    }
+
+    .ant-table-tbody > tr > td {
+      padding: 8px;
+    }
+
+    .ant-form-inline .ant-form-item-with-help {
+      margin: 0;
+    }
+
+    .ant-table-placeholder {
+      padding: 0;
+    }
+  }
+
+}
+
+// .k-form-build-9136076486841527 {
+
+// }
+
+
+// footer样式
+// .footer-9136076486841527 {
+//   width      : 100%;
+//   height     : 30px;
+//   line-height: 30px;
+//   padding    : 0 15px;
+//   text-align : right;
+//   background : #fafafa;
+//   color      : $primary-color;
+//   font-size  : 14px;
+//   font-weight: bold;
+//   border-top : 1px solid #e0e0e0;
+
+//   >a {
+//     color: $primary-color;
+//     text-decoration: none;
+//   }
+// }
+
+.left .ant-collapse > .ant-collapse-item > .ant-collapse-header {
+  background: #fff !important;
+}
+
+// 表单两列布局样式
+.flexColumns {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+
+  .drag-move {
+    width: 50%;
+  }
+
+  .flexColumnsItem {
+    width: 50%;
+  }
+}
+
+
+/* 栅格表格样式开始 */
+// .grid-row-tabel{
+// 	border: 1px solid rgba(0,0,0,.65);
+// 	border-top: 1px solid  rgba(0,0,0,.65);
+// 	.ant-col-12{
+// 		border-top: 1px solid rgba(0,0,0,.65);
+// 		&:first-child{
+// 			// border-right: none;
+// 			border-top: none;
+// 		}
+// 		&:nth-child(2){
+// 			// border-right: none;
+// 			border-top: none;
+// 		}
+// 	}
+// 	.grid-col{
+// 		min-height: 40px;
+// 		border-right: 1px solid rgba(0,0,0,.65);
+
+// 		.grid-row-tabel:first-child{
+// 			border-top: none;
+// 		}
+// 		.ant-form-item{
+// 			margin-bottom: 0 !important;
+// 		}
+// 		.ant-form-item-control{
+// 			line-height: 40px;
+// 			padding: 0 5px;
+// 		}
+// 		&:last-child {
+// 			border-right:none;
+// 		}
+// 		&+.grid-col .grid-row-tabel{
+// 			// border-top: 1px solid rgba(0,0,0,.65);
+// 		}
+// 	}
+// 	.ant-col-24{
+// 		border-right: none;
+// 		border-top: 1px solid rgba(0,0,0,.65);
+// 		// >.grid-row-tabel:first-child{
+// 		// 	border-top: none;
+// 		// }
+// 		&:first-child{
+// 			border-top: none;
+// 		}
+
+// 	}
+// 	&>.ant-col-24:first-child{
+// 		// border-right: none;
+// 		border-top: none;
+// 	}
+// 	.ant-col-12+.ant-col-12{
+// 		border-right: none;
+// 		&:nth-child(odd){
+// 			border-right: 1px solid rgba(0,0,0,.65);
+// 		}
+// 	}
+// 	.ant-col-12{
+// 		>.grid-row-tabel .ant-col-12{
+// 			border-top: 1px solid rgba(0,0,0,.65);
+// 			&:first-child{
+// 				// border-right: none;
+// 				border-top: none;
+// 			}
+// 			&:nth-child(2){
+// 				// border-right: none;
+// 				border-top: none;
+// 			}
+// 		}
+
+// 	}
+// 	.grid-row-tabel{
+// 		border: none;
+// 		>.grid-col{
+// 			border-bottom: 1px solid rgba(0,0,0,.65);
+// 		}
+// 		&:last-child {
+// 			>.grid-col{
+// 				border-bottom: none;
+// 			}
+// 		}
+// 		// &:first-child {
+// 		// 	border-bottom: none;
+// 		// 	>.grid-col{
+// 		// 		border-bottom: 1px solid rgba(0,0,0,.65);
+// 		// 	}
+// 		// }
+// 	}
+// 	&+.grid-row-tabel{
+// 		border-top: none;
+// 	}
+// 	.upload-img-box-9136076486841527 {
+// 		height: 77px;
+// 	  /* you can make up upload button and sample style by using stylesheets */
+// 	  .ant-upload-select-picture-card{
+// 		  width: 80px;
+// 		  height: 80px;
+// 	  }
+// 	}
+// }
+// .ant-col-24{
+
+// 	>.grid-row-tabel:first-child{
+// 		border-top: none;
+// 	}
+// }
+
+.grid-row-form-border {
+  .ant-input, .ant-input-number, .ant-select, .ant-time-picker {
+    border: none;
+  }
+
+  .ant-calendar-picker-icon, .ant-select-arrow, .ant-time-picker-icon {
+    display: none;
+  }
+}
+
+/* 栅格表格样式结束 */
+
+.grid-row-tabel {
+  border: 1px solid rgba(0, 0, 0, 0.65);
+  margin-bottom: -1px !important;
+
+  .grid-col {
+    min-height: 40px;
+    border-right: 1px solid rgba(0, 0, 0, .65);
+
+    &:last-child {
+      border-right: none;
+    }
+
+    .grid-col {
+      border-bottom: 1px solid rgba(0, 0, 0, .65);
+    }
+
+    .grid-row-tabel {
+      border-bottom: none;
+
+      &:last-child {
+        .grid-col {
+          border-bottom: none;
+        }
+      }
+
+      &:first-child {
+        border-bottom: 1px solid rgba(0, 0, 0, .65);
+
+        .grid-col {
+          border-bottom: 1px solid rgba(0, 0, 0, .65);
+        }
+      }
+
+    }
+  }
+
+  .grid-row-tabel {
+    border: none !important;
+  }
+
+  .ant-col-24, .ant-col-12:nth-child(2n),
+  .ant-col-6:last-child:nth-child(4n),
+  .ant-col-4:last-child:nth-child(6n),
+  .ant-col-2:last-child:nth-child(12n),
+  .ant-col-8:last-child:nth-child(3n) {
+    border-right: none;
+  }
+
+  .ant-form-item {
+    margin-bottom: 0 !important;
+    // &::before{
+    //   border-bottom: 1px solid rgba(0,0,0,.65);
+    //   content: '';
+    //   display: block;
+    //   position: absolute;
+    //   top: -1px;
+    //   left: -1px;
+    //   z-index: 3;
+    //   width: calc(100% + 2px);
+    //   height: calc(100% + 2px);
+    //   // border: 1px solid transparent;
+    //   box-shadow: 0px 0px 6px 0px rgba(255, 0, 0, 0);
+    //   transition: border-color 0.3s, box-shadow 0.3s;
+    //   pointer-events: none;
+    // }
+    .ant-form-item-control {
+      // line-height:35px;
+    }
+  }
+
+  .ant-upload-picture-card-wrapper, .ant-upload.ant-upload-select-picture-card {
+    width: 100%;
+    height: auto;
+  }
+
+  .upload-img-box-9136076486841527 {
+    padding: 0;
+    margin: 0;
+    height: auto;
+  }
+}
+
+

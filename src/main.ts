@@ -25,6 +25,7 @@ loadPlugins(app)
 loadSvg(app)
 /** 加载自定义指令 */
 loadDirectives(app)
+// app.component('draggable', draggable)
 
 app.use(store).use(router).mount('#app')
 // createApp(App).mount('#app')
