@@ -16,45 +16,45 @@
       >
         <el-row>
           <el-form-item class="hiddenItem">
-            <el-input v-model="formData.state"></el-input>
-            <el-input v-model="formData.status"></el-input>
-            <el-input v-model="formData.levelId"></el-input>
-            <el-input v-model="formData.pid"></el-input>
-            <el-input v-model="formData.sort"></el-input>
-            <el-input v-model="formData.roleType"></el-input>
+            <el-input v-model="formData.id"></el-input>
           </el-form-item>
           <el-col :md="8">
             <el-form-item label="角色名称" prop="text">
-              <el-input v-model="formData.text"></el-input>
+              <el-input v-model="formData.roleName"></el-input>
             </el-form-item>
           </el-col>
           <el-col :md="8">
-            <el-form-item label="请选择机构" prop="organzitionId">
-              <el-tree-select
-                  v-model="formData.organzitionId"
-                  lazy
-                  :load="load"
-                  node-key="id"
-                  check-strictly
-                  :render-after-expand="false"
-                  :props="{label: 'text'}"
-                  @node-click="handleClick"
-                  :default-expanded-keys="defaultExpandedKeys"
-              />
+            <el-form-item label="角色编码" prop="text">
+              <el-input v-model="formData.roleCode"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :md="8">
-            <el-form-item label="引用角色" prop="usePid">
-              <el-select v-model="formData.usePid" placeholder="引用角色" @change="changeRole">
-                <el-option
-                    v-for="item in options"
-                    :key="item.id"
-                    :label="item.text"
-                    :value="item.id"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
+          <!--          <el-col :md="8">-->
+          <!--            <el-form-item label="请选择机构" prop="organzitionId">-->
+          <!--              <el-tree-select-->
+          <!--                  v-model="formData.organzitionId"-->
+          <!--                  lazy-->
+          <!--                  :load="load"-->
+          <!--                  node-key="id"-->
+          <!--                  check-strictly-->
+          <!--                  :render-after-expand="false"-->
+          <!--                  :props="{label: 'text'}"-->
+          <!--                  @node-click="handleClick"-->
+          <!--                  :default-expanded-keys="defaultExpandedKeys"-->
+          <!--              />-->
+          <!--            </el-form-item>-->
+          <!--          </el-col>-->
+          <!--          <el-col :md="8">-->
+          <!--            <el-form-item label="引用角色" prop="usePid">-->
+          <!--              <el-select v-model="formData.usePid" placeholder="引用角色" @change="changeRole">-->
+          <!--                <el-option-->
+          <!--                    v-for="item in options"-->
+          <!--                    :key="item.id"-->
+          <!--                    :label="item.text"-->
+          <!--                    :value="item.id"-->
+          <!--                />-->
+          <!--              </el-select>-->
+          <!--            </el-form-item>-->
+          <!--          </el-col>-->
         </el-row>
         <el-row>
           <el-form-item label="分配资源">
@@ -82,9 +82,11 @@
             <el-tree
                 ref="treeRef"
                 :data="formData.roleList"
-                node-key="id"
+                node-key="key"
                 show-checkbox
+                check-strictly
                 :default-checked-keys="formData.checkedKeys"
+                :props="{label: 'slotTitle'}"
             />
           </el-form-item>
         </el-row>
@@ -104,7 +106,7 @@
 import {ref, watch, nextTick} from "vue";
 import {ElMessage} from "element-plus";
 import type {FormInstance, FormRules} from 'element-plus'
-import request from "@/axios";
+import request from "@/utils/axios";
 import {ElTree} from "element-plus";
 import {pick} from "lodash";
 // import Dialog from '@/components/Dialog/index.vue'
@@ -121,6 +123,9 @@ const props = defineProps({
       return {}
     }
   },
+  url: {
+    type: Object
+  }
 })
 const emit = defineEmits(['update:visible', 'close'])
 const dialogVisible = ref(false)
@@ -145,7 +150,11 @@ const demoData: demoTree[] = []
 
 watch(
     () => dialogVisible.value,
-    val => emit('update:visible', val)
+    val => {
+      emit('update:visible', val)
+      if (val) {
+      }
+    }
 )
 watch(
     () => props.visible,
@@ -154,8 +163,8 @@ watch(
 watch(
     () => props.data,
     val => {
+      console.log('val', val)
       formData.value = val
-
       let list = []
       if (val.ids) {
         list = val.ids.split(',')
@@ -230,30 +239,39 @@ const cancelClick = (formRef) => {
 
 const treeRef = ref<InstanceType<typeof ElTree>>()
 const confirmClick = async (formEl: FormInstance | undefined) => {
-  console.log(treeRef.value!.getCheckedNodes(false, false))
-  console.log(treeRef.value!.getCheckedKeys(false))
-  formData.value.attributes = treeRef.value!.getCheckedKeys(false).toString()
-  console.log('formData.value', formData.value)
-  const fileds = ['uuid', 'text', 'organzitionId', 'usePid', 'state', 'status', 'levelId', 'pid', 'sort', 'menuId', 'roleType', 'roleId', 'attributes']
+  // console.log(treeRef.value!.getCheckedNodes(false, false))
+  // console.log(treeRef.value!.getCheckedKeys(false))
+  // formData.value.attributes = treeRef.value!.getCheckedKeys(false).toString()
+
+  let datas = {
+    roleId: formData.value.id,
+    permissionIds: treeRef.value!.getCheckedKeys(false).toString(),
+    lastpermissionIds: formData.value.checkedKeys
+  }
+
+  request.post<any>({url: "/sys/permission/saveRolePermission", data: datas}).then(res => {
+    ElMessage.success(res.message)
+  })
+  const fileds = ['id', 'roleName', 'roleCode']
 
   if (!formEl) return
-  await formEl.validate((valid, fields) => {
-    if (valid) {
-      let url = formData.value.uuid ? '/system/authGroup/updateAndGrant' : '/system/authGroup/saveAndGrant'
-      request.post<any>({url: url, data: pick(formData.value, fileds)}).then(res => {
-        if (res.statusCode === 200) {
-          dialogVisible.value = false
-          resetForm(formRef.value)
-          ElMessage.success('保存成功')
-          emit('close')
-        } else {
-          ElMessage.error('保存失败')
-        }
-      })
-    } else {
-      console.log('error', fields)
-    }
-  })
+  // await formEl.validate((valid, fields) => {
+  //   if (valid) {
+  //     let url = formData.value.id ? "/sys/role/edit" : "/sys/role/add"
+  //     request.post<any>({url: url, data: pick(formData.value, fileds)}).then(res => {
+  //       if (res.statusCode === 200) {
+  //         dialogVisible.value = false
+  //         resetForm(formRef.value)
+  //         ElMessage.success('保存成功')
+  //         emit('close')
+  //       } else {
+  //         ElMessage.error('保存失败')
+  //       }
+  //     })
+  //   } else {
+  //     console.log('error', fields)
+  //   }
+  // })
 }
 
 

@@ -1,15 +1,26 @@
 <template>
-  <el-dialog :title="title">
+  <el-dialog :title="title" draggable>
     <el-form :model="formData" ref="ruleFormRef" :rules="rules">
-      <el-form-item label="资源类型" :label-width="formLabelWidth" prop="menuType">
+      <el-form-item label="菜单类型" :label-width="formLabelWidth" prop="menuType">
         <el-radio-group v-model="formData.menuType">
           <el-radio :label="0">一级菜单</el-radio>
           <el-radio :label="1">子菜单</el-radio>
           <el-radio :label="2">按钮/权限</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="资源名称" :label-width="formLabelWidth" prop="name">
+      <el-form-item label="菜单名称" :label-width="formLabelWidth" prop="name">
         <el-input v-model="formData.name" autocomplete="off"/>
+      </el-form-item>
+
+      <el-form-item v-show="formData.menuType !== 0" label="上级菜单" :label-width="formLabelWidth" :required="true">
+        <el-tree-select
+            style="width: 100%"
+            :data="treeData"
+            v-model="formData.parentId"
+            check-strictly
+            placeholder="请选择父级菜单"
+        >
+        </el-tree-select>
       </el-form-item>
       <el-form-item label="菜单路径" :label-width="formLabelWidth" prop="url">
         <el-input v-model="formData.url" autocomplete="off"/>
@@ -42,6 +53,20 @@
                    active-value="closed"
                    inactive-value="open"/>
       </el-form-item>
+
+      <el-form-item label="隐藏路由" :label-width="formLabelWidth">
+        <el-switch active-text="是"
+                   inactive-text="否"
+                   :active-value="true"
+                   :inactive-value="false"
+                   v-model="formData.hidden" />
+      </el-form-item>
+<!--      <el-form-item v-show="show" :labelCol="labelCol" :wrapperCol="wrapperCol" label="聚合路由">-->
+<!--        <el-switch checkedChildren="是" unCheckedChildren="否" v-model="model.alwaysShow" />-->
+<!--      </el-form-item>-->
+<!--      <el-form-item v-show="show" :labelCol="labelCol" :wrapperCol="wrapperCol" label="打开方式">-->
+<!--        <el-switch checkedChildren="外部" unCheckedChildren="内部" v-model="model.internalOrExternal" />-->
+<!--      </el-form-item>-->
     </el-form>
     <template #footer>
       <span>
@@ -62,9 +87,9 @@ import {rules} from './utils';
 import BaseSelect from '@/components/BaseSelect/index.vue';
 
 const props = defineProps({
-  menuData: {
+  data: {
     type: Object,
-    default: ()=>{
+    default: () => {
       return {}
     }
   }
@@ -73,35 +98,29 @@ const props = defineProps({
 const ruleFormRef = ref<FormInstance>();
 const formLabelWidth = 120;
 const emit = defineEmits(['close']);
-const {menuData} = toRefs(props);
-const defaultForm: MenuData = {
-  id: '',
-  menuType: 0,
-  name: '',
-  keepAlive: null,
-  status: 1,
-  route: true,
-  icon: 'Menu',
-  url: '/',
-  component: '',
-  sortNo: 1,
-  codeSetId: 'menu',
-};
-const formData = ref({...defaultForm});
+const formData = ref(props.data);
+const treeData = ref<any []>([])
 
-watch(() => menuData,
-    (newValue) => {
-      const newRuleForm = newValue ? {
-        ...defaultForm,
-        ...newValue
-      } : defaultForm
-      formData.value = newRuleForm;
+
+watch(() => props.data,
+    (val) => {
+      formData.value = val;
     },
-    {flush: 'post'}
+    {deep:true}
+)
+watch(() => formData.value.menuType,
+    val => {
+      if(val !== 1){
+        request.get({url: '/sys/permission/queryTreeList'}).then(res=>{
+          treeData.value = res.result.treeList
+        })
+      }
+    },
+    {immediate: true}
 )
 
 const title = computed(() => {
-  return menuData.value && menuData.value.id ? '编辑菜单节点' : '新增菜单节点'
+  return formData.value && formData.value.id ? '编辑菜单节点' : '新增菜单节点'
 });
 
 const onCencel = () => {
@@ -117,7 +136,7 @@ const onSubmit = async () => {
       request.post({url: url, data: formData.value}).then((res) => {
         if (res.code === 200) {
           ElMessage({type: 'success', message: res.message});
-          emit('close', );
+          emit('close',);
           //输入pid参数，刷新pid
         } else {
           ElMessage({type: 'error', message: res.message})
@@ -129,10 +148,7 @@ const onSubmit = async () => {
     }
   })
 
-
 };
-
-
 
 </script>
 

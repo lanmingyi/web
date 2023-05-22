@@ -1,6 +1,7 @@
 export interface MenuData {
     // uuid?: string,
     id?: string | null,
+    parentId?: string | null,
     name?: string,
     component?: string,
     url?: string,

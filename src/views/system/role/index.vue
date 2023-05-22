@@ -35,7 +35,8 @@
         </template>
       </Table>
     </div>
-    <RoleForm v-model:visible="drawerVisible" :data="formData" @close="getData(url.getPageSet,[])"></RoleForm>
+    <RoleForm v-model:visible="drawerVisible" :data="formData" :url="url"
+              @close="getData(url.getPageSet,[])"></RoleForm>
 
   </div>
 </template>
@@ -45,24 +46,27 @@ import {ref, unref, toRefs, reactive, onMounted, watch} from 'vue';
 import {ElMessage, ElMessageBox, ElTable} from 'element-plus';
 import {Delete, Edit, Search, Plus} from '@element-plus/icons-vue';
 import {useTable} from '@/hooks/useTable';
-import Table from '@/components/Table'
+import Table from '@/components/Table/index.vue'
 import ToolBar from "@/components/ToolBar/index.vue";
 import request from "@/utils/axios";
 import RoleForm from "./RoleForm.vue";
+import {method} from "lodash-es";
 
 const {tableData, pagination, getData, changeData} = useTable()
 const tableRef = ref()
-const columns: TableColumnsList = [
-  {label: "所属机构", prop: "orgName", align: "center",},
-  {label: "角色名称", prop: "text", align: "center",},
-  {label: "是否机构管理角色", prop: "isAdmin", align: "center",},
+// const columns: TableColumnsList = [
+const columns = [
+  // {label: "所属机构", prop: "orgName", align: "center",},
+  {label: "角色名称", prop: "roleName", align: "center",},
+  {label: "角色编码", prop: "roleCode", align: "center",},
   {label: "创建时间", prop: "createTime", align: "center",},
-  {label: "创建人", prop: "creator", align: "center",},
+  {label: "创建人", prop: "createBy", align: "center",},
   {label: "操作", prop: "action", align: "center",},
 ]
 const INITIAL_DATA = {
   uuid: '',
-  text: '',
+  roleName: '',
+  roleCode: '',
   roleList: [],
   checkedKeys: [],
   creator: '',
@@ -89,9 +93,9 @@ const queryParam = reactive({
   organzitionId: '',
 });
 const url = reactive({
-  getPageSet: '/system/authGroup/getListByUserUuid',
+  getPageSet: '/sys/role/list',
   detail: '/system/authGroup/getGrantDetailByUuid',
-  getTree: '/system/authGroup/getTree',
+  getTree: '/sys/role/queryTreeList',
   delete: '/system/authGroup/delete',
 })
 
@@ -100,45 +104,57 @@ const handleSearch = () => {
 };
 
 const handleAdd = () => {
-  request.post<any>({url: url.getTree, data: {}}).then(res => {
-    let sourceData: any[] = []
-    let children: any[] = []
-    res.data.forEach(e => {
-      if (e.pid === 1) {
-        e.label = e.text
-        e.children = e.state === 'closed' ? [] : ''
-        sourceData.push(e)
-      } else {
-        children.push(e)
-      }
-    })
-    formData.value.roleList = getFilter(sourceData, children)
-    check = []
-    formData.value.checkedKeys = getCheckedKeys(formData.value.roleList)
+  formData.value = INITIAL_DATA
+  request.get<any>({url: url.getTree}).then(res => {
+    formData.value.roleList = res.result.treeList
   })
+  // request.get<any>({url: url.getTree}).then(res => {
+  //   formData.value.roleList = res.result.treeList
+  //   // let sourceData: any[] = []
+  //   // let children: any[] = []
+  //   // res.data.forEach(e => {
+  //   //   if (e.pid === 1) {
+  //   //     e.label = e.text
+  //   //     e.children = e.state === 'closed' ? [] : ''
+  //   //     sourceData.push(e)
+  //   //   } else {
+  //   //     children.push(e)
+  //   //   }
+  //   // })
+  //   // formData.value.roleList = getFilter(sourceData, children)
+  //   // check = []
+  //   // formData.value.checkedKeys = getCheckedKeys(formData.value.roleList)
+  // })
   drawerVisible.value = true
 }
 
 
 const handleEdit = (index: number, row: any,) => {
-  request.post<any>({url: url.detail, data: {uuid: row.uuid, roleId: row.id, roleType: row.roleType}}).then(res => {
-    formData.value = res.data
-
-    let sourceData: any[] = []
-    let children: any[] = []
-    res.data.list.forEach(e => {
-      if (e.pid === 1) {
-        e.label = e.text
-        e.children = e.state === 'closed' ? [] : ''
-        sourceData.push(e)
-      } else {
-        children.push(e)
-      }
-    })
-    formData.value.roleList = getFilter(sourceData, children)
-    check = []
-    formData.value.checkedKeys = getCheckedKeys(formData.value.roleList)
-    formData.value.roleId = row.id
+  // request.post<any>({url: url.detail, data: {uuid: row.uuid, roleId: row.id, roleType: row.roleType}}).then(res => {
+  //   formData.value = res.data
+  //
+  //   let sourceData: any[] = []
+  //   let children: any[] = []
+  //   res.data.list.forEach(e => {
+  //     if (e.pid === 1) {
+  //       e.label = e.text
+  //       e.children = e.state === 'closed' ? [] : ''
+  //       sourceData.push(e)
+  //     } else {
+  //       children.push(e)
+  //     }
+  //   })
+  //   formData.value.roleList = getFilter(sourceData, children)
+  //   check = []
+  //   formData.value.checkedKeys = getCheckedKeys(formData.value.roleList)
+  //   formData.value.roleId = row.id
+  // })
+  formData.value = row
+  request.get<any>({url: url.getTree}).then(res => {
+    formData.value.roleList = res.result.treeList
+  })
+  request.get<any>({url: "/sys/permission/queryRolePermission", params: {roleId: row.id}}).then(res => {
+    formData.value.checkedKeys = res.result
   })
   drawerVisible.value = true
 
@@ -193,11 +209,11 @@ const handleDelete = (index: number, row: any) => {
   });
 };
 
-const handleDeleteBatch = () =>{
+const handleDeleteBatch = () => {
   const {getSelectionRows} = tableRef.value.getTableRef()
   const selectionRows = getSelectionRows()
   let uuids: any[] = []
-  selectionRows.forEach(e=>{
+  selectionRows.forEach(e => {
     uuids.push(e.uuid)
   })
   ElMessageBox.confirm('确定要删除吗？', '提示', {type: 'warning'}).then(() => {
@@ -214,7 +230,7 @@ const handleDeleteBatch = () =>{
 }
 
 onMounted(() => {
-  getData(url.getPageSet, []);
+  getData(url.getPageSet, [], 'get');
 });
 
 </script>

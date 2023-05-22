@@ -21,6 +21,7 @@
     "lodash-es": "^4.17.21",
     "normalize.css": "^8.0.1",
     "nprogress": "^0.2.0",
+    "ol": "^7.3.0",
     "path-browserify": "^1.0.1",
     "path-to-regexp": "^6.2.1",
     "pinia": "^2.0.33",

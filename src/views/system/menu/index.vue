@@ -20,7 +20,7 @@
     </ToolBar>
     <!--    lazy :load="loadExpand" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"-->
     <Table :data="tableData" style="width: 100%" row-key="id" border :selection="true" :autoHeight="true">
-      <el-table-column prop="name" label="名称"/>
+      <el-table-column prop="name" label="菜单名称"/>
       <el-table-column prop="menuType" label="菜单类型">
         <template #default="{ row }">
           <span>{{row.menuType===0 || row.menuType===1 ? '菜单' : '按钮/权限'}}</span>
@@ -32,19 +32,19 @@
       <el-table-column prop="sortNo" label="排序"/>
       <el-table-column prop="action" label="操作" :width="250">
         <template #default="{ row }">
-          <span class="blue" @click="handleAdd(row)">添加节点</span>
+          <span class="blue" @click="handleCommand('children')">添加节点</span>
           <el-divider direction="vertical"/>
-          <span class="blue" @click="handleEditNode(row)">编辑</span>
+          <span class="blue" @click="handleEdit(row)">编辑</span>
           <el-divider direction="vertical"/>
           <span class="red" @click="handleDelete(row)">删除</span>
         </template>
       </el-table-column>
     </Table>
     <MenuDialog
-        v-model="dialogToggle"
-        :menuData="dialogUsingData"
-        @close="closeDialog"
         ref="formDialog"
+        v-model="dialogToggle"
+        :data="formData"
+        @close="closeDialog"
     />
   </div>
 </template>
@@ -64,7 +64,25 @@ const url = {
   delete: '/sys/permission/delete',
 };
 
-const levelId = 1;
+const INITIAL_DATA = {
+  id:'',
+  pid:'',
+  menuType: 0,
+  name:'',
+  url:'',
+  component:'',
+  sortNo:'',
+  iconCls:'',
+  keepAlive:'',
+  route: true,
+  status:'',
+  state:'',
+  parentId: '',
+  hidden: false
+}
+
+const formData = ref({...INITIAL_DATA})
+
 const dialogToggle = ref<boolean>(false);
 const dialogUsingData = ref<MenuData | null>();
 const tableData: Array<MenuData> = reactive<Array<MenuData>>([]);
@@ -81,6 +99,18 @@ const getData = () => {
   })
 }
 
+const handleCommand = (command: string | number | object) => {
+  formData.value = INITIAL_DATA
+  dialogToggle.value = true;
+  if(command === 'root') formData.value.menuType = 0
+  if(command === 'children') formData.value.menuType = 1
+}
+
+const handleEdit = (row) => {
+  // formData.value = pick(row, ['id', 'pid', 'menuType', 'name', 'url', 'component', 'sortNo', 'iconCls', 'keepAlive', 'status', 'state']);
+  formData.value = row
+  dialogToggle.value = true;
+}
 
 const handleDelete = (row) => {
   const {id} = row;
@@ -101,16 +131,6 @@ const handleDelete = (row) => {
       }
     })
   });
-}
-
-const handleCommand = (commond: string | number | object) => {
-  // dialogUsingData.value!.id = row ? row.id : '';
-  dialogToggle.value = true;
-}
-
-const handleEditNode = (row) => {
-  dialogUsingData.value = pick(row, ['id', 'pid', 'menuType', 'name', 'url', 'component', 'sortNo', 'iconCls', 'keepAlive', 'status', 'state', 'levelId']);
-  dialogToggle.value = true;
 }
 
 const closeDialog = (pid = null) => {
