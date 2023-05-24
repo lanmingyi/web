@@ -1,53 +1,62 @@
 <!--拖拽组件-->
 <template>
   <div class="com-content">
-    <div class="com-title">{{title}}</div>
-    <draggable
+    <div class="com-title">{{ title }}</div>
+    <!--     ===设置为true时拖拽才能滚动====-->
+    <Draggable
         :list="list"
-        item-key="name"
+        :animation="100"
+        item-key="type"
         class="list-group"
+        :forceFallback="true"
         ghost-class="ghost"
+        @change="$emit('handleListPush', list)"
     >
       <template #item="{ element }">
-        <div class="list-group-item" :class="{ 'not-draggable': !enabled }">
-          {{ element.name }}
+        <div class="items">
+          <div class="title" @click="handleClick">{{ element.label }}</div>
+          <!--        <button @click.stop="fold(element)">{{element.isflod ? '展开' : '收起'}}</button>-->
         </div>
       </template>
-    </draggable>
-<!--    <draggable-->
-<!--        tag="ul"-->
-<!--        :list="list"-->
-<!--        v-bind="{-->
-<!--        group: { name: 'form-draggable', pull: 'clone', put: false },-->
-<!--        sort: false,-->
-<!--        animation: 180,-->
-<!--        ghostClass: 'moving',-->
-<!--      }"-->
-<!--        @start="handleStart($event, list)"-->
-<!--    >-->
-<!--&lt;!&ndash;      <li&ndash;&gt;-->
-<!--&lt;!&ndash;          v-for="(val, index) in list"&ndash;&gt;-->
-<!--&lt;!&ndash;          :key="index"&ndash;&gt;-->
-<!--&lt;!&ndash;          @dragstart="$emit('generateKey', list, index)"&ndash;&gt;-->
-<!--&lt;!&ndash;          @click="$emit('handleListPush', val)"&ndash;&gt;-->
-<!--&lt;!&ndash;      >&ndash;&gt;-->
-<!--&lt;!&ndash;        <span v-if="['icon', 'color', 'userPop', 'depart', 'codeTag', 'area'].includes(val.type)">&ndash;&gt;-->
-<!--&lt;!&ndash;&lt;!&ndash;          <el-icon :type="val.icon"></el-icon>&ndash;&gt;&ndash;&gt;-->
-<!--&lt;!&ndash;          <el-icon><CirclePlus /></el-icon>&ndash;&gt;-->
-<!--&lt;!&ndash;        </span>&ndash;&gt;-->
-<!--&lt;!&ndash;        <span v-else>&ndash;&gt;-->
-<!--&lt;!&ndash;          <svg v-if="val.icon" class="icon" aria-hidden="true">&ndash;&gt;-->
-<!--&lt;!&ndash;            <use :xlink:href="`#${val.icon}`"></use>&ndash;&gt;-->
-<!--&lt;!&ndash;          </svg>&ndash;&gt;-->
-<!--&lt;!&ndash;        </span>&ndash;&gt;-->
-<!--&lt;!&ndash;        {{ val.label }}&ndash;&gt;-->
-<!--&lt;!&ndash;      </li>&ndash;&gt;-->
-<!--    </draggable>-->
+    </Draggable>
+
+
+    <!--    <Draggable-->
+    <!--        tag="ul"-->
+    <!--        :list="list"-->
+    <!--        v-bind="{-->
+    <!--        group: { name: 'form-draggable', pull: 'clone', put: false },-->
+    <!--        sort: false,-->
+    <!--        animation: 180,-->
+    <!--        ghostClass: 'moving',-->
+    <!--      }"-->
+    <!--        @start="handleStart($event, list)"-->
+    <!--    >-->
+    <!--      <template #item="{ element }">-->
+    <!--        <li-->
+    <!--            v-for="(val, index) in list"-->
+    <!--            :key="index"-->
+    <!--            @dragstart="$emit('generateKey', list, index)"-->
+    <!--            @click="$emit('handleListPush', val)"-->
+    <!--        >-->
+    <!--        <span v-if="['icon', 'color', 'userPop', 'depart', 'codeTag', 'area'].includes(val.type)">-->
+    <!--&lt;!&ndash;          <el-icon :type="val.icon"></el-icon>&ndash;&gt;-->
+    <!--          <el-icon><CirclePlus /></el-icon>-->
+    <!--        </span>-->
+    <!--          <span v-else>-->
+    <!--          <svg v-if="val.icon" class="icon" aria-hidden="true">-->
+    <!--            <use :xlink:href="`#${val.icon}`"></use>-->
+    <!--          </svg>-->
+    <!--        </span>-->
+    <!--          {{ element.label }}-->
+    <!--        </li>-->
+    <!--      </template>-->
+    <!--    </Draggable>-->
   </div>
 </template>
 
 <script setup lang="ts">
-import draggable from 'vuedraggable'
+import Draggable from 'vuedraggable'
 
 defineOptions({
   name: "DraggableItem"
@@ -58,11 +67,15 @@ const props = defineProps({
   title: {
     type: String
   },
-  list:{
+  list: {
     type: Object
   }
 })
-const {title} = props
+const {title, list} = props
+
+const handleClick = () =>{
+  console.log('111111111111')
+}
 
 const handleStart = (e, list) => {
   emit('start', list[e.oldIndex].type || list[e.oldIndex]);
@@ -70,6 +83,22 @@ const handleStart = (e, list) => {
 
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+.items {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 20px;
+  margin-bottom: 20px;
+  background: #e3e3e3;
+  border-radius: 8px;
+
+  //padding      : 0px;
+  //list-style   : none;
+  //display      : flex;
+  //margin-bottom: 0;
+  //flex-wrap    : wrap;
+  //// background: #efefef;
+}
 
 </style>

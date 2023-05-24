@@ -1,9 +1,9 @@
 <template>
-  <FormDesign1></FormDesign1>
+  <FormDesign></FormDesign>
 </template>
 
 <script setup lang="ts">
-import FormDesign1 from "@/components/FormDesign/FormDesign/index.vue";
+import FormDesign from "@/components/FormDesign/FormDesign/index.vue";
 </script>
 
 <style scoped>

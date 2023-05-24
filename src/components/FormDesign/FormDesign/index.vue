@@ -3,7 +3,7 @@
   <el-config-provider :local="local">
     <div :class="['form-designer-container', ]">
       <!-- 操作区域-->
-      <form-design-operate v-if="!toolbarTop" :showToolbarText="showToolbarText" :toolbar="toolbar" :emptyElement="true"
+      <form-design-operate v-if="toolbarTop" :showToolbarText="showToolbarText" :toolbar="toolbar" :emptyElement="true"
                            @handleSave="handleSave" @handlePreview="handlePreview"
                            @handleOpenImportJsonModal="handleOpenImportJsonModal"
                            @handleOpenCodeModal="handleOpenCodeModal"
@@ -29,18 +29,18 @@
               @generateKey="generateKey"
               @handleListPush="handleListPush"
               @start="handleStart"/>
-<!--          <draggable-item-->
-<!--              title="布局控件"-->
-<!--              :list="layoutArray"-->
-<!--              @generateKey="generateKey"-->
-<!--              @handleListPush="handleListPush"-->
-<!--              @start="handleStart"/>-->
-<!--          <draggable-item-->
-<!--              title="自定义组件"-->
-<!--              :list="customComponents"-->
-<!--              @generateKey="generateKey"-->
-<!--              @handleListPush="handleListPush"-->
-<!--              @start="handleStart"/>-->
+          <draggable-item
+              title="布局控件"
+              :list="layoutArray"
+              @generateKey="generateKey"
+              @handleListPush="handleListPush"
+              @start="handleStart"/>
+          <draggable-item
+              title="自定义组件"
+              :list="customComponents"
+              @generateKey="generateKey"
+              @handleListPush="handleListPush"
+              @start="handleStart"/>
         </aside>
 
         <!-- 中间面板区域 -->
@@ -207,6 +207,7 @@ const startType = ref('')
 const showProperties = ref(false)
 
 const basicsArray = computed(() => {
+  console.log('basicsList.filter((item) => fields.value.includes(item.type))', basicsList.filter((item) => fields.value.includes(item.type)))
   return basicsList.filter((item) => fields.value.includes(item.type));
 })
 const layoutArray = computed(() => {
@@ -312,6 +313,7 @@ const handleClose = () => {
 }
 
 </script>
-<style scoped>
+<style scoped lang="scss">
+@import "../assets/css/k-form-design";
 
 </style>
