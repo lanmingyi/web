@@ -1,57 +1,95 @@
 <template>
   <div class="form-panel">
-    <p class="hint-text" v-show="formData.list.length === 0">
-      从左侧选择控件添加
-    </p>
-    <el-form
-        class="a-form-box k-form-build"
-        :layout="formData.config.layout"
-        :labelAlign="formData.config.labelAlign"
-        :hideRequiredMark="formData.config.hideRequiredMark"
-        :style="formData.config.customStyle"
+    <!--    <p class="hint-text" v-show="formData.list.length === 0">-->
+    <!--      从左侧选择控件添加-->
+    <!--    </p>-->
+    <draggable
+        class="list-group"
+        item-key="order"
+        tag="transition-group"
+        :component-data="{ tag: 'ul', name: 'flip-list', type: 'transition' }"
+        v-model="formData.list"
+        v-bind="dragOptions"
+        group="people"
+
+        @start="dragStart($event, formData.list)"
+        style="width: 100%"
+        @add="deepClone"
+
     >
-      <Draggable
-          tag="div"
-          class="draggable-box"
-          style="width: 100%"
-          v-bind="{
-					group: 'form-draggable',
-					ghostClass: 'moving',
-					animation: 180,
-					handle: '.drag-move',
-				}"
-          v-model="formData.list"
-          @add="deepClone"
-          @start="dragStart($event, formData.list)"
-      >
-        <transition-group
-            tag="div"
-            name="list"
-            class="list-main"
-            :class="[
-						formData.config.columns === 'two' ? 'flexColumns' : '',
-					]"
-        >
-          <layoutItem
-              class="drag-move"
-              v-for="record in formData.list"
-              :key="record.key"
-              :record="record"
-              :config="formData.config"
-              :selectItem.sync="selectItem"
-              :startType="startType"
-              :insertAllowedType="insertAllowedType"
-              :hideModel="hideModel"
-              @dragStart="dragStart"
-              @handleSelectItem="handleSelectItem"
-              @handleCopy="handleCopy"
-              @handleDelete="handleDelete"
-              @handleColAdd="handleColAdd"
-              @handleShowRightMenu="handleShowRightMenu"
-          />
-        </transition-group>
-      </Draggable>
-    </el-form>
+      <template #item="{element}">
+        <layoutItem
+            class="drag-move"
+            v-for="record in formData.list"
+            :key="record.key"
+            :record="record"
+            :config="formData.config"
+            :selectItem.sync="selectItem"
+            :startType="startType"
+            :insertAllowedType="insertAllowedType"
+            :hideModel="hideModel"
+            @dragStart="dragStart"
+            @handleSelectItem="handleSelectItem"
+            @handleCopy="handleCopy"
+            @handleDelete="handleDelete"
+            @handleColAdd="handleColAdd"
+            @handleShowRightMenu="handleShowRightMenu"
+        />
+      </template>
+    </draggable>
+
+
+    <!--    <el-form-->
+    <!--        class="a-form-box k-form-build"-->
+    <!--        :layout="formData.config.layout"-->
+    <!--        :labelAlign="formData.config.labelAlign"-->
+    <!--        :hideRequiredMark="formData.config.hideRequiredMark"-->
+    <!--        :style="formData.config.customStyle"-->
+    <!--    >-->
+    <!--&lt;!&ndash;      v-model="formData.list"&ndash;&gt;-->
+    <!--      <draggable-->
+    <!--          class="list-group"-->
+    <!--          item-key="order"-->
+    <!--          tag="transition-group"-->
+    <!--          :component-data="{ tag: 'ul', name: 'flip-list', type: 'transition' }"-->
+    <!--          :list="formData.list"-->
+    <!--          v-bind="dragOptions"-->
+
+    <!--          @start="dragStart($event, formData.list)"-->
+    <!--          style="width: 100%"-->
+    <!--          @add="deepClone"-->
+    <!--      >-->
+    <!--        <template #item="{element}">-->
+    <!--          <li class="list-group-item">-->
+    <!--            <i-->
+    <!--                :class="-->
+    <!--                element.fixed ? 'fa fa-anchor' : 'glyphicon glyphicon-pushpin'-->
+    <!--              "-->
+    <!--                @click="element.fixed = !element.fixed"-->
+    <!--                aria-hidden="true"-->
+    <!--            ></i>-->
+    <!--            {{ element.name }}-->
+    <!--          </li>-->
+    <!--&lt;!&ndash;          <layoutItem&ndash;&gt;-->
+    <!--&lt;!&ndash;              class="drag-move"&ndash;&gt;-->
+    <!--&lt;!&ndash;              v-for="record in formData.list"&ndash;&gt;-->
+    <!--&lt;!&ndash;              :key="record.key"&ndash;&gt;-->
+    <!--&lt;!&ndash;              :record="record"&ndash;&gt;-->
+    <!--&lt;!&ndash;              :config="formData.config"&ndash;&gt;-->
+    <!--&lt;!&ndash;              :selectItem.sync="selectItem"&ndash;&gt;-->
+    <!--&lt;!&ndash;              :startType="startType"&ndash;&gt;-->
+    <!--&lt;!&ndash;              :insertAllowedType="insertAllowedType"&ndash;&gt;-->
+    <!--&lt;!&ndash;              :hideModel="hideModel"&ndash;&gt;-->
+    <!--&lt;!&ndash;              @dragStart="dragStart"&ndash;&gt;-->
+    <!--&lt;!&ndash;              @handleSelectItem="handleSelectItem"&ndash;&gt;-->
+    <!--&lt;!&ndash;              @handleCopy="handleCopy"&ndash;&gt;-->
+    <!--&lt;!&ndash;              @handleDelete="handleDelete"&ndash;&gt;-->
+    <!--&lt;!&ndash;              @handleColAdd="handleColAdd"&ndash;&gt;-->
+    <!--&lt;!&ndash;              @handleShowRightMenu="handleShowRightMenu"&ndash;&gt;-->
+    <!--&lt;!&ndash;          />&ndash;&gt;-->
+    <!--        </template>-->
+    <!--      </draggable>-->
+    <!--    </el-form>-->
     <!-- 右键菜单 start -->
     <div
         v-show="showRightMenu"
@@ -80,10 +118,10 @@
   </div>
 </template>
 <script setup lang="ts">
-import Draggable from "vuedraggable";
-import layoutItem from "./layoutItem";
-import "codemirror/mode/javascript/javascript";
-import {ref, onMounted, onUnmounted} from "vue";
+import draggable from "vuedraggable";
+import layoutItem from "./layoutItem.vue";
+// import "codemirror/mode/javascript/javascript";
+import {ref, onMounted, onUnmounted, computed} from "vue";
 import {ElMessage} from "element-plus";
 
 const props = defineProps({
@@ -109,8 +147,24 @@ const props = defineProps({
     default: false,
   }
 })
+
 const {formData, noModel, selectItem} = props
 const emit = defineEmits(['handleSetSelectItem'])
+
+const dragOptions = computed(() => {
+  return {
+    animation: 0,
+    group: "description",
+    disabled: false,
+    ghostClass: "ghost"
+  };
+  // return {
+  //   group: 'form-draggable',
+  //   ghostClass: 'moving',
+  //   animation: 180,
+  //   handle: '.drag-move',
+  // }
+})
 
 const insertAllowedType = [
   "input",
@@ -217,6 +271,7 @@ const handleColAdd = (evt, columns, isCopy = false) => {
 }
 
 const dragStart = (evt, list) => {
+  console.log('formData.list', formData.list)
   // 拖拽结束,自动选择拖拽的控件项
   emit("handleSetSelectItem", list[evt.oldIndex]);
 }
@@ -434,23 +489,23 @@ const handleAddCol = () => {
   });
 }
 const handleAddRow = () => {
-      // 增加行
-      // 获取总col值
-      const sumCols = rightMenuSelectValue.trs[0].tds
-          .map((item) => item.colspan)
-          .reduce(function (partial, value) {
-            return partial + value;
-          });
-      const rowJson: any[] = {tds: []};
-      for (let i = 0; i < sumCols; i++) {
-        rowJson.tds.push({
-          colspan: 1,
-          rowspan: 1,
-          list: [],
-        });
-      }
-      rightMenuSelectValue.trs.splice(trIndex.value + 1, 0, rowJson);
-    }
+  // 增加行
+  // 获取总col值
+  const sumCols = rightMenuSelectValue.trs[0].tds
+      .map((item) => item.colspan)
+      .reduce(function (partial, value) {
+        return partial + value;
+      });
+  const rowJson: any[] = {tds: []};
+  for (let i = 0; i < sumCols; i++) {
+    rowJson.tds.push({
+      colspan: 1,
+      rowspan: 1,
+      list: [],
+    });
+  }
+  rightMenuSelectValue.trs.splice(trIndex.value + 1, 0, rowJson);
+}
 
 const handleShowRightMenu = (e, val, trIndex, tdIndex) => {
   // 显示右键菜单
@@ -477,21 +532,33 @@ const handleRemoveRightMenu = () => {
 }
 
 
-onMounted(() => {
-  document.addEventListener("click", handleRemoveRightMenu, true);
-  document.addEventListener(
-      "contextmenu",
-      handleRemoveRightMenu,
-      true
-  );
-})
-onUnmounted(() => {
-  // 移除监听
-  document.removeEventListener("click", handleRemoveRightMenu, true);
-  document.removeEventListener(
-      "contextmenu",
-      handleRemoveRightMenu,
-      true
-  );
-})
+// onMounted(() => {
+//   document.addEventListener("click", handleRemoveRightMenu, true);
+//   document.addEventListener(
+//       "contextmenu",
+//       handleRemoveRightMenu,
+//       true
+//   );
+// })
+// onUnmounted(() => {
+//   // 移除监听
+//   document.removeEventListener("click", handleRemoveRightMenu, true);
+//   document.removeEventListener(
+//       "contextmenu",
+//       handleRemoveRightMenu,
+//       true
+//   );
+// })
+
 </script>
+<style lang="scss" scoped>
+@import "../../assets/css/k-form-design";
+
+.list-group-item {
+  position: relative;
+  display: block;
+  padding: 0.75rem 1.25rem;
+  background-color: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+}
+</style>

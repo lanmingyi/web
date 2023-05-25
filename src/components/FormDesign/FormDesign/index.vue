@@ -1,8 +1,8 @@
 <!--表单设计器-->
 <template>
-  <el-config-provider :local="local">
+<!--  <el-config-provider :local="local">-->
     <div :class="['form-designer-container', ]">
-      <!-- 操作区域-->
+      <!-- 最顶部操作区域-->
       <form-design-operate v-if="toolbarTop" :showToolbarText="showToolbarText" :toolbar="toolbar" :emptyElement="true"
                            @handleSave="handleSave" @handlePreview="handlePreview"
                            @handleOpenImportJsonModal="handleOpenImportJsonModal"
@@ -16,11 +16,13 @@
           <slot name="right-action"></slot>
         </template>
       </form-design-operate>
+
+      <!-- 整体内容    -->
       <div class="content" :class="{
-              'show-head': showHead,
-              'toolbar-top': toolbarTop,
-              'show-head-and-toolbar-top': toolbarTop && showHead,
-            }">
+        'show-head': showHead,
+        'toolbar-top': toolbarTop,
+        'show-head-and-toolbar-top': toolbarTop && showHead
+      }">
         <!-- 左侧控件区域  -->
         <aside class="left">
           <draggable-item
@@ -45,6 +47,7 @@
 
         <!-- 中间面板区域 -->
         <section>
+        <!-- 中间面板操作区域-->
           <form-design-operate
               v-if="!toolbarTop"
               :toolbar="toolbar"
@@ -60,22 +63,23 @@
               <slot name="right-action"></slot>
             </template>
           </form-design-operate>
-          <form-design-panel
-              ref="formDesignPanelRef"
-              :class="{ 'no-toolbar-top': !toolbarTop }"
-              :formData="formData"
-              :selectItem="selectItem"
-              :noModel="noModel"
-              :hideModel="hideModel"
-              :startType="startType"
-              @handleSetSelectItem="handleSetSelectItem"
-          />
+
+          <!-- 中间面板表单区域-->
+<!--          <form-design-panel-->
+<!--              ref="formDesignPanelRef"-->
+<!--              :class="{'no-toolbar-top': !toolbarTop }"-->
+<!--              :formData="formData"-->
+<!--              :selectItem="selectItem"-->
+<!--              :noModel="noModel"-->
+<!--              :hideModel="hideModel"-->
+<!--              :startType="startType"-->
+<!--              @handleSetSelectItem="handleSetSelectItem"-->
+<!--          />-->
           <view-json ref="viewJsonRef"/>
           <view-code ref="viewCodeRef"/>
           <import-json ref="importJsonRef"/>
           <form-preview ref="formPreviewRef"/>
         </section>
-
         <!-- 右侧控件属性区域 -->
         <aside class="right">
           <el-tabs default-active-key="1">
@@ -95,15 +99,15 @@
         </aside>
       </div>
     </div>
-  </el-config-provider>
-
+<!--  </el-config-provider>-->
 </template>
 
 <script setup lang="ts">
-import {ref, reactive, computed, toRefs} from 'vue'
+import {ref, reactive, computed, toRefs, getCurrentInstance} from 'vue'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 import {ElMessageBox, ElMessage} from "element-plus";
 import FormDesignOperate from "@/components/FormDesign/FormDesign/module/FormDesignOperate.vue";
+import FormDesignPanel from "@/components/FormDesign/FormDesign/module/FormDesignPanel.vue";
 import DraggableItem from "@/components/FormDesign/FormDesign/module/DraggableItem.vue";
 import ImportJson from "@/components/FormDesign/FormDesign/module/ImportJson.vue";
 import ViewJson from "@/components/FormDesign/FormDesign/module/ViewJson.vue";
@@ -111,6 +115,8 @@ import ViewCode from "@/components/FormDesign/FormDesign/module/ViewCode.vue";
 import FormItemProperties from "@/components/FormDesign/FormDesign/module/FormItemProperties.vue";
 import FormProperties from "@/components/FormDesign/FormDesign/module/FormProperties.vue";
 import FormPreview from "@/components/FormDesign/FormPreview/index";
+import draggable from 'vuedraggable'
+
 import {
   basicsList,
   // highList,
@@ -181,6 +187,7 @@ const props = defineProps({
   },
 })
 const local = zhCn
+const internalInstance = getCurrentInstance()
 
 const emit = defineEmits(['save', 'close'])
 const {fields} = toRefs(props)
@@ -198,6 +205,7 @@ const formData = reactive<any>({
     width: 850,
   },
 })
+const list2 = []
 const formPreviewRef = ref()
 const formDesignPanelRef = ref()
 const noModel = reactive(["button", "divider", "card", "grid", "table", "alert", "text", "html",])
@@ -207,14 +215,15 @@ const startType = ref('')
 const showProperties = ref(false)
 
 const basicsArray = computed(() => {
-  console.log('basicsList.filter((item) => fields.value.includes(item.type))', basicsList.filter((item) => fields.value.includes(item.type)))
+  // console.log('basicsList.filter((item) => fields.value.includes(item.type))', basicsList.filter((item) => fields.value.includes(item.type)))
   return basicsList.filter((item) => fields.value.includes(item.type));
 })
 const layoutArray = computed(() => {
   return layoutList.filter((item) => fields.value.includes(item.type))
 })
 
-const handleDownload = () =>{}
+const handleDownload = () => {
+}
 const generateKey = (list, index) => {
   // 生成key值
   const key = list[index].type + '_' + new Date().getTime()
@@ -301,6 +310,8 @@ const handleOpenJsonModal = () => {
 }
 
 const handleStart = (type) => {
+  //操作数据后更新视图
+  internalInstance!.ctx.$forceUpdate()
   console.log('type', type)
   startType.value = type
 }
@@ -315,5 +326,4 @@ const handleClose = () => {
 </script>
 <style scoped lang="scss">
 @import "../assets/css/k-form-design";
-
 </style>

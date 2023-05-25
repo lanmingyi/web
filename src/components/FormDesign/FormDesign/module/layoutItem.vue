@@ -1,10 +1,8 @@
 <template>
   <div
     :class="{
-      'layout-width': ['grid', 'table', 'card', 'divider', 'html'].includes(
-        record.type
-      ),
-    }"
+      'layout-width': ['grid', 'table', 'card', 'divider', 'html'].includes(record.type),
+   }"
   >
     <!-- 动态表格设计模块 start -->
     <template v-if="record.type === 'batch'">
@@ -14,7 +12,7 @@
         @click.stop="handleSelectItem(record, record.options.tableName)"
       >
         <div class="batch-label">动态表格</div>
-        <Draggable
+        <draggable
           tag="div"
           class="draggable-box"
           v-bind="{
@@ -58,7 +56,7 @@
               @handleDelete="$emit('handleDelete')"
             />
           </transition-group>
-        </Draggable>
+        </draggable>
         <div
           class="copy"
           :class="record.key === selectItem.key ? 'active' : 'unactivated'"
@@ -199,7 +197,7 @@
             :key="idnex"
             :span="colItem.span || 0"
           >
-            <Draggable
+            <draggable
               tag="div"
               class="draggable-box"
               v-bind="{
@@ -230,7 +228,7 @@
                   @handleDelete="$emit('handleDelete')"
                 />
               </transition-group>
-            </Draggable>
+            </draggable>
           </el-col>
         </el-row>
 
@@ -374,7 +372,7 @@
               :colspan="tdItem.colspan"
               :rowspan="tdItem.rowspan"
               @contextmenu.prevent="$emit('handleShowRightMenu', $event, record, trIndex, tdIndex)">
-              <Draggable
+              <draggable
                 tag="div"
                 class="draggable-box"
                 v-bind="{
@@ -405,7 +403,7 @@
                     @handleDelete="$emit('handleDelete')"
                   />
                 </transition-group>
-              </Draggable>
+              </draggable>
             </td>
           </tr>
         </table>
@@ -526,7 +524,7 @@
         >
 <!--            - 隐藏表单字段 start - -->
             <div class="grid-col">
-                <Draggable
+                <draggable
                     tag="div"
                     class="draggable-box"
                     v-bind="{
@@ -557,7 +555,7 @@
                             @handleDelete="$emit('handleDelete')"
                         />
                     </transition-group>
-                </Draggable>
+                </draggable>
             </div>
 <!--            - 隐藏表单字段 end - -->
         <div
@@ -609,8 +607,8 @@
  */
 import {computed} from "vue";
 import {Delete, InfoFilled, DocumentCopy} from '@element-plus/icons-vue'
-import Draggable from "vuedraggable";
-import formNode from "./formNode";
+import draggable from "vuedraggable";
+import formNode from "./formNode.vue";
 
 const props = defineProps({
   record: {
@@ -638,8 +636,8 @@ const props = defineProps({
     default: false,
   }
 })
-
-const {startType , insertAllowedType} = props
+const { record, startType , insertAllowedType} = props
+console.log('record', record)
 const emit = defineEmits(['handleShowRightMenu', 'handleSelectItem', 'handleColAdd'])
 const insertAllowed = computed(()=>{
   return insertAllowedType.includes(startType)

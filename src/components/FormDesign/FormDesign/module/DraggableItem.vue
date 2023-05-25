@@ -2,68 +2,28 @@
 <template>
   <div class="com-content">
     <div class="com-title">{{ title }}</div>
-    <!--     ===设置为true时拖拽才能滚动====-->
-    <Draggable
-        :list="list"
-        :animation="100"
-        item-key="type"
+    <draggable
         class="list-group"
-        :forceFallback="true"
-        ghost-class="ghost"
-        @change="$emit('handleListPush', list)"
-        :move="false"
+        :list="list"
+        group="people"
+        itemKey="label"
+        @change="log"
     >
       <template #item="{ element }">
-        <div class="items">
-          <li class="title" @click="handleClick">{{ element.label }}</li>
-          <!--        <button @click.stop="fold(element)">{{element.isflod ? '展开' : '收起'}}</button>-->
-        </div>
+        <div class="list-group-item">{{ element.label }}</div>
       </template>
-    </Draggable>
-
-
-    <!--    <Draggable-->
-    <!--        tag="ul"-->
-    <!--        :list="list"-->
-    <!--        v-bind="{-->
-    <!--        group: { name: 'form-draggable', pull: 'clone', put: false },-->
-    <!--        sort: false,-->
-    <!--        animation: 180,-->
-    <!--        ghostClass: 'moving',-->
-    <!--      }"-->
-    <!--        @start="handleStart($event, list)"-->
-    <!--    >-->
-    <!--      <template #item="{ element }">-->
-    <!--        <li-->
-    <!--            v-for="(val, index) in list"-->
-    <!--            :key="index"-->
-    <!--            @dragstart="$emit('generateKey', list, index)"-->
-    <!--            @click="$emit('handleListPush', val)"-->
-    <!--        >-->
-    <!--        <span v-if="['icon', 'color', 'userPop', 'depart', 'codeTag', 'area'].includes(val.type)">-->
-    <!--&lt;!&ndash;          <el-icon :type="val.icon"></el-icon>&ndash;&gt;-->
-    <!--          <el-icon><CirclePlus /></el-icon>-->
-    <!--        </span>-->
-    <!--          <span v-else>-->
-    <!--          <svg v-if="val.icon" class="icon" aria-hidden="true">-->
-    <!--            <use :xlink:href="`#${val.icon}`"></use>-->
-    <!--          </svg>-->
-    <!--        </span>-->
-    <!--          {{ element.label }}-->
-    <!--        </li>-->
-    <!--      </template>-->
-    <!--    </Draggable>-->
+    </draggable>
   </div>
 </template>
 
 <script setup lang="ts">
-import Draggable from 'vuedraggable'
+import draggable from 'vuedraggable'
 
 defineOptions({
   name: "DraggableItem"
 })
 
-const emit = defineEmits(['start'])
+const emit = defineEmits(['start','handleListPush'])
 const props = defineProps({
   title: {
     type: String
@@ -73,25 +33,32 @@ const props = defineProps({
   }
 })
 const {title, list} = props
+// console.log('list', list)
 
-const handleClick = () =>{
-  console.log('111111111111')
-}
-
-const handleStart = (e, list) => {
-  emit('start', list[e.oldIndex].type || list[e.oldIndex]);
+const log = (evt) => {
+  window.console.log(evt);
+  emit('start')
+  // emit('handleListPush', list)
 }
 
 </script>
 
 <style scoped lang="scss">
+.list-group-item {
+  position: relative;
+  display: block;
+  padding: 0.75rem 1.25rem;
+  background-color: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+}
+
 .items {
   display: flex;
   justify-content: space-between;
   width: 100%;
   padding: 20px;
   margin-bottom: 20px;
-  background: #e3e3e3;
+  background: #fff;
   border-radius: 8px;
 
   //padding      : 0px;

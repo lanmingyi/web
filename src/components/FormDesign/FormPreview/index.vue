@@ -52,6 +52,8 @@ const setData =(e) => {
   formDesignData.value = e
 }
 
+const handleSubmit =() => {
+}
 const getJsonData = () => {
   formBuildRef.value.getData().then(res => {
     emit('getJsonData', res, formDesignData)

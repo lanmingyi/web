@@ -27,17 +27,22 @@
     <div class="right-btn-box">
       <!-- 按钮右侧插槽 -->
       <slot name="right-action"></slot>
-      <a-tooltip title="关闭">
+      <el-tooltip
+          class="box-item"
+          effect="dark"
+          content="关闭"
+          placement="top-start"
+      >
         <a v-if="toolbar.includes('close')" @click="$emit('handleClose')">
-          <a-icon type="close"/>
+          <el-icon><Close /></el-icon>
         </a>
-      </a-tooltip>
+      </el-tooltip>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import {Check, VideoPlay, View, Document, Delete} from "@element-plus/icons-vue";
+import {Check, VideoPlay, View, Document, Delete, Close} from "@element-plus/icons-vue";
 
 defineOptions({
   name: 'FormDesignOperate'
@@ -67,6 +72,6 @@ const props = defineProps({
 })
 </script>
 
-<style scoped>
-
+<style scoped lang="scss">
+@import "../../assets/css/k-form-design";
 </style>
