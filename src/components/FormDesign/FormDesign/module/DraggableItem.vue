@@ -11,10 +11,11 @@
         :forceFallback="true"
         ghost-class="ghost"
         @change="$emit('handleListPush', list)"
+        :move="false"
     >
       <template #item="{ element }">
         <div class="items">
-          <div class="title" @click="handleClick">{{ element.label }}</div>
+          <li class="title" @click="handleClick">{{ element.label }}</li>
           <!--        <button @click.stop="fold(element)">{{element.isflod ? '展开' : '收起'}}</button>-->
         </div>
       </template>

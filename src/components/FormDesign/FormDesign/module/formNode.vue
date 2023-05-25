@@ -1,5 +1,5 @@
 <!--
- * @Description: 将数据通过form-item组件解析，生成控件
+ * 将数据通过form-item组件解析，生成控件
  -->
 
 <template>
@@ -14,16 +14,16 @@
 		}"
 	>
 		<div class="form-item-box">
-			<kFormItem :formConfig="config" :record="record" />
+			<FormItem :formConfig="config" :record="record" />
 		</div>
 		<!-- <div v-if="!hideModel" class="show-key-box" v-text="record.model" /> -->
 		<div
-            v-if="!isMult"
-			class="copy"
-			:class="record.key === selectItem.key ? 'active' : 'unactivated'"
-			@click.stop="$emit('handleCopy')"
+        v-if="!isMult"
+			  class="copy"
+			  :class="record.key === selectItem.key ? 'active' : 'unactivated'"
+			  @click.stop="$emit('handleCopy')"
 		>
-			<a-icon type="copy" />
+      <el-icon><DocumentCopy /></el-icon>
 		</div>
 
         <div v-if="record.options.sortValue"
@@ -32,23 +32,21 @@
         >
             排序顺位：{{record.options.sortValue}}
         </div>
-		<a-popconfirm
+		<el-popconfirm
 			placement="bottomRight"
 			ok-text="是"
 			cancel-text="否"
+      :icon="InfoFilled"
+      icon-color="#626AEF"
 			@confirm="$emit('handleDelete')"
 		>
-			<a-icon slot="icon" type="question-circle-o" style="color: red" />
 			<template slot="title">
 				<p>是否删除该组件？</p>
 			</template>
-			<div
-				class="delete"
-				:class="record.key === selectItem.key ? 'active' : 'unactivated'"
-			>
-				<a-icon type="delete" />
+			<div class="delete" :class="record.key === selectItem.key ? 'active' : 'unactivated'">
+        <el-icon><Delete/></el-icon>
 			</div>
-		</a-popconfirm>
+		</el-popconfirm>
 		<!-- 		<div
 			class="delete"
 			:class="record.key === selectItem.key ? 'active' : 'unactivated'"
@@ -58,38 +56,36 @@
 		</div> -->
 	</div>
 </template>
-<script>
+
+<script setup lang="ts">
 /*
- * description 通过json生成的单个表单节点
+ * 通过json生成的单个表单节点
  */
-import kFormItem from "../../FormItem/index";
-export default {
-	props: {
-		record: {
-			type: Object,
-			required: true,
-		},
-		selectItem: {
-			type: Object,
-			default: () => {},
-		},
-		config: {
-			type: Object,
-			required: true,
-		},
-		hideModel: {
-			type: Boolean,
-			default: false,
-		},
-        isMult: {
-			type: Boolean,
-			default: false,
-        }
-	},
-	components: {
-		kFormItem,
-	},
-};
+import FormItem from "../../FormItem/index";
+import {Delete, DocumentCopy, InfoFilled} from "@element-plus/icons-vue";
+
+const props = defineProps({
+  record: {
+    type: Object,
+    required: true,
+  },
+  selectItem: {
+    type: Object,
+    default: () => {},
+  },
+  config: {
+    type: Object,
+    required: true,
+  },
+  hideModel: {
+    type: Boolean,
+    default: false,
+  },
+  isMult: {
+    type: Boolean,
+    default: false,
+  }
+})
 </script>
 
 <style lang="less">

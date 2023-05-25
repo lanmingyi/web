@@ -14,7 +14,7 @@
         @click.stop="handleSelectItem(record, record.options.tableName)"
       >
         <div class="batch-label">动态表格</div>
-        <draggable
+        <Draggable
           tag="div"
           class="draggable-box"
           v-bind="{
@@ -58,38 +58,34 @@
               @handleDelete="$emit('handleDelete')"
             />
           </transition-group>
-        </draggable>
+        </Draggable>
         <div
           class="copy"
           :class="record.key === selectItem.key ? 'active' : 'unactivated'"
           @click.stop="$emit('handleCopy')"
         >
-          <a-icon type="copy" />
+          <el-icon><DocumentCopy /></el-icon>
         </div>
-        <!-- <div
-				  class="delete"
-				  :class="record.key === selectItem.key ? 'active' : 'unactivated'"
-				  @click.stop="$emit('handleDelete')"
-				>
-				  <a-icon type="delete" />
-				</div> -->
-        <a-popconfirm
+
+        <el-popconfirm
           placement="bottomRight"
           ok-text="是"
           cancel-text="否"
+          :icon="InfoFilled"
+          icon-color="#626AEF"
           @confirm="$emit('handleDelete')"
         >
-          <a-icon slot="icon" type="question-circle-o" style="color: red" />
-          <template slot="title">
+<!--          <el-icon slot="icon" type="question-circle-o" style="color: red" />-->
+          <template slot="reference">
             <p>是否删除该组件？</p>
           </template>
           <div
             class="delete"
             :class="record.key === selectItem.key ? 'active' : 'unactivated'"
           >
-            <a-icon type="delete" />
+            <el-icon><Delete/></el-icon>
           </div>
-        </a-popconfirm>
+        </el-popconfirm>
       </div>
     </template>
     <!-- 动态表格设计模块 end -->
@@ -100,7 +96,7 @@
         :class="{ active: record.key === selectItem.key }"
         @click.stop="handleSelectItem(record)"
       >
-        <a-tabs
+        <el-tabs
           class="grid-row"
           :default-active-key="0"
           :tabBarGutter="record.options.tabBarGutter || null"
@@ -109,7 +105,7 @@
           :tabPosition="record.options.tabPosition"
           :animated="record.options.animated"
         >
-          <a-tab-pane
+          <el-tab-pane
             v-for="(tabItem, index) in record.columns"
             :key="index"
             :tab="tabItem.label"
@@ -148,23 +144,24 @@
                 </transition-group>
               </draggable>
             </div>
-          </a-tab-pane>
-        </a-tabs>
+          </el-tab-pane>
+        </el-tabs>
 
         <div
           class="copy"
           :class="record.key === selectItem.key ? 'active' : 'unactivated'"
           @click.stop="$emit('handleCopy')"
         >
-          <a-icon type="copy" />
+          <el-icon><DocumentCopy /></el-icon>
         </div>
-        <a-popconfirm
+        <el-popconfirm
           placement="bottomRight"
           ok-text="是"
           cancel-text="否"
+          :icon="InfoFilled"
+          icon-color="#626AEF"
           @confirm="$emit('handleDelete')"
         >
-          <a-icon slot="icon" type="question-circle-o" style="color: red" />
           <template slot="title">
             <p>是否删除该组件？</p>
           </template>
@@ -172,9 +169,9 @@
             class="delete"
             :class="record.key === selectItem.key ? 'active' : 'unactivated'"
           >
-            <a-icon type="delete" />
+            <el-icon><Delete/></el-icon>
           </div>
-        </a-popconfirm>
+        </el-popconfirm>
       </div>
     </template>
     <!-- 标签Tabs布局 end -->
@@ -185,7 +182,7 @@
         :class="{ active: record.key === selectItem.key }"
         @click.stop="handleSelectItem(record)"
       >
-        <a-row
+        <el-row
           class="grid-row"
           :gutter="record.options.gutter"
           v-bind="{
@@ -196,13 +193,13 @@
               record.options.type === 'default' ? null : record.options.justify,
           }"
         >
-          <a-col
+          <el-col
             class="grid-col"
             v-for="(colItem, idnex) in record.columns"
             :key="idnex"
             :span="colItem.span || 0"
           >
-            <draggable
+            <Draggable
               tag="div"
               class="draggable-box"
               v-bind="{
@@ -233,24 +230,25 @@
                   @handleDelete="$emit('handleDelete')"
                 />
               </transition-group>
-            </draggable>
-          </a-col>
-        </a-row>
+            </Draggable>
+          </el-col>
+        </el-row>
 
         <div
           class="copy"
           :class="record.key === selectItem.key ? 'active' : 'unactivated'"
           @click.stop="$emit('handleCopy')"
         >
-          <a-icon type="copy" />
+          <el-icon><DocumentCopy /></el-icon>
         </div>
-        <a-popconfirm
+        <el-popconfirm
           placement="bottomRight"
           ok-text="是"
           cancel-text="否"
+          :icon="InfoFilled"
+          icon-color="#626AEF"
           @confirm="$emit('handleDelete')"
         >
-          <a-icon slot="icon" type="question-circle-o" style="color: red" />
           <template slot="title">
             <p>是否删除该组件？</p>
           </template>
@@ -258,9 +256,9 @@
             class="delete"
             :class="record.key === selectItem.key ? 'active' : 'unactivated'"
           >
-            <a-icon type="delete" />
+            <el-icon><Delete/></el-icon>
           </div>
-        </a-popconfirm>
+        </el-popconfirm>
       </div>
     </template>
     <!-- 栅格布局 end -->
@@ -327,15 +325,16 @@
           :class="record.key === selectItem.key ? 'active' : 'unactivated'"
           @click.stop="$emit('handleCopy')"
         >
-          <a-icon type="copy" />
+          <el-icon><DocumentCopy /></el-icon>
         </div>
-        <a-popconfirm
+        <el-popconfirm
           placement="bottomRight"
           ok-text="是"
           cancel-text="否"
+          :icon="InfoFilled"
+          icon-color="#626AEF"
           @confirm="$emit('handleDelete')"
         >
-          <a-icon slot="icon" type="question-circle-o" style="color: red" />
           <template slot="title">
             <p>是否删除该组件？</p>
           </template>
@@ -343,9 +342,9 @@
             class="delete"
             :class="record.key === selectItem.key ? 'active' : 'unactivated'"
           >
-            <a-icon type="delete" />
+            <el-icon><Delete/></el-icon>
           </div>
-        </a-popconfirm>
+        </el-popconfirm>
       </div>
     </template>
     <!-- 卡片布局 end -->
@@ -375,7 +374,7 @@
               :colspan="tdItem.colspan"
               :rowspan="tdItem.rowspan"
               @contextmenu.prevent="$emit('handleShowRightMenu', $event, record, trIndex, tdIndex)">
-              <draggable
+              <Draggable
                 tag="div"
                 class="draggable-box"
                 v-bind="{
@@ -406,7 +405,7 @@
                     @handleDelete="$emit('handleDelete')"
                   />
                 </transition-group>
-              </draggable>
+              </Draggable>
             </td>
           </tr>
         </table>
@@ -416,15 +415,16 @@
           :class="record.key === selectItem.key ? 'active' : 'unactivated'"
           @click.stop="$emit('handleCopy')"
         >
-          <a-icon type="copy" />
+          <el-icon><DocumentCopy /></el-icon>
         </div>
-        <a-popconfirm
+        <el-popconfirm
           placement="bottomRight"
           ok-text="是"
           cancel-text="否"
+          :icon="InfoFilled"
+          icon-color="#626AEF"
           @confirm="$emit('handleDelete')"
         >
-          <a-icon slot="icon" type="question-circle-o" style="color: red" />
           <template slot="title">
             <p>是否删除该组件？</p>
           </template>
@@ -432,9 +432,9 @@
             class="delete"
             :class="record.key === selectItem.key ? 'active' : 'unactivated'"
           >
-            <a-icon type="delete" />
+            <el-icon><Delete/></el-icon>
           </div>
-        </a-popconfirm>
+        </el-popconfirm>
       </div>
     </template>
     <!-- 表格布局 end -->
@@ -493,15 +493,16 @@
           :class="record.key === selectItem.key ? 'active' : 'unactivated'"
           @click.stop="$emit('handleCopy')"
         >
-          <a-icon type="copy" />
+          <el-icon><DocumentCopy /></el-icon>
         </div>
-        <a-popconfirm
+        <el-popconfirm
           placement="bottomRight"
           ok-text="是"
           cancel-text="否"
+          :icon="InfoFilled"
+          icon-color="#626AEF"
           @confirm="$emit('handleDelete')"
         >
-          <a-icon slot="icon" type="question-circle-o" style="color: red" />
           <template slot="title">
             <p>是否删除该组件？</p>
           </template>
@@ -509,9 +510,9 @@
             class="delete"
             :class="record.key === selectItem.key ? 'active' : 'unactivated'"
           >
-            <a-icon type="delete" />
+            <el-icon><Delete/></el-icon>
           </div>
-        </a-popconfirm>
+        </el-popconfirm>
       </div>
     </template>
     <!-- 多级表头 end -->
@@ -523,9 +524,9 @@
             :class="{ active: record.key === selectItem.key }"
             @click.stop="handleSelectItem(record)"
         >
-            - 隐藏表单字段 start -
+<!--            - 隐藏表单字段 start - -->
             <div class="grid-col">
-                <draggable
+                <Draggable
                     tag="div"
                     class="draggable-box"
                     v-bind="{
@@ -556,23 +557,24 @@
                             @handleDelete="$emit('handleDelete')"
                         />
                     </transition-group>
-                </draggable>
+                </Draggable>
             </div>
-            - 隐藏表单字段 end -
+<!--            - 隐藏表单字段 end - -->
         <div
           class="copy"
           :class="record.key === selectItem.key ? 'active' : 'unactivated'"
           @click.stop="$emit('handleCopy')"
         >
-          <a-icon type="copy" />
+          <el-icon><DocumentCopy /></el-icon>
         </div>
-        <a-popconfirm
+        <el-popconfirm
           placement="bottomRight"
           ok-text="是"
           cancel-text="否"
+          :icon="InfoFilled"
+          icon-color="#626AEF"
           @confirm="$emit('handleDelete')"
         >
-          <a-icon slot="icon" type="question-circle-o" style="color: red" />
           <template slot="title">
             <p>是否删除该组件？</p>
           </template>
@@ -580,9 +582,9 @@
             class="delete"
             :class="record.key === selectItem.key ? 'active' : 'unactivated'"
           >
-            <a-icon type="delete" />
+            <el-icon><Delete/></el-icon>
           </div>
-        </a-popconfirm>
+        </el-popconfirm>
       </div>
     </template>
     <!-- 隐藏 end -->
@@ -601,61 +603,59 @@
     </template>
   </div>
 </template>
-<script>
+<script setup lang="ts">
 /*
 使用递归组件调用自己，生成布局结构及表单
  */
-import draggable from "vuedraggable";
+import {computed} from "vue";
+import {Delete, InfoFilled, DocumentCopy} from '@element-plus/icons-vue'
+import Draggable from "vuedraggable";
 import formNode from "./formNode";
-export default {
-  name: "layoutItem",
-  props: {
-    record: {
-      type: Object,
-      required: true,
-    },
-    selectItem: {
-      type: Object,
-      required: true,
-    },
-    config: {
-      type: Object,
-      required: true,
-    },
-    startType: {
-      type: String,
-      required: true,
-    },
-    insertAllowedType: {
-      type: Array,
-      required: true,
-    },
-    hideModel: {
-      type: Boolean,
-      default: false,
-    },
+
+const props = defineProps({
+  record: {
+    type: Object,
+    required: true,
   },
-  computed: {
-    insertAllowed() {
-      return this.insertAllowedType.includes(this.startType);
-    },
+  selectItem: {
+    type: Object,
+    required: true,
   },
-  components: {
-    formNode,
-    draggable,
+  config: {
+    type: Object,
+    required: true,
   },
-  methods: {
-        handleShowRightMenu(e, record, trIndex, tdIndex) {
-            this.$emit("handleShowRightMenu", e, record, trIndex, tdIndex);
-        },
-        handleSelectItem(record, batchName) {
-            this.$emit("handleSelectItem", record, batchName);
-        },
-        handleColAdd(e, list) {
-            this.$emit("handleColAdd", e, list);
-        },
+  startType: {
+    type: String,
+    required: true,
   },
-};
+  insertAllowedType: {
+    type: Array,
+    required: true,
+  },
+  hideModel: {
+    type: Boolean,
+    default: false,
+  }
+})
+
+const {startType , insertAllowedType} = props
+const emit = defineEmits(['handleShowRightMenu', 'handleSelectItem', 'handleColAdd'])
+const insertAllowed = computed(()=>{
+  return insertAllowedType.includes(startType)
+})
+
+const handleShowRightMenu = (e, record, trIndex, tdIndex) => {
+  emit("handleShowRightMenu", e, record, trIndex, tdIndex)
+}
+
+const handleSelectItem = (record, batchName) => {
+  emit("handleSelectItem", record, batchName)
+}
+const handleColAdd = (e, list) => {
+  emit("handleColAdd", e, list)
+}
+
 </script>
 
 <style lang="scss" scoped>

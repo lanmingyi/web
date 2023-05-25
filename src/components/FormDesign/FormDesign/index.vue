@@ -63,7 +63,7 @@
           <form-design-panel
               ref="formDesignPanelRef"
               :class="{ 'no-toolbar-top': !toolbarTop }"
-              :data="data"
+              :formData="formData"
               :selectItem="selectItem"
               :noModel="noModel"
               :hideModel="hideModel"
@@ -89,7 +89,7 @@
               />
             </el-tab-pane>
             <el-tab-pane name="2" label="表单属性">
-              <form-properties :config="data.config"/>
+              <form-properties :config="formData.config"/>
             </el-tab-pane>
           </el-tabs>
         </aside>
@@ -184,7 +184,7 @@ const local = zhCn
 
 const emit = defineEmits(['save', 'close'])
 const {fields} = toRefs(props)
-const data = reactive<any>({
+const formData = reactive<any>({
   list: [],
   config: {
     layout: "horizontal",
@@ -232,7 +232,7 @@ const generateKey = (list, index) => {
 const handleListPush = (item) => {
   // 双击控件按钮push到list
   if (!selectItem.key) {
-    // 在没有选择表单时，将数据push到data.list
+    // 在没有选择表单时，将数据push到formData.list
     const key = item.type + "_" + new Date().getTime();
     item = {
       ...item,
@@ -248,7 +248,7 @@ const handleListPush = (item) => {
     // 删除icon及component属性
     delete record.icon;
     delete record.component;
-    data.list.push(record);
+    formData.list.push(record);
     handleSetSelectItem(record);
     return false;
   }
@@ -279,7 +279,7 @@ const handleReset = () => {
     cancelButtonText: '否',
     type: 'warning'
   }).then(res => {
-    data.list = [];
+    formData.list = [];
     handleSetSelectItem({key: ""});
     ElMessage({type: 'success', message: '已清空'})
   }).catch(() => {
@@ -288,8 +288,8 @@ const handleReset = () => {
 }
 
 const handlePreview = () => {
-  formPreviewRef.value.formDesignData = data
-  formPreviewRef.value.previewWidth = data.config.width
+  formPreviewRef.value.formDesignData = formData
+  formPreviewRef.value.previewWidth = formData.config.width
   formPreviewRef.value.visible = true
 }
 
@@ -305,7 +305,7 @@ const handleStart = (type) => {
   startType.value = type
 }
 const handleSave = () => {
-  emit('save', JSON.stringify(data))
+  emit('save', JSON.stringify(formData))
 }
 
 const handleClose = () => {
