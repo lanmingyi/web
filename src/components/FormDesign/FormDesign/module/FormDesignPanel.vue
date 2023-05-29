@@ -3,6 +3,9 @@
     <!--    <p class="hint-text" v-show="formData.list.length === 0">-->
     <!--      从左侧选择控件添加-->
     <!--    </p>-->
+<!--    @start="dragStart($event, formData.list)"-->
+<!--    style="width: 100%"-->
+<!--    @add="deepClone"-->
     <draggable
         class="list-group"
         item-key="order"
@@ -11,14 +14,10 @@
         v-model="formData.list"
         v-bind="dragOptions"
         group="people"
-
-        @start="dragStart($event, formData.list)"
-        style="width: 100%"
-        @add="deepClone"
-
+        @change="log"
     >
       <template #item="{element}">
-        <layoutItem
+        <LayoutItem
             class="drag-move"
             v-for="record in formData.list"
             :key="record.key"
@@ -38,58 +37,6 @@
       </template>
     </draggable>
 
-
-    <!--    <el-form-->
-    <!--        class="a-form-box k-form-build"-->
-    <!--        :layout="formData.config.layout"-->
-    <!--        :labelAlign="formData.config.labelAlign"-->
-    <!--        :hideRequiredMark="formData.config.hideRequiredMark"-->
-    <!--        :style="formData.config.customStyle"-->
-    <!--    >-->
-    <!--&lt;!&ndash;      v-model="formData.list"&ndash;&gt;-->
-    <!--      <draggable-->
-    <!--          class="list-group"-->
-    <!--          item-key="order"-->
-    <!--          tag="transition-group"-->
-    <!--          :component-data="{ tag: 'ul', name: 'flip-list', type: 'transition' }"-->
-    <!--          :list="formData.list"-->
-    <!--          v-bind="dragOptions"-->
-
-    <!--          @start="dragStart($event, formData.list)"-->
-    <!--          style="width: 100%"-->
-    <!--          @add="deepClone"-->
-    <!--      >-->
-    <!--        <template #item="{element}">-->
-    <!--          <li class="list-group-item">-->
-    <!--            <i-->
-    <!--                :class="-->
-    <!--                element.fixed ? 'fa fa-anchor' : 'glyphicon glyphicon-pushpin'-->
-    <!--              "-->
-    <!--                @click="element.fixed = !element.fixed"-->
-    <!--                aria-hidden="true"-->
-    <!--            ></i>-->
-    <!--            {{ element.name }}-->
-    <!--          </li>-->
-    <!--&lt;!&ndash;          <layoutItem&ndash;&gt;-->
-    <!--&lt;!&ndash;              class="drag-move"&ndash;&gt;-->
-    <!--&lt;!&ndash;              v-for="record in formData.list"&ndash;&gt;-->
-    <!--&lt;!&ndash;              :key="record.key"&ndash;&gt;-->
-    <!--&lt;!&ndash;              :record="record"&ndash;&gt;-->
-    <!--&lt;!&ndash;              :config="formData.config"&ndash;&gt;-->
-    <!--&lt;!&ndash;              :selectItem.sync="selectItem"&ndash;&gt;-->
-    <!--&lt;!&ndash;              :startType="startType"&ndash;&gt;-->
-    <!--&lt;!&ndash;              :insertAllowedType="insertAllowedType"&ndash;&gt;-->
-    <!--&lt;!&ndash;              :hideModel="hideModel"&ndash;&gt;-->
-    <!--&lt;!&ndash;              @dragStart="dragStart"&ndash;&gt;-->
-    <!--&lt;!&ndash;              @handleSelectItem="handleSelectItem"&ndash;&gt;-->
-    <!--&lt;!&ndash;              @handleCopy="handleCopy"&ndash;&gt;-->
-    <!--&lt;!&ndash;              @handleDelete="handleDelete"&ndash;&gt;-->
-    <!--&lt;!&ndash;              @handleColAdd="handleColAdd"&ndash;&gt;-->
-    <!--&lt;!&ndash;              @handleShowRightMenu="handleShowRightMenu"&ndash;&gt;-->
-    <!--&lt;!&ndash;          />&ndash;&gt;-->
-    <!--        </template>-->
-    <!--      </draggable>-->
-    <!--    </el-form>-->
     <!-- 右键菜单 start -->
     <div
         v-show="showRightMenu"
@@ -119,7 +66,7 @@
 </template>
 <script setup lang="ts">
 import draggable from "vuedraggable";
-import layoutItem from "./layoutItem.vue";
+import LayoutItem from "./LayoutItem.vue";
 // import "codemirror/mode/javascript/javascript";
 import {ref, onMounted, onUnmounted, computed} from "vue";
 import {ElMessage} from "element-plus";
@@ -192,6 +139,11 @@ const menuLeft = ref(0)
 const trIndex = ref(0)
 const tdIndex = ref(0)
 const activeArr: any[] = ref([])
+
+const log = (evt) => {
+  console.log('formData.list', formData.list)
+  window.console.log('evt', evt);
+}
 
 const deepClone = (evt) => {
   const newIndex = evt.newIndex;

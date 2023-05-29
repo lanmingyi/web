@@ -1,105 +1,105 @@
 <!--表单设计器-->
 <template>
-<!--  <el-config-provider :local="local">-->
-    <div :class="['form-designer-container', ]">
-      <!-- 最顶部操作区域-->
-      <form-design-operate v-if="toolbarTop" :showToolbarText="showToolbarText" :toolbar="toolbar" :emptyElement="true"
-                           @handleSave="handleSave" @handlePreview="handlePreview"
-                           @handleOpenImportJsonModal="handleOpenImportJsonModal"
-                           @handleOpenCodeModal="handleOpenCodeModal"
-                           @handleOpenJsonModal="handleOpenJsonModal" @handleClose="handleClose"
-      >
-        <template slot="left-action">
-          <slot name="left-action"></slot>
-        </template>
-        <template slot="right-action">
-          <slot name="right-action"></slot>
-        </template>
-      </form-design-operate>
+  <!--  <el-config-provider :local="local">-->
+  <div :class="['form-designer-container', ]">
+    <!-- 最顶部操作区域-->
+    <form-design-operate v-if="toolbarTop" :showToolbarText="showToolbarText" :toolbar="toolbar" :emptyElement="true"
+                         @handleSave="handleSave" @handlePreview="handlePreview"
+                         @handleOpenImportJsonModal="handleOpenImportJsonModal"
+                         @handleOpenCodeModal="handleOpenCodeModal"
+                         @handleOpenJsonModal="handleOpenJsonModal" @handleClose="handleClose"
+    >
+      <template slot="left-action">
+        <slot name="left-action"></slot>
+      </template>
+      <template slot="right-action">
+        <slot name="right-action"></slot>
+      </template>
+    </form-design-operate>
 
-      <!-- 整体内容    -->
-      <div class="content" :class="{
+    <!-- 整体内容    -->
+    <div class="content" :class="{
         'show-head': showHead,
         'toolbar-top': toolbarTop,
         'show-head-and-toolbar-top': toolbarTop && showHead
       }">
-        <!-- 左侧控件区域  -->
-        <aside class="left">
-          <draggable-item
-              title="基础控件"
-              :list="basicsArray"
-              @generateKey="generateKey"
-              @handleListPush="handleListPush"
-              @start="handleStart"/>
-          <draggable-item
-              title="布局控件"
-              :list="layoutArray"
-              @generateKey="generateKey"
-              @handleListPush="handleListPush"
-              @start="handleStart"/>
-          <draggable-item
-              title="自定义组件"
-              :list="customComponents"
-              @generateKey="generateKey"
-              @handleListPush="handleListPush"
-              @start="handleStart"/>
-        </aside>
+      <!-- 左侧控件区域  -->
+      <aside class="left">
+        <draggable-item
+            title="基础控件"
+            :list="basicsArray"
+            @generateKey="generateKey"
+            @handleListPush="handleListPush"
+            @start="handleStart"/>
+        <draggable-item
+            title="布局控件"
+            :list="layoutArray"
+            @generateKey="generateKey"
+            @handleListPush="handleListPush"
+            @start="handleStart"/>
+        <draggable-item
+            title="自定义组件"
+            :list="customComponents"
+            @generateKey="generateKey"
+            @handleListPush="handleListPush"
+            @start="handleStart"/>
+      </aside>
 
-        <!-- 中间面板区域 -->
-        <section>
+      <!-- 中间面板区域 -->
+      <section>
         <!-- 中间面板操作区域-->
-          <form-design-operate
-              v-if="!toolbarTop"
-              :toolbar="toolbar"
-              :emptyElement="true" @handleSave="handleSave" @handlePreview="handlePreview"
-              @handleOpenImportJsonModal="handleOpenImportJsonModal"
-              @handleOpenCodeModal="handleOpenCodeModal" @handleOpenJsonModal="handleOpenJsonModal"
-              @handleReset="handleReset" @handleClose="handleClose" @handleDownloads="handleDownload"
-          >
-            <template slot="left-action">
-              <slot name="left-action"></slot>
-            </template>
-            <template slot="right-action">
-              <slot name="right-action"></slot>
-            </template>
-          </form-design-operate>
+        <form-design-operate
+            v-if="!toolbarTop"
+            :toolbar="toolbar"
+            :emptyElement="true" @handleSave="handleSave" @handlePreview="handlePreview"
+            @handleOpenImportJsonModal="handleOpenImportJsonModal"
+            @handleOpenCodeModal="handleOpenCodeModal" @handleOpenJsonModal="handleOpenJsonModal"
+            @handleReset="handleReset" @handleClose="handleClose" @handleDownloads="handleDownload"
+        >
+          <template slot="left-action">
+            <slot name="left-action"></slot>
+          </template>
+          <template slot="right-action">
+            <slot name="right-action"></slot>
+          </template>
+        </form-design-operate>
 
-          <!-- 中间面板表单区域-->
-<!--          <form-design-panel-->
-<!--              ref="formDesignPanelRef"-->
-<!--              :class="{'no-toolbar-top': !toolbarTop }"-->
-<!--              :formData="formData"-->
-<!--              :selectItem="selectItem"-->
-<!--              :noModel="noModel"-->
-<!--              :hideModel="hideModel"-->
-<!--              :startType="startType"-->
-<!--              @handleSetSelectItem="handleSetSelectItem"-->
-<!--          />-->
-          <view-json ref="viewJsonRef"/>
-          <view-code ref="viewCodeRef"/>
-          <import-json ref="importJsonRef"/>
-          <form-preview ref="formPreviewRef"/>
-        </section>
-        <!-- 右侧控件属性区域 -->
-        <aside class="right">
-          <el-tabs default-active-key="1">
-            <el-tab-pane name="1" label="组件属性" force-render>
-              <form-item-properties
-                  :class="{ 'show-properties': true }"
-                  class="form-item-properties"
-                  :selectItem="selectItem"
-                  :hideModel="hideModel"
-                  @handleHide="showProperties = false"
-              />
-            </el-tab-pane>
-            <el-tab-pane name="2" label="表单属性">
-              <form-properties :config="formData.config"/>
-            </el-tab-pane>
-          </el-tabs>
-        </aside>
-      </div>
+        <!-- 中间面板表单区域-->
+        <form-design-panel
+            ref="formDesignPanelRef"
+            :class="{'no-toolbar-top': !toolbarTop }"
+            :formData="formData"
+            :selectItem="selectItem"
+            :noModel="noModel"
+            :hideModel="hideModel"
+            :startType="startType"
+            @handleSetSelectItem="handleSetSelectItem"
+        />
+        <view-json ref="viewJsonRef"/>
+        <view-code ref="viewCodeRef"/>
+        <import-json ref="importJsonRef"/>
+        <form-preview ref="formPreviewRef"/>
+      </section>
+      <!-- 右侧控件属性区域 -->
+      <aside class="right">
+        <el-tabs default-active-key="1">
+          <el-tab-pane name="1" label="组件属性" force-render>
+            <form-item-properties
+                :class="{ 'show-properties': true }"
+                class="form-item-properties"
+                :selectItem="selectItem"
+                :hideModel="hideModel"
+                @handleHide="showProperties = false"
+            />
+          </el-tab-pane>
+          <el-tab-pane name="2" label="表单属性">
+            <form-properties :config="formData.config"/>
+          </el-tab-pane>
+        </el-tabs>
+      </aside>
     </div>
-<!--  </el-config-provider>-->
+  </div>
+  <!--  </el-config-provider>-->
 </template>
 
 <script setup lang="ts">
@@ -205,7 +205,6 @@ const formData = reactive<any>({
     width: 850,
   },
 })
-const list2 = []
 const formPreviewRef = ref()
 const formDesignPanelRef = ref()
 const noModel = reactive(["button", "divider", "card", "grid", "table", "alert", "text", "html",])

@@ -1,9 +1,6 @@
 <template>
-  <div
-    :class="{
-      'layout-width': ['grid', 'table', 'card', 'divider', 'html'].includes(record.type),
-   }"
-  >
+<!--  <div :class="{'layout-width': ['grid', 'table', 'card', 'divider', 'html'].includes(record.type)}">-->
+  <div>
     <!-- 动态表格设计模块 start -->
     <template v-if="record.type === 'batch'">
       <div
@@ -36,7 +33,7 @@
             >
               请将组件拖拽到此处（可拖拽多个组件）
             </p>
-            <formNode
+            <FormNode
               v-else
               v-for="item in record.list"
               :key="item.key"
@@ -66,7 +63,7 @@
         </div>
 
         <el-popconfirm
-          placement="bottomRight"
+          placement="right"
           ok-text="是"
           cancel-text="否"
           :icon="InfoFilled"
@@ -123,7 +120,7 @@
                 @add="$emit('handleColAdd', $event, tabItem.list)"
               >
                 <transition-group tag="div" name="list" class="list-main">
-                  <layoutItem
+                  <LayoutItem
                     class="drag-move"
                     v-for="item in tabItem.list"
                     :key="item.key"
@@ -153,7 +150,7 @@
           <el-icon><DocumentCopy /></el-icon>
         </div>
         <el-popconfirm
-          placement="bottomRight"
+          placement="right"
           ok-text="是"
           cancel-text="否"
           :icon="InfoFilled"
@@ -211,7 +208,7 @@
               @add="$emit('handleColAdd', $event, colItem.list)"
             >
               <transition-group tag="div" name="list" class="list-main">
-                <layoutItem
+                <LayoutItem
                   class="drag-move"
                   v-for="item in colItem.list"
                   :key="item.key"
@@ -240,7 +237,7 @@
           <el-icon><DocumentCopy /></el-icon>
         </div>
         <el-popconfirm
-          placement="bottomRight"
+          placement="right"
           ok-text="是"
           cancel-text="否"
           :icon="InfoFilled"
@@ -267,7 +264,7 @@
         :class="{ active: record.key === selectItem.key }"
         @click.stop="handleSelectItem(record)"
       >
-        <a-card
+        <el-card
           class="grid-row"
           :title="record.label"
           :bordered="record.options.bordered ? record.options.bordered : false"
@@ -297,7 +294,7 @@
                 >
                   请将组件拖拽到此处（可拖拽多个组件）
                 </p> -->
-                <layoutItem
+                <LayoutItem
                   class="drag-move"
                   v-for="item in record.list"
                   :key="item.key"
@@ -316,7 +313,7 @@
               </transition-group>
             </draggable>
           </div>
-        </a-card>
+        </el-card>
 
         <div
           class="copy"
@@ -326,7 +323,7 @@
           <el-icon><DocumentCopy /></el-icon>
         </div>
         <el-popconfirm
-          placement="bottomRight"
+          placement="right"
           ok-text="是"
           cancel-text="否"
           :icon="InfoFilled"
@@ -386,7 +383,7 @@
                 @add="$emit('handleColAdd', $event, tdItem.list)"
               >
                 <transition-group tag="div" name="list" class="list-main">
-                  <layoutItem
+                  <LayoutItem
                     class="drag-move"
                     v-for="item in tdItem.list"
                     :key="item.key"
@@ -416,7 +413,7 @@
           <el-icon><DocumentCopy /></el-icon>
         </div>
         <el-popconfirm
-          placement="bottomRight"
+          placement="right"
           ok-text="是"
           cancel-text="否"
           :icon="InfoFilled"
@@ -460,7 +457,7 @@
                 @add="$emit('handleColAdd', $event, record.list)"
                 >
                 <transition-group tag="div" name="list" class="list-main">
-                    <layoutItem
+                    <LayoutItem
                     class="drag-move"
                     v-for="item in record.list"
                     :key="item.key"
@@ -494,7 +491,7 @@
           <el-icon><DocumentCopy /></el-icon>
         </div>
         <el-popconfirm
-          placement="bottomRight"
+          placement="right"
           ok-text="是"
           cancel-text="否"
           :icon="InfoFilled"
@@ -538,7 +535,7 @@
                     @add="$emit('handleColAdd', $event, record.list)"
                 >
                     <transition-group tag="div" name="list" class="list-main">
-                        <layoutItem
+                        <LayoutItem
                             class="drag-move"
                             v-for="item in record.list"
                             :key="item.key"
@@ -566,7 +563,7 @@
           <el-icon><DocumentCopy /></el-icon>
         </div>
         <el-popconfirm
-          placement="bottomRight"
+          placement="right"
           ok-text="是"
           cancel-text="否"
           :icon="InfoFilled"
@@ -587,7 +584,7 @@
     </template>
     <!-- 隐藏 end -->
     <template v-else>
-      <formNode
+      <FormNode
         :key="record.key"
         :selectItem.sync="selectItem"
         :record="record"
@@ -608,7 +605,7 @@
 import {computed} from "vue";
 import {Delete, InfoFilled, DocumentCopy} from '@element-plus/icons-vue'
 import draggable from "vuedraggable";
-import formNode from "./formNode.vue";
+import FormNode from "./FormNode.vue";
 
 const props = defineProps({
   record: {

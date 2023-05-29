@@ -14,7 +14,7 @@
 		}"
   >
     <div class="form-item-box">
-      <FormItem :formConfig="config" :record="record"/>
+      <FormItem :formConfig="config" :formItem="record"/>
     </div>
     <!-- <div v-if="!hideModel" class="show-key-box" v-text="record.model" /> -->
     <div
@@ -35,7 +35,7 @@
       排序顺位：{{ record.options.sortValue }}
     </div>
     <el-popconfirm
-        placement="bottomRight"
+        placement="right"
         ok-text="是"
         cancel-text="否"
         :icon="InfoFilled"
@@ -51,13 +51,6 @@
         </el-icon>
       </div>
     </el-popconfirm>
-    <!-- 		<div
-      class="delete"
-      :class="record.key === selectItem.key ? 'active' : 'unactivated'"
-      @click.stop="$emit('handleDelete')"
-    >
-      <a-icon type="delete" />
-    </div> -->
   </div>
 </template>
 

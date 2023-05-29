@@ -8,25 +8,32 @@
         <input type='button' class='ButtonLib' id='restore' value='复位' @click='operateMap'/>
         <input type='button' class='ButtonLib' id='addGEOJSON' value='加载GEOJSON' @click='loadVectData' />
       </div>
-      <a-dropdown>
+      <el-dropdown trigger="click" @command="handleCommand">
         <div class='MapMenu'>
           <span class="mapmenu-button">
             <span class="mapmenu-label">Map & Tools</span>
-            <a-icon class="mapmenu-icon" type="menu"/>
+            <!--            <el-icon class="map-menu-icon"><Operation /></el-icon>-->
+            <el-icon><Operation/></el-icon>
           </span>
         </div>
-        <a-menu slot='overlay' class="mapmenu-item">
-          <a-menu-item key="0" @click='selectLayers'>
-            <a-icon type='setting'/>
-            <span>图层列表</span>
-          </a-menu-item>
-          <a-menu-divider />
-          <a-menu-item key="1">
-            <a-icon type='setting'/>
-            <span>工具</span>
-          </a-menu-item>
-        </a-menu>
-      </a-dropdown>
+        <template #dropdown>
+          <el-dropdown-menu class="map-menu-item">
+            <el-dropdown-item command="图层">
+              <el-icon>
+                <Setting/>
+              </el-icon>
+              图层列表
+            </el-dropdown-item>
+            <el-divider/>
+            <el-dropdown-item command="工具">
+              <el-icon>
+                <Setting/>
+              </el-icon>
+              工具
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
     </div>
     <div id='map' class='map'>
       <div id='mouse-position'></div>

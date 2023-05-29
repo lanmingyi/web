@@ -20,6 +20,7 @@
 
 <script setup lang="ts">
 import {onMounted, ref, computed} from "vue";
+import FormBuild from "@/components/FormDesign/FormBuild/index";
 
 const props = defineProps({
   formDesign:{

@@ -21,7 +21,6 @@
       </build-blocks>
     </el-form>
   </el-config-provider>
-
 </template>
 
 <script setup lang="ts">
