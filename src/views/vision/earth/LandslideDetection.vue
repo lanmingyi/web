@@ -5,16 +5,21 @@
     </div>
     <div class='' v-show='pictureShow'>
       <!--      <PictureChooseOne ref='pictureSelection' />-->
-      <Table ref="pictureSelectionRef">
+      <Table
+          ref="pictureSelectionRef"
+          :columns="columns"
+      >
+        <template #filePreview="{scope}">
+          <tiff :path="scope.row.filePath" :types="scope.row.fileType"></tiff>
+        </template>
 
       </Table>
-
     </div>
     <div v-show='formShow'>
       <div class='step-content' style='margin-left: 20%; margin-right: 20%'>
         <el-form :model='formData'>
           <el-form-item label='输出图像名称' :labelCol='labelCol' :wrapperCol='wrapperCol'>
-            <el-input v-model='formData.res_name' addon-after='.jpg'/>
+            <el-input v-model='formData.resultName' addon-after='.jpg'/>
           </el-form-item>
         </el-form>
       </div>
@@ -47,17 +52,23 @@
 
 <script setup lang="ts">
 import {defineComponent, reactive, ref} from 'vue'
-import {ElMessage} from "element-plus";
+import {ElMessage, ElMessageBox} from "element-plus";
 import Table from '@/components/Table/index.vue'
 import PictureChooseOne from '@/components/ComputerVision/PictureChooseOne'
 import FileUpload from '@/components/ComputerVision/FileUpload'
 import ImageProcessingModal from '@/components/ComputerVision/ImageProcessingModal'
-import axios from 'axios'
-import {defineOptions} from "unplugin-vue-define-options/macros";
+import request from "@/utils/axios";
+import tiff from '@/components/ComputerVision/tiff'
 
 defineOptions({
   name: 'LandslideDetection'
 })
+
+const columns = [
+  {label: "图片名称", prop: "fileName", align: "center", },
+  {label: "图片类型", prop: "fileType", align: "center", },
+  {label: "图片预览", prop: "filePreview", align: "center"},
+]
 
 const activeKey = ref('1')
 const drawer = ref(false)
@@ -68,108 +79,92 @@ const url = reactive({
 const pictureSelectionRef = ref()
 
 const selection = ref<any[]>([])
-const displayImg = ''
-const displayImg1 = ''
-const pictureShow = true
-const formShow = false
+const pictureShow = ref(true)
+const formShow = ref(false)
 const labelCol = {xs: {span: 24}, sm: {span: 5}}
 const wrapperCol = {xs: {span: 24}, sm: {span: 16}}
-const formData = {}
-const formUrl = ''
-const type = 1
+const formData = reactive({
+  resultName: ''
+})
+let formUrl = ''
+const type = ref(1)
+const modalForm = ref()
 
 const  daUnet = async(url, type, param)=> {
   selection.value = pictureSelectionRef.value.multipleSelection
-  if (type === 1) {
+  if (type.value === 1) {
     if (selection.value.length !== 1) {
-      ElMessage.warning({title: '数量错误', content: '选择的图片数量不是一张！', okText: '确定'})
+      ElMessageBox({title: '数量错误', message: '选择的图片数量不是一张！'})
       return
     }
-    this.$refs.modalForm.modal.visible = true
-    this.$refs.modalForm.imgPath = selection.value[0].filePath
-    this.$refs.modalForm.imgType = selection.value[0].fileType
-    let res_name = this.utils.calculate_res_name(this.formData.res_name, selection.value[0].fileType)
-    console.log('res_name1', res_name)
+    modalForm.value.modal.visible = true
+    modalForm.value.imgPath = selection.value[0].filePath
+    modalForm.value.imgType = selection.value[0].fileType
+
     console.log('selection.value[0].fileType', selection.value[0].fileType)
 
-    let resultName = this.formData.res_name !== '' ? res_name : selection.value[0].fileName
-    const axios = require('axios')
-    await axios.get(
-        window._CONFIG['algorithmURL'] + url, {
-          params: {
-            img_name: selection.value[0].filePath,
-            result_name: resultName,
-            ...param
-          }
-        }
-    ).then((res) => {
-          this.$refs.modalForm.processResult = {}
-          this.$refs.modalForm.processResult = res.data
-          if (res.data.code === '1') {
-            ElMessage.success('图片处理成功！')
-          } else if (res.data.code === '2') {
-            ElMessage.error('图片处理失败！')
-          }
-        }
-    )
-  } else if (type === 2) {
+    let resultName = formData.resultName
+    let params =  {
+      img_name: selection.value[0].filePath,
+      result_name: resultName,
+      ...param
+    }
+    request.get<any>({url:url,params: params}).then(res=>{
+      modalForm.value.processResult = {}
+      modalForm.value.processResult = res.data
+      if (res.data.code === '1') {
+        ElMessage.success('图片处理成功！')
+      } else if (res.data.code === '2') {
+        ElMessage.error('图片处理失败！')
+      }
+    })
+  } else if (type.value === 2) {
     if (selection.value.length !== 2) {
-      ElMessage.warning({title: '数量错误', content: '选择的图片数量不是两张！', okText: '确定'})
+      ElMessageBox({title: '数量错误', message: '选择的图片数量不是两张！'})
       return
     }
-    this.$refs.modalForm.modal.visible = true
-    this.$refs.modalForm.imgPath = selection.value[0].filePath
-    this.$refs.modalForm.imgPath1 = selection.value[1].filePath
-    this.$refs.modalForm.imgType = selection.value[0].fileType
-    this.$refs.modalForm.imgType1 = selection.value[1].fileType
-    let res_name = this.utils.calculate_res_name(this.formData.res_name)
-    let resultName = this.formData.res_name !== '' ? res_name : selection.value[0].fileName
-    const axios = require('axios')
-    await axios.get(
-        window._CONFIG['algorithmURL'] + url, {
-          params: {
-            img_name1: selection.value[0].filePath,
-            img_name2: selection.value[1].filePath,
-            result_name: resultName,
-            ...param
-          }
-        }
-    ).then((res) => {
-          this.$refs.modalForm.processResult = {}
-          this.$refs.modalForm.processResult = res.data
-          this.processResult = res.data
-          if (res.data.code === '1') {
-            ElMessage.success('图片处理成功！')
-          } else if (res.data.code === '2') {
-            ElMessage.error('图片处理失败！')
-          }
-        }
-    )
+    modalForm.value.modal.visible = true
+    modalForm.value.imgPath = selection.value[0].filePath
+    modalForm.value.imgPath1 = selection.value[1].filePath
+    modalForm.value.imgType = selection.value[0].fileType
+    modalForm.value.imgType1 = selection.value[1].fileType
+
+    let resultName = formData.resultName
+    let params = {
+      img_name1: selection.value[0].filePath,
+      img_name2: selection.value[1].filePath,
+      result_name: resultName,
+      ...param
+    }
+
+    request.get<any>({url:url,params: params}).then(res=>{
+      modalForm.value.processResult = {}
+      modalForm.value.processResult = res.data
+      if (res.data.code === '1') {
+        ElMessage.success('图片处理成功！')
+      } else if (res.data.code === '2') {
+        ElMessage.error('图片处理失败！')
+      }
+    })
   }
 }
 
-export default {
-  methods: {
-    onClose() {
-      this.drawer = false
-    },
-    cancel() {
-      selection.value = []
-      this.displayImg = ''
-      this.displayImg1 = ''
-      this.pictureShow = true
-      this.formShow = false
-      this.formData.res_name = ''
-    },
-    
+const onClose = () => {
+  drawer.value = false
+}
 
-    showForm(url, type) {
-      this.formUrl = url
-      this.type = type
-      this.pictureShow = false
-      this.formShow = true
-    }
-  }
+const cancel = () =>  {
+  selection.value = []
+  pictureShow.value = true
+  formShow.value = false
+  formData.resultName = ''
+}
+
+const showForm = (url, type) => {
+  formUrl = url
+  type.value = type
+  pictureShow.value = false
+  formShow.value = true
 }
 </script>
 
