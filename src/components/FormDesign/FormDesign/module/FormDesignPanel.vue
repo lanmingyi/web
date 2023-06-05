@@ -68,7 +68,7 @@
 import draggable from "vuedraggable";
 import LayoutItem from "./LayoutItem.vue";
 // import "codemirror/mode/javascript/javascript";
-import {ref, onMounted, onUnmounted, computed} from "vue";
+import {ref, reactive, onMounted, onUnmounted, computed} from "vue";
 import {ElMessage} from "element-plus";
 
 const props = defineProps({
@@ -132,13 +132,15 @@ const insertAllowedType = [
   "text",
   "html",
 ]
-const rightMenuSelectValue = {}
+let rightMenuSelectValue = reactive({
+  trs: []
+})
 const showRightMenu = ref(false)
 const menuTop = ref(0)
 const menuLeft = ref(0)
 const trIndex = ref(0)
 const tdIndex = ref(0)
-const activeArr: any[] = ref([])
+const activeArr = ref<any[]>([])
 
 const log = (evt) => {
   console.log('formData.list', formData.list)

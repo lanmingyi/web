@@ -17,6 +17,7 @@
     "bpmn-js": "^13.0.4",
     "echarts": "^5.4.1",
     "element-plus": "^2.2.36",
+    "face-api.js": "^0.22.2",
     "fast-glob": "^3.2.12",
     "js-cookie": "^3.0.1",
     "lodash-es": "^4.17.21",

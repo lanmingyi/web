@@ -1,5 +1,5 @@
 <template>
-  <div class='card-container' style='background: #fff; min-height: 100%'>
+  <div class='app-container' style='background: #fff; min-height: 100%'>
     <el-tabs v-model:activeKey='activeKey' type='card'>
       <el-tab-pane name='1' label='基础功能'>
         <div class='table-operator' style='border-top: 5px'>
@@ -17,8 +17,10 @@
           <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.rotate, 1)'>图像旋转</el-button>
           <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.resize, 1)'>图像缩放</el-button>
         </div>
-        <div class='' v-show='pictureShow'>
-          <PictureChooseOne ref='pictureSelection'/>
+        <div class=''>
+          <Table ref="tableRef">
+
+          </Table>
         </div>
         <div v-show='formShow'>
           <div class='step-content' style='margin-left: 20%; margin-right: 20%'>
@@ -77,308 +79,309 @@
           </el-button>
         </div>
       </el-tab-pane>
-      <el-tab-pane name='2' label='图像分析'>
-        <div class='table-operator' style='border-top: 5px'>
-          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.histogramGray, 1)'>灰度直方图
-          </el-button>
-          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.histogramBgr, 1)'>彩色直方图
-          </el-button>
-        </div>
-        <div class='' v-show='pictureShow'>
-          <PictureChooseOne ref='pictureSelection'/>
-        </div>
-        <div v-show='formShow'>
-          <div class='step-content' style='margin-left: 20%; margin-right: 20%'>
-            <el-form :model='formData'>
-              <el-form-item label='输出图像名称' :labelCol='labelCol' :wrapperCol='wrapperCol'>
-                <el-input v-model='formData.res_name' addon-after='.jpg'/>
-              </el-form-item>
-            </el-form>
-          </div>
-          <el-button style='margin-left: 80%; margin-top: 10px;' @click='cancel'>取消</el-button>
-          <el-button type='primary' style='margin-left: 10px; margin-top: 10px;'
-                     @click='basicFunction(formUrl, type, formData)'>处理图像
-          </el-button>
-        </div>
-      </el-tab-pane>
-      <el-tab-pane name='3' label='图像分割'>
-        <div class='table-operator' style='border-top: 5px'>
-          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.roberts, 1)'>Roberts 算子
-          </el-button>
-          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.sobel, 1)'>Sobel 算子</el-button>
-          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.laplacian, 1)'>Laplacian 算子
-          </el-button>
-          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.LoG, 1)'>LoG 算子</el-button>
-          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.canny, 1)'>Canny 算子</el-button>
-          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.houghLines, 1)'>HoughLines
-            线条变化检测
-          </el-button>
-          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.houghLinesP, 1)'>HoughLinesP
-            线条变化检测
-          </el-button>
-        </div>
-        <div class='' v-show='pictureShow'>
-          <PictureChooseOne ref='pictureSelection'/>
-        </div>
-        <div v-show='formShow'>
-          <div class='step-content' style='margin-left: 20%; margin-right: 20%'>
-            <el-form :model='formData'>
-              <el-form-item label='输出图像名称' :labelCol='labelCol' :wrapperCol='wrapperCol'>
-                <el-input v-model='formData.res_name' addon-after='.jpg'/>
-              </el-form-item>
-              <!--              Roberts 算子，Sobel 算子-->
-              <el-form-item label="Roberts 算子，Sobel 算子" class="labelStyle"/>
-              <el-form-item label='权值' :labelCol='labelCol' :wrapperCol='wrapperCol'>
-                <el-input placeholder='x权值，推荐0.5' v-model='formData.val1'>
-                </el-input>
-                <el-input placeholder='y权值，推荐0.5' v-model='formData.val2'>
-                </el-input>
-              </el-form-item>
-              <el-form-item label='偏置值' :labelCol='labelCol' :wrapperCol='wrapperCol'>
-                <el-input placeholder='推荐0' v-model='formData.exp'>
-                </el-input>
-              </el-form-item>
-              <!--              Laplacian 算子-->
-              <el-form-item label="Laplacian 算子" class="labelStyle"/>
-              <el-form-item label='滤波核数' :labelCol='labelCol' :wrapperCol='wrapperCol'>
-                <el-input placeholder='奇数，推荐3' v-model='formData.kernel_size'>
-                </el-input>
-              </el-form-item>
-              <el-form-item label='偏置值' :labelCol='labelCol' :wrapperCol='wrapperCol'>
-                <el-input placeholder='推荐0' v-model='formData.exp'>
-                </el-input>
-              </el-form-item>
-              <el-form-item label='处理核数' :labelCol='labelCol' :wrapperCol='wrapperCol'>
-                <el-input placeholder='奇数，推荐3' v-model='formData.k_size'>
-                </el-input>
-              </el-form-item>
-              <!--              Canny 算子-->
-              <el-form-item label="Canny 算子" class="labelStyle"/>
-              <el-form-item label='滤波核数' :labelCol='labelCol' :wrapperCol='wrapperCol'>
-                <el-input placeholder='奇数，推荐3' v-model='formData.kernel_size'>
-                </el-input>
-              </el-form-item>
-              <el-form-item label='偏置值' :labelCol='labelCol' :wrapperCol='wrapperCol'>
-                <el-input placeholder='推荐0' v-model='formData.exp'>
-                </el-input>
-              </el-form-item>
-            </el-form>
-          </div>
-          <el-button style='margin-left: 80%; margin-top: 10px;' @click='cancel'>取消</el-button>
-          <el-button type='primary' style='margin-left: 10px; margin-top: 10px;'
-                     @click='basicFunction(formUrl, type, formData)'>处理图像
-          </el-button>
-        </div>
-      </el-tab-pane>
-      <el-tab-pane name='4' label='图像平滑与锐化'>
-        <div class='table-operator' style='border-top: 5px'>
-          <!--          图像平滑-->
-          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.smoNeighbourAverage, 1)'>领域平均法
-          </el-button>
-          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.smoMedianFilter, 1)'>中值滤波法
-          </el-button>
-          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.smoIdealFilter, 1)'>理想低通滤波器
-          </el-button>
-          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.smoBarteFilter, 1)'>
-            巴特沃斯低通滤波器
-          </el-button>
-          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.smoExpFilter, 1)'>指数低通滤波器
-          </el-button>
-          <!--          图像锐化-->
-          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.sharRobert, 1)'>Roberts 算子
-          </el-button>
-          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.sharLaplacian, 1)'>Laplacian 算子
-          </el-button>
-          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.sharSobel, 1)'>Sobel 算子
-          </el-button>
-          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.sharPrewitt, 1)'>Prewitt 算子
-          </el-button>
-          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.sharIdealHigh, 1)'>理想低通滤波器
-          </el-button>
-          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.sharBarteFilter, 1)'>
-            巴特沃斯低通滤波器
-          </el-button>
-          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.sharExpFilter, 1)'>指数低通滤波器
-          </el-button>
+<!--      <el-tab-pane name='2' label='图像分析'>-->
+<!--        <div class='table-operator' style='border-top: 5px'>-->
+<!--          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.histogramGray, 1)'>灰度直方图-->
+<!--          </el-button>-->
+<!--          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.histogramBgr, 1)'>彩色直方图-->
+<!--          </el-button>-->
+<!--        </div>-->
+<!--        <div class='' v-show='pictureShow'>-->
+<!--          <PictureChooseOne ref='pictureSelection'/>-->
+<!--        </div>-->
+<!--        <div v-show='formShow'>-->
+<!--          <div class='step-content' style='margin-left: 20%; margin-right: 20%'>-->
+<!--            <el-form :model='formData'>-->
+<!--              <el-form-item label='输出图像名称' :labelCol='labelCol' :wrapperCol='wrapperCol'>-->
+<!--                <el-input v-model='formData.res_name' addon-after='.jpg'/>-->
+<!--              </el-form-item>-->
+<!--            </el-form>-->
+<!--          </div>-->
+<!--          <el-button style='margin-left: 80%; margin-top: 10px;' @click='cancel'>取消</el-button>-->
+<!--          <el-button type='primary' style='margin-left: 10px; margin-top: 10px;'-->
+<!--                     @click='basicFunction(formUrl, type, formData)'>处理图像-->
+<!--          </el-button>-->
+<!--        </div>-->
+<!--      </el-tab-pane>-->
+<!--      <el-tab-pane name='3' label='图像分割'>-->
+<!--        <div class='table-operator' style='border-top: 5px'>-->
+<!--          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.roberts, 1)'>Roberts 算子-->
+<!--          </el-button>-->
+<!--          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.sobel, 1)'>Sobel 算子</el-button>-->
+<!--          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.laplacian, 1)'>Laplacian 算子-->
+<!--          </el-button>-->
+<!--          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.LoG, 1)'>LoG 算子</el-button>-->
+<!--          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.canny, 1)'>Canny 算子</el-button>-->
+<!--          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.houghLines, 1)'>HoughLines-->
+<!--            线条变化检测-->
+<!--          </el-button>-->
+<!--          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.houghLinesP, 1)'>HoughLinesP-->
+<!--            线条变化检测-->
+<!--          </el-button>-->
+<!--        </div>-->
+<!--        <div class='' v-show='pictureShow'>-->
+<!--          <PictureChooseOne ref='pictureSelection'/>-->
+<!--        </div>-->
+<!--        <div v-show='formShow'>-->
+<!--          <div class='step-content' style='margin-left: 20%; margin-right: 20%'>-->
+<!--            <el-form :model='formData'>-->
+<!--              <el-form-item label='输出图像名称' :labelCol='labelCol' :wrapperCol='wrapperCol'>-->
+<!--                <el-input v-model='formData.res_name' addon-after='.jpg'/>-->
+<!--              </el-form-item>-->
+<!--              &lt;!&ndash;              Roberts 算子，Sobel 算子&ndash;&gt;-->
+<!--              <el-form-item label="Roberts 算子，Sobel 算子" class="labelStyle"/>-->
+<!--              <el-form-item label='权值' :labelCol='labelCol' :wrapperCol='wrapperCol'>-->
+<!--                <el-input placeholder='x权值，推荐0.5' v-model='formData.val1'>-->
+<!--                </el-input>-->
+<!--                <el-input placeholder='y权值，推荐0.5' v-model='formData.val2'>-->
+<!--                </el-input>-->
+<!--              </el-form-item>-->
+<!--              <el-form-item label='偏置值' :labelCol='labelCol' :wrapperCol='wrapperCol'>-->
+<!--                <el-input placeholder='推荐0' v-model='formData.exp'>-->
+<!--                </el-input>-->
+<!--              </el-form-item>-->
+<!--              &lt;!&ndash;              Laplacian 算子&ndash;&gt;-->
+<!--              <el-form-item label="Laplacian 算子" class="labelStyle"/>-->
+<!--              <el-form-item label='滤波核数' :labelCol='labelCol' :wrapperCol='wrapperCol'>-->
+<!--                <el-input placeholder='奇数，推荐3' v-model='formData.kernel_size'>-->
+<!--                </el-input>-->
+<!--              </el-form-item>-->
+<!--              <el-form-item label='偏置值' :labelCol='labelCol' :wrapperCol='wrapperCol'>-->
+<!--                <el-input placeholder='推荐0' v-model='formData.exp'>-->
+<!--                </el-input>-->
+<!--              </el-form-item>-->
+<!--              <el-form-item label='处理核数' :labelCol='labelCol' :wrapperCol='wrapperCol'>-->
+<!--                <el-input placeholder='奇数，推荐3' v-model='formData.k_size'>-->
+<!--                </el-input>-->
+<!--              </el-form-item>-->
+<!--              &lt;!&ndash;              Canny 算子&ndash;&gt;-->
+<!--              <el-form-item label="Canny 算子" class="labelStyle"/>-->
+<!--              <el-form-item label='滤波核数' :labelCol='labelCol' :wrapperCol='wrapperCol'>-->
+<!--                <el-input placeholder='奇数，推荐3' v-model='formData.kernel_size'>-->
+<!--                </el-input>-->
+<!--              </el-form-item>-->
+<!--              <el-form-item label='偏置值' :labelCol='labelCol' :wrapperCol='wrapperCol'>-->
+<!--                <el-input placeholder='推荐0' v-model='formData.exp'>-->
+<!--                </el-input>-->
+<!--              </el-form-item>-->
+<!--            </el-form>-->
+<!--          </div>-->
+<!--          <el-button style='margin-left: 80%; margin-top: 10px;' @click='cancel'>取消</el-button>-->
+<!--          <el-button type='primary' style='margin-left: 10px; margin-top: 10px;'-->
+<!--                     @click='basicFunction(formUrl, type, formData)'>处理图像-->
+<!--          </el-button>-->
+<!--        </div>-->
+<!--      </el-tab-pane>-->
+<!--      <el-tab-pane name='4' label='图像平滑与锐化'>-->
+<!--        <div class='table-operator' style='border-top: 5px'>-->
+<!--          &lt;!&ndash;          图像平滑&ndash;&gt;-->
+<!--          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.smoNeighbourAverage, 1)'>领域平均法-->
+<!--          </el-button>-->
+<!--          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.smoMedianFilter, 1)'>中值滤波法-->
+<!--          </el-button>-->
+<!--          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.smoIdealFilter, 1)'>理想低通滤波器-->
+<!--          </el-button>-->
+<!--          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.smoBarteFilter, 1)'>-->
+<!--            巴特沃斯低通滤波器-->
+<!--          </el-button>-->
+<!--          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.smoExpFilter, 1)'>指数低通滤波器-->
+<!--          </el-button>-->
+<!--          &lt;!&ndash;          图像锐化&ndash;&gt;-->
+<!--          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.sharRobert, 1)'>Roberts 算子-->
+<!--          </el-button>-->
+<!--          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.sharLaplacian, 1)'>Laplacian 算子-->
+<!--          </el-button>-->
+<!--          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.sharSobel, 1)'>Sobel 算子-->
+<!--          </el-button>-->
+<!--          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.sharPrewitt, 1)'>Prewitt 算子-->
+<!--          </el-button>-->
+<!--          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.sharIdealHigh, 1)'>理想低通滤波器-->
+<!--          </el-button>-->
+<!--          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.sharBarteFilter, 1)'>-->
+<!--            巴特沃斯低通滤波器-->
+<!--          </el-button>-->
+<!--          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.sharExpFilter, 1)'>指数低通滤波器-->
+<!--          </el-button>-->
 
-        </div>
-        <div class='' v-show='pictureShow'>
-          <PictureChooseOne ref='pictureSelection'/>
-        </div>
-        <div v-show='formShow'>
-          <div class='step-content' style='margin-left: 20%; margin-right: 20%'>
-            <el-form :model='formData'>
-              <el-form-item label='输出图像名称' :labelCol='labelCol' :wrapperCol='wrapperCol'>
-                <el-input v-model='formData.res_name' addon-after='.jpg'/>
-              </el-form-item>
-              <!--              领域平均法，中值滤波法-->
-              <el-form-item label="领域平均法，中值滤波法" class="labelStyle"/>
-              <el-form-item label='核数' :labelCol='labelCol' :wrapperCol='wrapperCol'>
-                <el-input placeholder='奇数，推荐3' v-model='formData.kernel_size'>
-                </el-input>
-              </el-form-item>
-              <!--              理想低通滤波器-->
-              <el-form-item label="理想低通滤波器" class="labelStyle"/>
-              <el-form-item label='阈值' :labelCol='labelCol' :wrapperCol='wrapperCol'>
-                <el-input placeholder='0～255' v-model='formData.d0'>
-                </el-input>
-              </el-form-item>
-              <!--              巴特沃斯低通滤波器，指数低通滤波器-->
-              <el-form-item label="巴特沃斯低通滤波器，指数低通滤波器" class="labelStyle"/>
-              <el-form-item label='阈值' :labelCol='labelCol' :wrapperCol='wrapperCol'>
-                <el-input placeholder='0～255' v-model='formData.d0'>
-                </el-input>
-              </el-form-item>
-              <el-form-item label='阶数' :labelCol='labelCol' :wrapperCol='wrapperCol'>
-                <el-input v-model='formData.rank'>
-                </el-input>
-              </el-form-item>
-            </el-form>
-          </div>
-          <el-button style='margin-left: 80%; margin-top: 10px;' @click='cancel'>取消</el-button>
-          <el-button type='primary' style='margin-left: 10px; margin-top: 10px;'
-                     @click='basicFunction(formUrl, type, formData)'>处理图像
-          </el-button>
-        </div>
-      </el-tab-pane>
-      <el-tab-pane name='5' label='图像形态学'>
-        <div class='table-operator' style='border-top: 5px'>
-          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.erode, 1)'>腐蚀</el-button>
-          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.dilate, 1)'>膨胀</el-button>
-          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.morOpen, 1)'>开运算</el-button>
-          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.morClose, 1)'>闭运算</el-button>
-        </div>
-        <div class='' v-show='pictureShow'>
-          <PictureChooseOne ref='pictureSelection'/>
-        </div>
-        <div v-show='formShow'>
-          <div class='step-content' style='margin-left: 20%; margin-right: 20%'>
-            <el-form :model='formData'>
-              <el-form-item label='输出图像名称' :labelCol='labelCol' :wrapperCol='wrapperCol'>
-                <el-input v-model='formData.res_name' addon-after='.jpg'/>
-              </el-form-item>
-              <!--              腐蚀，膨胀，开运算，闭运算-->
-              <el-form-item label="腐蚀，膨胀，开运算，闭运算" class="labelStyle"/>
-              <el-form-item label='结构元类型' :labelCol='labelCol' :wrapperCol='wrapperCol'>
-                <el-select v-model='formData.kernel_type' placeholder='请选择结构元类型'>
-                  <el-option value='cross'>十字形</el-option>
-                  <el-option value='rectangle'>矩形</el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item label='结构元核数' :labelCol='labelCol' :wrapperCol='wrapperCol'>
-                <el-input placeholder='奇数，推荐3' v-model='formData.kernel_size'>
-                </el-input>
-              </el-form-item>
-            </el-form>
-          </div>
-          <el-button style='margin-left: 80%; margin-top: 10px;' @click='cancel'>取消</el-button>
-          <el-button type='primary' style='margin-left: 10px; margin-top: 10px;'
-                     @click='basicFunction(formUrl, type, formData)'>处理图像
-          </el-button>
-        </div>
-      </el-tab-pane>
-      <el-tab-pane name='6' label='图像修复'>
-        <div class='table-operator' style='border-top: 5px'>
-          <!--          添加噪声-->
-          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.gaussNoise, 1)'>高斯噪声</el-button>
-          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.saltPepperNoise, 1)'>椒盐噪声
-          </el-button>
-          <!--          图像去噪-->
-          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.arithmeticAverageFilter, 1)'>
-            算数均值滤波
-          </el-button>
-          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.geometricAverageFilter, 1)'>
-            几何均值滤波
-          </el-button>
-          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.harmonicAverageFilter, 1)'>
-            谐波均值滤波
-          </el-button>
-          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.minFilter, 1)'>最小值滤波
-          </el-button>
-          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.maxFilter, 1)'>最大值滤波
-          </el-button>
-          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.medianFilter, 1)'>中值滤波
-          </el-button>
-          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.rangeFilter, 1)'>频域带通滤波器
-          </el-button>
+<!--        </div>-->
+<!--        <div class='' v-show='pictureShow'>-->
+<!--          <PictureChooseOne ref='pictureSelection'/>-->
+<!--        </div>-->
+<!--        <div v-show='formShow'>-->
+<!--          <div class='step-content' style='margin-left: 20%; margin-right: 20%'>-->
+<!--            <el-form :model='formData'>-->
+<!--              <el-form-item label='输出图像名称' :labelCol='labelCol' :wrapperCol='wrapperCol'>-->
+<!--                <el-input v-model='formData.res_name' addon-after='.jpg'/>-->
+<!--              </el-form-item>-->
+<!--              &lt;!&ndash;              领域平均法，中值滤波法&ndash;&gt;-->
+<!--              <el-form-item label="领域平均法，中值滤波法" class="labelStyle"/>-->
+<!--              <el-form-item label='核数' :labelCol='labelCol' :wrapperCol='wrapperCol'>-->
+<!--                <el-input placeholder='奇数，推荐3' v-model='formData.kernel_size'>-->
+<!--                </el-input>-->
+<!--              </el-form-item>-->
+<!--              &lt;!&ndash;              理想低通滤波器&ndash;&gt;-->
+<!--              <el-form-item label="理想低通滤波器" class="labelStyle"/>-->
+<!--              <el-form-item label='阈值' :labelCol='labelCol' :wrapperCol='wrapperCol'>-->
+<!--                <el-input placeholder='0～255' v-model='formData.d0'>-->
+<!--                </el-input>-->
+<!--              </el-form-item>-->
+<!--              &lt;!&ndash;              巴特沃斯低通滤波器，指数低通滤波器&ndash;&gt;-->
+<!--              <el-form-item label="巴特沃斯低通滤波器，指数低通滤波器" class="labelStyle"/>-->
+<!--              <el-form-item label='阈值' :labelCol='labelCol' :wrapperCol='wrapperCol'>-->
+<!--                <el-input placeholder='0～255' v-model='formData.d0'>-->
+<!--                </el-input>-->
+<!--              </el-form-item>-->
+<!--              <el-form-item label='阶数' :labelCol='labelCol' :wrapperCol='wrapperCol'>-->
+<!--                <el-input v-model='formData.rank'>-->
+<!--                </el-input>-->
+<!--              </el-form-item>-->
+<!--            </el-form>-->
+<!--          </div>-->
+<!--          <el-button style='margin-left: 80%; margin-top: 10px;' @click='cancel'>取消</el-button>-->
+<!--          <el-button type='primary' style='margin-left: 10px; margin-top: 10px;'-->
+<!--                     @click='basicFunction(formUrl, type, formData)'>处理图像-->
+<!--          </el-button>-->
+<!--        </div>-->
+<!--      </el-tab-pane>-->
+<!--      <el-tab-pane name='5' label='图像形态学'>-->
+<!--        <div class='table-operator' style='border-top: 5px'>-->
+<!--          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.erode, 1)'>腐蚀</el-button>-->
+<!--          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.dilate, 1)'>膨胀</el-button>-->
+<!--          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.morOpen, 1)'>开运算</el-button>-->
+<!--          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.morClose, 1)'>闭运算</el-button>-->
+<!--        </div>-->
+<!--        <div class='' v-show='pictureShow'>-->
+<!--          <PictureChooseOne ref='pictureSelection'/>-->
+<!--        </div>-->
+<!--        <div v-show='formShow'>-->
+<!--          <div class='step-content' style='margin-left: 20%; margin-right: 20%'>-->
+<!--            <el-form :model='formData'>-->
+<!--              <el-form-item label='输出图像名称' :labelCol='labelCol' :wrapperCol='wrapperCol'>-->
+<!--                <el-input v-model='formData.res_name' addon-after='.jpg'/>-->
+<!--              </el-form-item>-->
+<!--              &lt;!&ndash;              腐蚀，膨胀，开运算，闭运算&ndash;&gt;-->
+<!--              <el-form-item label="腐蚀，膨胀，开运算，闭运算" class="labelStyle"/>-->
+<!--              <el-form-item label='结构元类型' :labelCol='labelCol' :wrapperCol='wrapperCol'>-->
+<!--                <el-select v-model='formData.kernel_type' placeholder='请选择结构元类型'>-->
+<!--                  <el-option value='cross'>十字形</el-option>-->
+<!--                  <el-option value='rectangle'>矩形</el-option>-->
+<!--                </el-select>-->
+<!--              </el-form-item>-->
+<!--              <el-form-item label='结构元核数' :labelCol='labelCol' :wrapperCol='wrapperCol'>-->
+<!--                <el-input placeholder='奇数，推荐3' v-model='formData.kernel_size'>-->
+<!--                </el-input>-->
+<!--              </el-form-item>-->
+<!--            </el-form>-->
+<!--          </div>-->
+<!--          <el-button style='margin-left: 80%; margin-top: 10px;' @click='cancel'>取消</el-button>-->
+<!--          <el-button type='primary' style='margin-left: 10px; margin-top: 10px;'-->
+<!--                     @click='basicFunction(formUrl, type, formData)'>处理图像-->
+<!--          </el-button>-->
+<!--        </div>-->
+<!--      </el-tab-pane>-->
+<!--      <el-tab-pane name='6' label='图像修复'>-->
+<!--        <div class='table-operator' style='border-top: 5px'>-->
+<!--          &lt;!&ndash;          添加噪声&ndash;&gt;-->
+<!--          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.gaussNoise, 1)'>高斯噪声</el-button>-->
+<!--          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.saltPepperNoise, 1)'>椒盐噪声-->
+<!--          </el-button>-->
+<!--          &lt;!&ndash;          图像去噪&ndash;&gt;-->
+<!--          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.arithmeticAverageFilter, 1)'>-->
+<!--            算数均值滤波-->
+<!--          </el-button>-->
+<!--          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.geometricAverageFilter, 1)'>-->
+<!--            几何均值滤波-->
+<!--          </el-button>-->
+<!--          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.harmonicAverageFilter, 1)'>-->
+<!--            谐波均值滤波-->
+<!--          </el-button>-->
+<!--          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.minFilter, 1)'>最小值滤波-->
+<!--          </el-button>-->
+<!--          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.maxFilter, 1)'>最大值滤波-->
+<!--          </el-button>-->
+<!--          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.medianFilter, 1)'>中值滤波-->
+<!--          </el-button>-->
+<!--          <el-button type='primary' style='margin-right: 8px;' @click='showForm(url.rangeFilter, 1)'>频域带通滤波器-->
+<!--          </el-button>-->
 
-        </div>
-        <div class='' v-show='pictureShow'>
-          <PictureChooseOne ref='pictureSelection'/>
-        </div>
-        <div v-show='formShow'>
-          <div class='step-content' style='margin-left: 20%; margin-right: 20%'>
-            <el-form :model='formData'>
-              <el-form-item label='输出图像名称' :labelCol='labelCol' :wrapperCol='wrapperCol'>
-                <el-input v-model='formData.res_name' addon-after='.jpg'/>
-              </el-form-item>
-              <!--              椒盐噪声-->
-              <el-form-item label="椒盐噪声" class="labelStyle"/>
-              <el-form-item label='噪声比' :labelCol='labelCol' :wrapperCol='wrapperCol'>
-                <el-input placeholder='0.01' v-model='formData.prob'>
-                </el-input>
-              </el-form-item>
-              <!--              算数均值滤波，几何均值滤波，谐波均值滤波-->
-              <el-form-item label="算数均值滤波，几何均值滤波，谐波均值滤波" class="labelStyle"/>
-              <el-form-item label='滤波器大小' :labelCol='labelCol' :wrapperCol='wrapperCol'>
-                <el-input placeholder='奇数，推荐3' v-model='formData.filter_size_p'>
-                </el-input>
-                <el-input placeholder='奇数，推荐3' v-model='formData.filter_size_q'>
-                </el-input>
-              </el-form-item>
-              <!--              频域带通滤波器-->
-              <el-form-item label="频域带通滤波器" class="labelStyle"/>
-              <el-form-item label='可通过像素值范围' :labelCol='labelCol' :wrapperCol='wrapperCol'>
-                <el-input placeholder='最小值' v-model='formData.min'>
-                </el-input>
-                <el-input placeholder="无穷大输入'MAX'" v-model='formData.max'>
-                </el-input>
-              </el-form-item>
-              <el-form-item label='未通过像素新值' :labelCol='labelCol' :wrapperCol='wrapperCol'>
-                <el-select v-model='formData.color' placeholder='请选择翻转方向' style="width:100%">
-                  <el-option value='0'>0</el-option>
-                  <el-option value='255'>255</el-option>
-                </el-select>
-              </el-form-item>
-            </el-form>
-          </div>
-          <el-button style='margin-left: 80%; margin-top: 10px;' @click='cancel'>取消</el-button>
-          <el-button type='primary' style='margin-left: 10px; margin-top: 10px;'
-                     @click='basicFunction(formUrl, type, formData)'>处理图像
-          </el-button>
-        </div>
-      </el-tab-pane>
+<!--        </div>-->
+<!--        <div class='' v-show='pictureShow'>-->
+<!--          <PictureChooseOne ref='pictureSelection'/>-->
+<!--        </div>-->
+<!--        <div v-show='formShow'>-->
+<!--          <div class='step-content' style='margin-left: 20%; margin-right: 20%'>-->
+<!--            <el-form :model='formData'>-->
+<!--              <el-form-item label='输出图像名称' :labelCol='labelCol' :wrapperCol='wrapperCol'>-->
+<!--                <el-input v-model='formData.res_name' addon-after='.jpg'/>-->
+<!--              </el-form-item>-->
+<!--              &lt;!&ndash;              椒盐噪声&ndash;&gt;-->
+<!--              <el-form-item label="椒盐噪声" class="labelStyle"/>-->
+<!--              <el-form-item label='噪声比' :labelCol='labelCol' :wrapperCol='wrapperCol'>-->
+<!--                <el-input placeholder='0.01' v-model='formData.prob'>-->
+<!--                </el-input>-->
+<!--              </el-form-item>-->
+<!--              &lt;!&ndash;              算数均值滤波，几何均值滤波，谐波均值滤波&ndash;&gt;-->
+<!--              <el-form-item label="算数均值滤波，几何均值滤波，谐波均值滤波" class="labelStyle"/>-->
+<!--              <el-form-item label='滤波器大小' :labelCol='labelCol' :wrapperCol='wrapperCol'>-->
+<!--                <el-input placeholder='奇数，推荐3' v-model='formData.filter_size_p'>-->
+<!--                </el-input>-->
+<!--                <el-input placeholder='奇数，推荐3' v-model='formData.filter_size_q'>-->
+<!--                </el-input>-->
+<!--              </el-form-item>-->
+<!--              &lt;!&ndash;              频域带通滤波器&ndash;&gt;-->
+<!--              <el-form-item label="频域带通滤波器" class="labelStyle"/>-->
+<!--              <el-form-item label='可通过像素值范围' :labelCol='labelCol' :wrapperCol='wrapperCol'>-->
+<!--                <el-input placeholder='最小值' v-model='formData.min'>-->
+<!--                </el-input>-->
+<!--                <el-input placeholder="无穷大输入'MAX'" v-model='formData.max'>-->
+<!--                </el-input>-->
+<!--              </el-form-item>-->
+<!--              <el-form-item label='未通过像素新值' :labelCol='labelCol' :wrapperCol='wrapperCol'>-->
+<!--                <el-select v-model='formData.color' placeholder='请选择翻转方向' style="width:100%">-->
+<!--                  <el-option value='0'>0</el-option>-->
+<!--                  <el-option value='255'>255</el-option>-->
+<!--                </el-select>-->
+<!--              </el-form-item>-->
+<!--            </el-form>-->
+<!--          </div>-->
+<!--          <el-button style='margin-left: 80%; margin-top: 10px;' @click='cancel'>取消</el-button>-->
+<!--          <el-button type='primary' style='margin-left: 10px; margin-top: 10px;'-->
+<!--                     @click='basicFunction(formUrl, type, formData)'>处理图像-->
+<!--          </el-button>-->
+<!--        </div>-->
+<!--      </el-tab-pane>-->
       <el-button slot='tabBarExtraContent' type='primary' @click='drawer = true' style='margin-right: 20px;'>
         上传图片
       </el-button>
 
     </el-tabs>
-    <el-drawer
-        title='上传图片'
-        :closable='false'
-        v-model='drawer'
-        width='700'
-        @close='onClose'
-    >
-      <FileUpload/>
-    </el-drawer>
-    <image-processing-modal
-        ref='modalForm'
-    ></image-processing-modal>
+<!--    <el-drawer-->
+<!--        title='上传图片'-->
+<!--        :closable='false'-->
+<!--        v-model='drawer'-->
+<!--        width='700'-->
+<!--        @close='onClose'-->
+<!--    >-->
+<!--      <FileUpload/>-->
+<!--    </el-drawer>-->
+<!--    <image-processing-modal-->
+<!--        ref='modalForm'-->
+<!--    ></image-processing-modal>-->
   </div>
 </template>
 
 <script setup lang="ts">
-import {defineComponent, ref} from 'vue'
+import {defineComponent, ref, reactive} from 'vue'
+import Table from '@/components/Table/index.vue'
 import PictureChooseOne from '@/components/ComputerVision/PictureChooseOne'
 import FileUpload from '@/components/ComputerVision/FileUpload'
 import ImageProcessingModal from '@/components/ComputerVision/ImageProcessingModal'
 import axios from 'axios'
 
-
+const tableRef= ref()
 const activeKey = ref('1')
-const drawer = false
-const url = {
+const drawer = ref(false)
+const url = reactive({
   gray: '/basic_func/graying',
   thre: '/basic_func/thresholding',
   logicalAnd: '/basic_func/logical_and',
@@ -426,15 +429,15 @@ const url = {
   maxFilter: '/repair/max_filter',
   medianFilter: '/repair/median_filter',
   rangeFilter: '/repair/range_filter',
-}
-const selection = []
-const displayImg = ''
-const displayImg1 = ''
-const pictureShow = true
-const formShow = false
+})
+
+const selection = ref<any[]>([])
+const displayImg = ref('')
+const displayImg1 = ref('')
+const formShow = ref(false)
 const labelCol = {xs: {span: 24}, sm: {span: 5}}
 const wrapperCol = {xs: {span: 24}, sm: {span: 16}}
-const formData = {
+const formData = reactive({
   res_name: '',
   fli_choi: 'horizontal',
   move_x: null,
@@ -456,20 +459,20 @@ const formData = {
   min: null,
   max: null,
   color: '0'
-}
-const formUrl = ''
-const type = 1
+})
+
+const formUrl = ref('')
+const type = ref(1)
 
 const onClose = () => {
-  drawer = false
+  drawer.value = false
 }
 
 const cancel = () => {
-  selection = []
-  displayImg = ''
-  displayImg1 = ''
-  pictureShow = true
-  formShow = false
+  selection.value = []
+  displayImg.value = ''
+  displayImg1.value = ''
+  formShow.value = false
   formData.res_name = ''
   formData.fli_choi = 'horizontal'
   formData.move_x = null
@@ -493,79 +496,78 @@ const cancel = () => {
   formData.color = '0'
 }
 
-const basicFunction = async (url, type, param) => {
-  this.selection = this.$refs['pictureSelection'].multipleSelection
-  if (type === 1) {
-    if (this.selection.length !== 1) {
-      this.$modal.warning({title: '数量错误', content: '选择的图片数量不是一张！', okText: '确定'})
-      return
-    }
-    this.$refs.modalForm.modal.visible = true
-    this.$refs.modalForm.imgPath = this.selection[0].filePath
-    this.$refs.modalForm.imgType = this.selection[0].fileType
-    console.log('this.$refs.modalForm.imgType', this.$refs.modalForm.imgType)
-    let res_name = this.utils.calculate_res_name(this.formData.res_name)
-    let resultName = this.formData.res_name !== '' ? res_name : this.selection[0].fileName
-    const axios = require('axios')
-    await axios.get(
-        this.constant.data().BaseUrl + url, {
-          params: {
-            img_name: this.selection[0].filePath,
-            result_name: resultName,
-            ...param
-          }
-        }
-    ).then((res) => {
-          this.$refs.modalForm.processResult = {}
-          this.$refs.modalForm.processResult = res.data
-          if (res.data.code === '1') {
-            this.$message.success('图片处理成功！')
-          } else if (res.data.code === '2') {
-            this.$message.error('图片处理失败！')
-          }
-        }
-    )
-  } else if (type === 2) {
-    if (this.selection.length !== 2) {
-      this.$modal.warning({title: '数量错误', content: '选择的图片数量不是两张！', okText: '确定'})
-      return
-    }
-    this.$refs.modalForm.modal.visible = true
-    this.$refs.modalForm.imgPath = this.selection[0].filePath
-    this.$refs.modalForm.imgPath1 = this.selection[1].filePath
-    this.$refs.modalForm.imgType = this.selection[0].fileType
-    this.$refs.modalForm.imgType1 = this.selection[1].fileType
-    let res_name = this.utils.calculate_res_name(this.formData.res_name)
-    let resultName = this.formData.res_name !== '' ? res_name : this.selection[0].fileName
-    const axios = require('axios')
-    await axios.get(
-        this.constant.data().BaseUrl + url, {
-          params: {
-            img_name1: this.selection[0].filePath,
-            img_name2: this.selection[1].filePath,
-            result_name: resultName,
-            ...param
-          }
-        }
-    ).then((res) => {
-          this.$refs.modalForm.processResult = {}
-          this.$refs.modalForm.processResult = res.data
-          this.processResult = res.data
-          if (res.data.code === '1') {
-            this.$message.success('图片处理成功！')
-          } else if (res.data.code === '2') {
-            this.$message.error('图片处理失败！')
-          }
-        }
-    )
-  }
-}
-
+// const basicFunction = async (url, type, param) => {
+//   this.selection = this.$refs['pictureSelection'].multipleSelection
+//   if (type === 1) {
+//     if (this.selection.length !== 1) {
+//       this.$modal.warning({title: '数量错误', content: '选择的图片数量不是一张！', okText: '确定'})
+//       return
+//     }
+//     this.$refs.modalForm.modal.visible = true
+//     this.$refs.modalForm.imgPath = this.selection[0].filePath
+//     this.$refs.modalForm.imgType = this.selection[0].fileType
+//     console.log('this.$refs.modalForm.imgType', this.$refs.modalForm.imgType)
+//     let res_name = this.utils.calculate_res_name(this.formData.res_name)
+//     let resultName = this.formData.res_name !== '' ? res_name : this.selection[0].fileName
+//     const axios = require('axios')
+//     await axios.get(
+//         this.constant.data().BaseUrl + url, {
+//           params: {
+//             img_name: this.selection[0].filePath,
+//             result_name: resultName,
+//             ...param
+//           }
+//         }
+//     ).then((res) => {
+//           this.$refs.modalForm.processResult = {}
+//           this.$refs.modalForm.processResult = res.data
+//           if (res.data.code === '1') {
+//             this.$message.success('图片处理成功！')
+//           } else if (res.data.code === '2') {
+//             this.$message.error('图片处理失败！')
+//           }
+//         }
+//     )
+//   } else if (type === 2) {
+//     if (this.selection.length !== 2) {
+//       this.$modal.warning({title: '数量错误', content: '选择的图片数量不是两张！', okText: '确定'})
+//       return
+//     }
+//     this.$refs.modalForm.modal.visible = true
+//     this.$refs.modalForm.imgPath = this.selection[0].filePath
+//     this.$refs.modalForm.imgPath1 = this.selection[1].filePath
+//     this.$refs.modalForm.imgType = this.selection[0].fileType
+//     this.$refs.modalForm.imgType1 = this.selection[1].fileType
+//     let res_name = this.utils.calculate_res_name(this.formData.res_name)
+//     let resultName = this.formData.res_name !== '' ? res_name : this.selection[0].fileName
+//     const axios = require('axios')
+//     await axios.get(
+//         this.constant.data().BaseUrl + url, {
+//           params: {
+//             img_name1: this.selection[0].filePath,
+//             img_name2: this.selection[1].filePath,
+//             result_name: resultName,
+//             ...param
+//           }
+//         }
+//     ).then((res) => {
+//           this.$refs.modalForm.processResult = {}
+//           this.$refs.modalForm.processResult = res.data
+//           this.processResult = res.data
+//           if (res.data.code === '1') {
+//             this.$message.success('图片处理成功！')
+//           } else if (res.data.code === '2') {
+//             this.$message.error('图片处理失败！')
+//           }
+//         }
+//     )
+//   }
+// }
+//
 const showForm = (url, type) => {
-  this.formUrl = url
-  this.type = type
-  this.pictureShow = false
-  this.formShow = true
+  formUrl.value = url
+  type.value = type
+  formShow.value = true
 }
 
 </script>
