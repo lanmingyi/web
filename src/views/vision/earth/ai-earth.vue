@@ -15,7 +15,7 @@
         <el-button class="margin-r5" :icon="RefreshRight" @click="handleReload"/>
         <el-dropdown class="margin-r5" @command="handleCreate">
           <el-button type="primary" :icon="Plus"/>
-          <!--          <el-icon><Plus /></el-icon>-->
+<!--          <el-icon><Plus /></el-icon>-->
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item v-for="(item, index) in createList" :command="item.command" :icon="item.icon">
@@ -36,7 +36,7 @@
         </el-dropdown>
         <el-button class="margin-r5" :icon="Filter"/>
       </div>
-      <!--      节点树-->
+<!--      节点树-->
       <el-tabs v-model="nodeTabActiveName" :tab-position="tabPosition" class="node-tab">
         <el-tab-pane v-for="(item, index) in nodePanes" :label="item.label" :name="item.name">
           <div class="node-tree">
@@ -65,7 +65,7 @@
                             :command="item.command"
                             :divided="item.command==='6'"
                         >
-                          {{ item.menu }}
+                          {{item.menu}}
                         </el-dropdown-item>
                       </el-dropdown-menu>
                     </template>
@@ -78,30 +78,8 @@
       </el-tabs>
     </div>
 
-    <!--    中心-->
-    <div class="center-class">
-      <div class="center-content">
-        <img ref='imgRef' :src='imgUrl' width='640' height='480'/>
-        <video ref='webcamRef' width='640' height='480'></video>
-        <canvas ref='canvasRef' width='640' height='480'/>
-      </div>
-      <div class='center-panel'>
-        <el-button type="warning" @click="changeImgUrl(0)" :icon="Picture">
-          默认图像
-        </el-button>
-        <el-button type="primary" @click="openWebcam" :icon="VideoCamera">
-          打开摄像头
-        </el-button>
-        <el-button type="danger" @click="closeWebcam" :icon="SwitchButton">
-          关闭摄像头
-        </el-button>
-        <el-button v-if="!detecting" type="primary" @click="realTimeDetection" :icon="Monitor">
-          实时检测
-        </el-button>
-        <el-button v-else type="danger" @click="stopRealTimeDetection" :icon="SwitchButton">
-          停止检测
-        </el-button>
-      </div>
+    <!--    地图-->
+    <div class="map-class" id='map'>
     </div>
 
     <!--    属性-->
@@ -115,25 +93,12 @@
                @edit="handlePropertyTabEdit" closable>
         <el-tab-pane v-for="(pane, index) in propertyPanes" :name="pane.key" :label="pane.tab">
           <div class="property-form">
-            <collapse-panel v-if="pane.type==='image'" :active-names="imageCollapseActiveNames" :data-list="pane.collapse">
+            <collapse-panel :active-names="landslideCollapseActiveNames" :data-list="pane.collapse">
               <template #基础信息>
-                <image-form collapse-panel="基础信息" :form-data="pane.formData"></image-form>
+                <landslide-form collapse-panel="基础信息" :form-data="pane.formData"></landslide-form>
               </template>
               <template #处理结果>
-                <image-form collapse-panel="处理结果" :form-data="pane.formData"></image-form>
-              </template>
-              <template #编辑记录>
-                <el-table :columns="recordColumns" :data="pane.editRecord" :pagination="false" rowKey="dataIndex">
-                </el-table>
-              </template>
-            </collapse-panel>
-            <collapse-panel v-if="pane.type==='object'" :active-names="objectCollapseActiveNames"
-                            :data-list="pane.collapse">
-              <template #基础信息>
-                <image-form collapse-panel="基础信息" :form-data="pane.formData"></image-form>
-              </template>
-              <template #处理结果>
-                <image-form collapse-panel="处理结果" :form-data="pane.formData"></image-form>
+                <landslide-form collapse-panel="处理结果" :form-data="pane.formData"></landslide-form>
               </template>
               <template #编辑记录>
                 <el-table :columns="recordColumns" :data="pane.editRecord" :pagination="false" rowKey="dataIndex">
@@ -143,8 +108,7 @@
             <div class="property-operate">
               <el-button class="margin-r10" @click="handleProcessing(pane.key, index, pane.type)">处理分析</el-button>
               <el-button class="margin-r10" @click="remove(pane.key)">取消</el-button>
-              <el-button type="primary" @click="handlePropertyOk(pane.key, index, pane.type)"
-                         v-show="pane.propertyOkShow">确定
+              <el-button type="primary" @click="handlePropertyOk(pane.key, index, pane.type)" v-show="pane.propertyOkShow">确定
               </el-button>
             </div>
           </div>
@@ -167,32 +131,27 @@ import {
   FolderAdd,
   Folder,
   Location,
-  Close, MoreFilled, Platform, Reading, VideoCamera, SwitchButton, Picture, Monitor
+  Close, MoreFilled,Platform,Reading
 } from "@element-plus/icons-vue";
-
 import Map from "ol/Map";
 import {Tile as TileLayer} from "ol/layer";
 import {XYZ} from "ol/source";
 import View from "ol/View";
 import CollapsePanel from "@/components/CollapsePanel/index.vue"
 import LandslideForm from "@/views/vision/earth/landslide-form.vue";
-import ImageForm from "@/views/vision/computer/image-form.vue";
-import {ALGORITHM_URL} from "@/utils/axios/service";
-import * as tf from "@tensorflow/tfjs";
-
 
 defineOptions({
   name: 'image-processing'
 })
 /** 全局类型*/
-const type = ref(null || '')
+const type = ref(null||'')
 
 /** 节点数据*/
 const nodeTitle = ref('全部节点')
 const nodeShow = ref(true)
 const nodePanes = ref([
   {label: 'All', name: '1',},
-  {label: '目标检测', name: '2',},
+  {label: '地球视觉', name: '2',},
 ])
 const nodeTabActiveName = ref('1')
 const treeData = ref<any[]>([])
@@ -202,8 +161,8 @@ const replaceFields = {label: "folderName"}
 const nodeKey = ref(null)
 const searchValue = ref()
 const createList = ref([
-  {command: '1', menu: '图像处理', icon: 'Reading'},
-  {command: '2', menu: '目标检测', icon: 'Reading'},
+  {command: '1', menu: '滑坡检测', icon: 'Reading'},
+  {command: '2', menu: '创建区域', icon: 'Reading'},
   {command: '3', menu: '创建线路', icon: 'Reading'},
   {command: '4', menu: '创建图层', icon: 'Reading'},
   {command: '5', menu: '创建文件夹', icon: 'FolderAdd'},
@@ -229,86 +188,226 @@ const operateList = ref([
 treeData.value = [
   {
     "uuid": "BCB5C74B9C86485F8623A8A02A9F204F",
+    "creatorId": "ewsd0001",
+    "creator": "超级管理员",
+    "createTime": "2023-06-03 09:15:26",
+    "modifierId": "ewsd0001",
+    "modifier": "超级管理员",
+    "modifyTime": "2023-06-05 13:04:10",
+    "creatorOrgId": 4,
     "pid": "",
-    "folderName": "图像处理",
+    "folderName": "Landsat",
+    "sort": 0,
+    "remark": "1",
+    "levelId": 1,
     "children": [
       {
         "uuid": "F9AF1DA5DF21495DBA1B552FA01E1ABC",
+        "creatorId": "ewsd0001",
+        "creator": "超级管理员",
+        "createTime": "2023-06-03 10:36:55",
+        "modifierId": "ewsd0001",
+        "modifier": "超级管理员",
+        "modifyTime": "2023-06-03 16:52:24",
+        "creatorOrgId": 4,
         "pid": "BCB5C74B9C86485F8623A8A02A9F204F",
-        "folderName": "图像处理1",
+        "folderName": "Landsat5 C2 L2",
+        "sort": 2,
+        "remark": "1",
+        "levelId": 2,
+        "children": [],
+        "hasChildren": false,
+        "type": "folder",
+        "slots": {
+          "icon": "folder"
+        },
+        "logs": null
       },
+      {
+        "uuid": "E57DD42B708E45F39DC1112CEB5BADA8",
+        "creatorId": "ewsd0001",
+        "creator": "超级管理员",
+        "createTime": "2023-06-03 10:37:42",
+        "modifierId": "ewsd0001",
+        "modifier": "超级管理员",
+        "modifyTime": "2023-06-03 16:52:31",
+        "creatorOrgId": 4,
+        "pid": "BCB5C74B9C86485F8623A8A02A9F204F",
+        "folderName": "Landsat7 C2 L2",
+        "sort": 3,
+        "remark": "1",
+        "levelId": 2,
+        "children": [],
+        "hasChildren": false,
+        "type": "folder",
+        "slots": {
+          "icon": "folder"
+        },
+        "logs": null
+      },
+      {
+        "uuid": "073D474368A248008EE32E88D52A558B",
+        "creatorId": "ewsd0001",
+        "creator": "超级管理员",
+        "createTime": "2023-06-03 10:27:10",
+        "modifierId": "ewsd0001",
+        "modifier": "超级管理员",
+        "modifyTime": "2023-06-03 16:52:41",
+        "creatorOrgId": 4,
+        "pid": "BCB5C74B9C86485F8623A8A02A9F204F",
+        "folderName": "Landsat8 C2 L2",
+        "sort": 4,
+        "remark": "1",
+        "levelId": 2,
+        "children": [],
+        "hasChildren": false,
+        "type": "folder",
+        "slots": {
+          "icon": "folder"
+        },
+        "logs": null
+      },
+      {
+        "uuid": "FD743F68B9324898B535DB59D9EA2596",
+        "creatorId": "ewsd0001",
+        "creator": "超级管理员",
+        "createTime": "2023-06-03 10:36:21",
+        "modifierId": "ewsd0001",
+        "modifier": "超级管理员",
+        "modifyTime": "2023-06-03 16:53:23",
+        "creatorOrgId": 4,
+        "pid": "BCB5C74B9C86485F8623A8A02A9F204F",
+        "folderName": "Landsat9 C2 L2",
+        "sort": 5,
+        "remark": "1",
+        "levelId": 2,
+        "children": [],
+        "hasChildren": false,
+        "type": "folder",
+        "slots": {
+          "icon": "folder"
+        },
+        "logs": null
+      }
     ],
     "hasChildren": true,
     "type": "folder",
+    "slots": {
+      "icon": "folder"
+    },
+    "logs": null
   },
   {
-    "uuid": "mubiaojiance",
+    "uuid": "shandong",
+    "creatorId": null,
+    "creator": null,
+    "createTime": null,
+    "modifierId": null,
+    "modifier": null,
+    "modifyTime": null,
+    "creatorOrgId": null,
     "pid": null,
-    "folderName": "目标检测",
+    "folderName": "Sentinel",
+    "sort": 1,
+    "remark": null,
+    "levelId": 1,
     "children": [
       {
-        "uuid": "mubiaojiance1",
+        "uuid": "yantai",
+        "creatorId": null,
+        "creator": null,
+        "createTime": null,
+        "modifierId": null,
+        "modifier": null,
+        "modifyTime": null,
+        "creatorOrgId": null,
         "pid": "shandong",
-        "folderName": "目标检测1",
+        "folderName": "Sentinel-1 SAR GRD",
+        "sort": 1,
+        "remark": null,
+        "levelId": 2,
         "children": [
           {
-            "uuid": "mubiaojiance1-1",
+            "uuid": "kaifaqu",
+            "creatorId": null,
+            "creator": null,
+            "createTime": null,
+            "modifierId": null,
+            "modifier": null,
+            "modifyTime": null,
+            "creatorOrgId": null,
             "pid": "yantai",
-            "folderName": "目标检测1-1",
+            "folderName": "Sentinel-2 L2A",
+            "sort": 1,
+            "remark": null,
+            "levelId": 3,
+            "children": [],
+            "hasChildren": true,
+            "type": "folder",
+            "slots": {
+              "icon": "folder"
+            },
+            "logs": null
           }
         ],
         "hasChildren": true,
+        "type": "folder",
+        "slots": {
+          "icon": "folder"
+        },
+        "logs": null
       },
       {
-        "uuid": "mubiaojiance2",
+        "uuid": "qingdao",
+        "creatorId": null,
+        "creator": null,
+        "createTime": null,
+        "modifierId": null,
+        "modifier": null,
+        "modifyTime": null,
+        "creatorOrgId": null,
         "pid": "shandong",
-        "folderName": "目标检测2",
-      }
-    ],
-    "hasChildren": true,
-    "type": "folder",
-  },
-  {
-    "uuid": "zitaiguji",
-    "pid": null,
-    "folderName": "姿态估计",
-    "children": [
+        "folderName": "Sentinel-3 OLCI",
+        "sort": 2,
+        "remark": null,
+        "levelId": 2,
+        "children": [],
+        "hasChildren": false,
+        "type": "folder",
+        "slots": {
+          "icon": "folder"
+        },
+        "logs": null
+      },
       {
-        "uuid": "zitaiguji1",
+        "uuid": "qingdao",
+        "creatorId": null,
+        "creator": null,
+        "createTime": null,
+        "modifierId": null,
+        "modifier": null,
+        "modifyTime": null,
+        "creatorOrgId": null,
         "pid": "shandong",
-        "folderName": "姿态估计1",
+        "folderName": "Sentinel-5p OFFL",
+        "sort": 2,
+        "remark": null,
+        "levelId": 2,
+        "children": [],
+        "hasChildren": false,
+        "type": "folder",
+        "slots": {
+          "icon": "folder"
+        },
+        "logs": null
       }
     ],
     "hasChildren": true,
     "type": "folder",
-  },
-  {
-    "uuid": "renlianshibie",
-    "pid": null,
-    "folderName": "人脸识别",
-    "children": [
-      {
-        "uuid": "renlianshibie1",
-        "pid": "shandong",
-        "folderName": "人脸识别1",
-      }
-    ],
-    "hasChildren": true,
-    "type": "folder",
-  },
-  {
-    "uuid": "fenggeqianyi",
-    "pid": null,
-    "folderName": "风格迁移",
-    "children": [
-      {
-        "uuid": "fenggeqianyi1",
-        "pid": "shandong",
-        "folderName": "风格迁移1",
-      }
-    ],
-    "hasChildren": true,
-    "type": "folder",
+    "slots": {
+      "icon": "folder"
+    },
+    "logs": null
   }
 ]
 
@@ -359,21 +458,13 @@ const recordColumns = [
   },
 ]
 
-/** 图像处理*/
-const imageCollapse = ref([
+/** 滑坡*/
+const landslideCollapse = ref([
   {name: '1', title: '基础信息', slot: '基础信息', show: true},
   {name: '2', title: '处理结果', slot: '处理结果', show: true},
   {name: '3', title: '编辑记录', slot: '编辑记录', show: true},
 ])
-const imageCollapseActiveNames = ref(['1', '2'])
-
-/** 目标检测*/
-const objectCollapse = ref([
-  {name: '1', title: '基础信息', slot: '基础信息', show: true},
-  {name: '2', title: '处理结果', slot: '处理结果', show: true},
-  {name: '3', title: '编辑记录', slot: '编辑记录', show: true},
-])
-const objectCollapseActiveNames = ref(['1', '2'])
+const landslideCollapseActiveNames = ref(['1', '2'])
 
 /** 接口*/
 const url = reactive({
@@ -384,24 +475,58 @@ const url = reactive({
   folderDelete: '/line/eleFolder/delete',
 })
 
-/** 中心内容*/
-const imgRef = ref()
-const webcamRef = ref()
-const canvasRef = ref()
-const imgUrl = ref()
-const isOpenWebcam = ref(false)
-const detecting = ref(false)
-const detectionFrame = ref()
-const names = ['person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train', 'truck', 'boat', 'traffic light',
-  'fire hydrant', 'stop sign', 'parking meter', 'bench', 'bird', 'cat', 'dog', 'horse', 'sheep', 'cow',
-  'elephant', 'bear', 'zebra', 'giraffe', 'backpack', 'umbrella', 'handbag', 'tie', 'suitcase', 'frisbee',
-  'skis', 'snowboard', 'sports ball', 'kite', 'baseball bat', 'baseball glove', 'skateboard', 'surfboard',
-  'tennis racket', 'bottle', 'wine glass', 'cup', 'fork', 'knife', 'spoon', 'bowl', 'banana', 'apple',
-  'sandwich', 'orange', 'broccoli', 'carrot', 'hot dog', 'pizza', 'donut', 'cake', 'chair', 'couch',
-  'potted plant', 'bed', 'dining table', 'toilet', 'tv', 'laptop', 'mouse', 'remote', 'keyboard', 'cell phone',
-  'microwave', 'oven', 'toaster', 'sink', 'refrigerator', 'book', 'clock', 'vase', 'scissors', 'teddy bear',
-  'hair drier', 'toothbrush']
+/** 地图*/
+const map = ref()
 
+const initMap = () => {
+  // const projection = olProj.get('EPSG:3857')
+  // const resolutions: any[] = [];
+  // for(let i=0; i<19; i++){
+  //   resolutions[i] = Math.pow(2, 18-i);
+  // }
+  // const tileGrid  = new TileGrid({
+  //   origin: [0,0],
+  //   resolutions: resolutions
+  // });
+  // const baidu_source = new TileImage({
+  //   projection: projection,
+  //   tileGrid: tileGrid,
+  //   tileUrlFunction: function(tileCoord, pixelRatio, proj){
+  //     if(!tileCoord){
+  //       return "";
+  //     }
+  //     let z = tileCoord[0];
+  //     let x = tileCoord[1];
+  //     let y = tileCoord[2];
+  //
+  //     if(x<0){
+  //       x = "M"+(-x);
+  //     }
+  //     if(y<0){
+  //       y = "M"+(-y);
+  //     }
+  //     return "http://online3.map.bdimg.com/onlinelabel/?qt=tile&x="+x+"&y="+y+"&z="+z+"&styles=pl&udt=20151021&scaler=1&p=1";
+  //   }
+  // });
+  // 实例化map对象加载地图
+  map.value = new Map({
+    target: 'map',
+    // 地图容器中加载的图层
+    layers: [
+      new TileLayer({
+        // source: baidu_source
+        source: new XYZ({
+          url: 'http://webrd03.is.autonavi.com/appmaptile?x={x}&y={y}&z={z}&lang=zh_cn&size=1&scale=1&style=8'
+        }),
+      })
+    ],
+    view: new View({
+      zoom: 12,
+      projection: 'EPSG:4326',
+      center: [116.06, 39.67],
+    }),
+  })
+}
 
 const getTreeData = (unfoldType = 'element') => {
   treeData.value = []
@@ -469,33 +594,15 @@ function handleCreate(e) {
     //   ElMessage.warning({message: '请选择支持要素类型为点的图层创建！', duration: 1500})
     //   return false
     // }
-    type.value = 'imageProcessing'
+    type.value = 'landslide'
     propertyShow.value = true
-    propertyTitle.value = '图像处理创建'
+    propertyTitle.value = '滑坡检测创建'
     const newTabActiveKey = `N-${newTabIndex.value++}`;
     // changeCollapse('', false)
     propertyPanes.value.push({
       tab: propertyTitle.value,
       key: newTabActiveKey,
-      collapse: JSON.parse(JSON.stringify(imageCollapse.value)),
-      formData: {folderId: nodeKey.value, menuType: type.value, pointCode: ''},
-      editRecord: [],
-      propertyOkShow: true,
-      type: type.value
-    })
-    propertyTabActiveKey.value = newTabActiveKey
-    // console.log('propertyPanes', this.propertyPanes)
-  }
-  if (key === '2') {
-    type.value = 'object'
-    propertyShow.value = true
-    propertyTitle.value = '目标检测创建'
-    const newTabActiveKey = `N-${newTabIndex.value++}`;
-    // changeCollapse('', false)
-    propertyPanes.value.push({
-      tab: propertyTitle.value,
-      key: newTabActiveKey,
-      collapse: JSON.parse(JSON.stringify(objectCollapse.value)),
+      collapse: JSON.parse(JSON.stringify(landslideCollapse.value)),
       formData: {folderId: nodeKey.value, menuType: type.value, pointCode: ''},
       editRecord: [],
       propertyOkShow: true,
@@ -587,125 +694,12 @@ function handleNodeItem(e, title, nodeItemKey) {
     )
   }
 }
+const handleProcessing = (paneKey, index, type) =>{
 
-const changeImgUrl = (imageUrl) => {
-  if(imageUrl === 0) {
-    imgUrl.value = new URL('@/assets/images/object_detection/street.jpg', import.meta.url).href
-  }
-}
-const clearCanvas = () => {
-  canvasRef.value.getContext('2d').clearRect(0, 0, canvasRef.value.width, canvasRef.value.height)
+
 }
 
-const openWebcam = () =>{
-  clearCanvas()
-  // if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {}
-  navigator.getUserMedia = navigator.getUserMedia ||
-      navigator.webkitGetUserMedia || navigator.mozGetUserMedia ||
-      navigator.msGetUserMedia
-  // console.log('navigator.getUserMedia', navigator.getUserMedia)
-
-  navigator.getUserMedia(
-      {
-        video: true
-      },
-      (stream) => {
-        // this.stream = stream
-        webcamRef.value.srcObject = stream
-        // console.log('webcamRef', webcamRef.value)
-        webcamRef.value.play()
-        isOpenWebcam.value = true
-      },
-      (err) => {
-        console.error(err)
-      }
-  )
-}
-
-const closeWebcam = () => {
-  webcamRef.value.srcObject.getTracks()[0].stop()
-  webcamRef.value.srcObject = null
-  isOpenWebcam.value = false
-  clearCanvas()
-}
-const handleProcessing = (e) => {
-  if (isOpenWebcam.value) {
-    detectionFrame.value = webcamRef.value
-  } else {
-    detectionFrame.value = imgRef.value
-  }
-  const threshold = 0.25
-  let [modelWidth, modelHeight] = model.value.inputs[0].shape.slice(1, 3)
-  // console.log('tf.browser.fromPixels(c)', tf.browser.fromPixels(c))
-  const input = tf.tidy(() => {
-    return tf.image.resizeBilinear(tf.browser.fromPixels(detectionFrame.value), [modelWidth, modelHeight])
-        .div(255.0).expandDims(0)
-  })
-  model.value.executeAsync(input).then(res => {
-    const [boxes, scores, classes, valid_detections] = res
-    const boxes_data = boxes.dataSync()
-    const scores_data = scores.dataSync()
-    const classes_data = classes.dataSync()
-    const valid_detections_data = valid_detections.dataSync()[0]
-    renderBoxes(canvasRef.value, threshold, boxes_data, scores_data, classes_data)
-    tf.dispose(res)
-  })
-}
-
-const renderBoxes = (canvasRef, threshold, boxes_data, scores_data, classes_data) => {
-  const ctx = canvasRef.getContext('2d')
-  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height) // clean canvas
-
-  // font configs
-  const font = '14px sans-serif'
-  ctx.font = font
-  ctx.textBaseline = 'top'
-
-  for (let i = 0; i < scores_data.length; ++i) {
-    if (scores_data[i] > threshold) {
-      const klass = names[classes_data[i]]
-      const score = (scores_data[i] * 100).toFixed(1)
-
-      let [x1, y1, x2, y2] = boxes_data.slice(i * 4, (i + 1) * 4)
-      x1 *= canvasRef.width
-      x2 *= canvasRef.width
-      y1 *= canvasRef.height
-      y2 *= canvasRef.height
-      const width = x2 - x1
-      const height = y2 - y1
-
-      // Draw the bounding box.
-      ctx.strokeStyle = 'rgba(0, 0, 255, 1)'
-      ctx.lineWidth = 2
-      ctx.strokeRect(x1, y1, width, height)
-
-      // Draw the label background.
-      ctx.fillStyle = 'rgba(0, 0, 255, 1)'
-      const textWidth = ctx.measureText(klass + ' - ' + score + '%').width
-      const textHeight = parseInt(font, 10) // base 10
-      ctx.fillRect(x1 - 1, y1 - (textHeight + 2), textWidth + 2, textHeight + 2)
-
-      // Draw labels
-      // ctx.fillStyle = '#000000'
-      ctx.fillStyle = '#ffffff'
-      ctx.fillText(klass + ' - ' + score + '%', x1 - 1, y1 - (textHeight + 2))
-    }
-  }
-}
-
-const realTimeDetection = () =>  {
-  detecting.value= true
-  imgUrl.value = ALGORITHM_URL + '/video_feed'
-}
-const stopRealTimeDetection = () => {
-  detecting.value = false
-  imgUrl.value = new URL('@/assets/images/object_detection/street.jpg', import.meta.url).href
-}
-
-// const handleProcessing = (paneKey, index, type) => {
-// }
-
-function handlePropertyOk1(paneKey, index, type) {
+function handlePropertyOk(paneKey, index, type) {
   // console.log('this.propertyPanes[index]', this.propertyPanes[index])
   let formData = propertyPanes.value[index].formData
   let url1 = formData.uuid ? url.folderUpdate : url.folderSave
@@ -724,39 +718,6 @@ function handlePropertyOk1(paneKey, index, type) {
         getTreeData();
       }
     });
-  }
-}
-
-const handlePropertyOk = (paneKey, index, type) => {
-  // console.log('this.propertyPanes[index]', this.propertyPanes[index])
-  // console.log('this.propertyTabActiveKey', this.propertyTabActiveKey)
-  // console.log('paneKey', paneKey)
-  let formData = propertyPanes.value[index].formData
-  let url1 = formData.uuid ? url.folderUpdate : url.folderSave
-  // console.log('this.$refs', this.$refs)
-  // console.log('this.$refs.formRef', this.$refs[`formRef${paneKey}`])
-  let validList = this.$refs[`formRef${paneKey}`].map(item => {
-    let valid
-    item.$refs.formRef.validate(v => {
-      valid = v
-    })
-    // console.log('valid', valid)
-    return valid
-  })
-  // console.log('validList', validList)
-  if (validList.indexOf(false) === -1 && validList.indexOf(undefined) === -1) {
-    request.post({url: url1, data: formData}).then((res) => {
-      if (res.statusCode === 200) {
-        ElMessage.success({message: res.message || '操作成功', duration: 1500})
-        remove(paneKey)
-        getTreeData();
-        this.clearMap();
-      } else {
-        ElMessage.error({message: res.message || '操作失败', duration: 1500})
-      }
-    });
-  } else {
-    ElMessage.error({message: '表单校验失败', duration: 1500})
   }
 }
 
@@ -824,6 +785,7 @@ function handleFold(e) {
   console.log('expandedKeys', expandedKeys.value)
 }
 
+
 function treeFindPath(tree, func, field = "", path: any = []) {
   if (!tree) return []
   for (const data of tree) {
@@ -876,6 +838,7 @@ function onContextMenuClick(treeKey, menuKey) {
   console.log(`treeKey: ${treeKey}, menuKey: ${menuKey}`);
 }
 
+
 function onDragEnter(e) {
 
 }
@@ -899,8 +862,11 @@ function getParentKey(key, tree) {
   return parentKey;
 }
 
+
 onMounted(() => {
   // getTreeData()
+  // 初始化地图
+  initMap()
 })
 </script>
 
@@ -970,34 +936,8 @@ onMounted(() => {
   margin-left: 10px
 }
 
-.center-class {
-  width: calc(100vw - 360px - 360px);
-  height: 100%;
-}
-
-.center-content {
-  position: relative;
-  margin-top: 100px;
-  margin-left: 100px;
-}
-
-.center-content canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-.center-content video {
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-.center-panel {
-  position: absolute;
-  right: 360px;
-  top: 90px;
-  z-index: 1000;
+.map-class {
+  width: calc(100vw - 360px);
 }
 
 

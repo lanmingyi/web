@@ -77,7 +77,6 @@ const url = reactive({
 })
 
 const pictureSelectionRef = ref()
-
 const selection = ref<any[]>([])
 const pictureShow = ref(true)
 const formShow = ref(false)

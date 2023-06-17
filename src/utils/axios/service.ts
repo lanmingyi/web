@@ -16,11 +16,12 @@ import {getToken} from "@/utils/cache/cookies";
 const {result_code, base_url} = config
 
 // export const PATH_URL = base_url[import.meta.env.VITE_BASE_API]
-export const PATH_URL = import.meta.env.VITE_BASE_API
+export const SERVER_URL = import.meta.env.VITE_BASE_API
+export const ALGORITHM_URL = import.meta.env.VITE_ALGORITHM_API
 
 // 创建axios实例
 const service: AxiosInstance = axios.create({
-    baseURL: PATH_URL, // api 的 base_url
+    baseURL: SERVER_URL, // api 的 base_url
     timeout: config.request_timeout // 请求超时时间
 })
 
