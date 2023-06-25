@@ -4,6 +4,8 @@
 <!--  :data="uploadData"-->
 <!--  :on-success="handleSuccess"-->
 <!--  :on-preview="handlePictureCardPreview"-->
+<!--  :auto-upload="false"-->
+
   <el-upload
       ref="uploadRef"
       v-model:file-list="fileList"
@@ -12,6 +14,7 @@
       :disabled="disabled"
       :before-upload="handleBeforeUpload"
       :on-preview="handlePreview"
+      :on-remove="handleRemove"
   >
 <!--    <el-icon><Plus/></el-icon>-->
     <el-button v-if="fileList.length < 6" :loading="loading" :icon="Upload" >上传</el-button>
@@ -23,7 +26,7 @@
 
 <script setup lang="ts">
 import {ref, toRefs} from 'vue'
-import type { UploadInstance, UploadProps, UploadRawFile, UploadFile  } from 'element-plus'
+import type { UploadInstance, UploadProps, UploadRawFile, UploadFile, UploadFiles  } from 'element-plus'
 import {Upload,Plus} from "@element-plus/icons-vue";
 import request from "@/utils/axios/index";
 import {SERVER_URL} from "@/utils/axios/service";
@@ -63,7 +66,7 @@ const props= defineProps({
     },
   },
 })
-const emit = defineEmits(['change'])
+const emit = defineEmits(['update:modelValue'])
 
 const {uploadParam} = props
 const fileList= ref<any[]>([])
@@ -90,9 +93,9 @@ const handleUpload = (data) =>{
       let url = SERVER_URL+"/sys/common/static"+'/'+ path
       // console.log('url', url)
       fileList.value.push({name: path.split('/')[1], url: url, path: path});
-      // console.log('that.fileList', fileList.value)
+      console.log('that.fileList', fileList.value)
       let modelValue = fileList.value.map(item=>item.path).join()
-      emit('change', modelValue)
+      emit('update:modelValue', modelValue)
       // console.log('modelValue', modelValue)
       loading.value = false;
       // }
@@ -109,9 +112,15 @@ const handlePreview = (uploadFile: UploadFile) =>{
   previewVisible.value = true
   previewImage.value = uploadFile.url
 }
+
+const handleRemove = (uploadFile, uploadFiles) =>{
+  console.log(uploadFile, uploadFiles)
+}
+
 const handleClose = () =>{
   previewVisible.value = false
 }
+
 
 </script>
 

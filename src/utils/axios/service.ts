@@ -14,10 +14,16 @@ import {ElMessage} from 'element-plus'
 import {getToken} from "@/utils/cache/cookies";
 
 const {result_code, base_url} = config
+const token = getToken()
 
 // export const PATH_URL = base_url[import.meta.env.VITE_BASE_API]
 export const SERVER_URL = import.meta.env.VITE_BASE_API
 export const ALGORITHM_URL = import.meta.env.VITE_ALGORITHM_API
+// console.log('import.meta.env', import.meta.env)
+export const BASE_URL = {
+    SERVER_URL: import.meta.env.VITE_BASE_API,
+    ALGORITHM_URL: import.meta.env.VITE_ALGORITHM_API
+}
 
 // 创建axios实例
 const service: AxiosInstance = axios.create({
@@ -28,7 +34,6 @@ const service: AxiosInstance = axios.create({
 // request拦截器
 service.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
-        const token = getToken()
         if(token){
             config.headers['X-Access-Token'] = token  // 让每个请求携带自定义token，请根据实际情况自行修改
         }
@@ -70,7 +75,6 @@ service.interceptors.response.use(
         } else {
             ElMessage.error(response.data.message)
         }
-        console.log('response', response)
     },
     (error: AxiosError) => {
         console.log('err' + error) // for debug
@@ -79,4 +83,68 @@ service.interceptors.response.use(
     }
 )
 
-export {service}
+const serviceFunction = (baseUrl) =>{
+    const service: AxiosInstance = axios.create({
+        baseURL: BASE_URL[baseUrl], // api 的 base_url
+        timeout: config.request_timeout // 请求超时时间
+    })
+
+    service.interceptors.request.use(
+        (config: InternalAxiosRequestConfig) => {
+            if(baseUrl === 'SERVER_URL'){
+                if(token){
+                    config.headers['X-Access-Token'] = token  // 让每个请求携带自定义token，请根据实际情况自行修改
+                }
+            }
+            if (config.method === 'post' && (config.headers as AxiosRequestHeaders)['Content-Type'] === 'application/x-www-form-urlencoded') {
+                config.data = qs.stringify(config.data)
+                console.log('config.data', config.data)
+            }
+            // ;(config.headers as AxiosRequestHeaders)['Token'] = 'test test'
+            // get参数编码
+            if (config.method === 'get' && config.params) {
+                let url = config.url as string
+                url += '?'
+                const keys = Object.keys(config.params)
+                for (const key of keys) {
+                    if (config.params[key] !== void 0 && config.params[key] !== null) {
+                        url += `${key}=${encodeURIComponent(config.params[key])}&`
+                    }
+                }
+                url = url.substring(0, url.length - 1)
+                config.params = {}
+                config.url = url
+            }
+            console.log('config', config)
+            return config
+        },
+        (error: AxiosError) => {
+            // Do something with request error
+            console.log(error) // for debug
+            return Promise.reject(error)
+        }
+    )
+
+// response 拦截器
+    service.interceptors.response.use(
+        (response: AxiosResponse<any>) => {
+            if (response.config.responseType === 'blob') {
+                // 如果是文件流，直接过
+                return response
+            } else if (response.data.code === result_code || response.data.code === 0) {
+                return response.data
+            } else {
+                ElMessage.error(response.data.message)
+            }
+        },
+        (error: AxiosError) => {
+            console.log('err' + error) // for debug
+            ElMessage.error(error.message)
+            return Promise.reject(error)
+        }
+    )
+    return service
+}
+
+
+export {service, serviceFunction}

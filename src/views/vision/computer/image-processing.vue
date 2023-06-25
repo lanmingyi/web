@@ -81,13 +81,19 @@
     <!--    中心-->
     <div class="center-class">
       <div class="center-content">
-        <img ref='imgRef' :src='imgUrl' width='640' height='480'/>
+        <img id='imgId' ref='imgRef' :src='imgUrl' width='640' height='480'/>
         <video ref='webcamRef' width='640' height='480'></video>
         <canvas ref='canvasRef' width='640' height='480'/>
       </div>
       <div class='center-panel'>
         <el-button type="warning" @click="changeImgUrl(0)" :icon="Picture">
           默认图像
+        </el-button>
+<!--        <el-button type='primary' @click='loadGraphModel(0)' :icon="Download">-->
+<!--          加载前端模型-->
+<!--        </el-button>-->
+        <el-button type='primary' @click='frontDetection' :disabled='frontDisabled' :icon="Monitor">
+          前端检测
         </el-button>
         <el-button type="primary" @click="openWebcam" :icon="VideoCamera">
           打开摄像头
@@ -130,10 +136,10 @@
             <collapse-panel v-if="pane.type==='object'" :active-names="objectCollapseActiveNames"
                             :data-list="pane.collapse">
               <template #基础信息>
-                <image-form collapse-panel="基础信息" :form-data="pane.formData"></image-form>
+                <object-form :ref="`${pane.type}Ref`" collapse-panel="基础信息" :form-data="pane.formData"></object-form>
               </template>
               <template #处理结果>
-                <image-form collapse-panel="处理结果" :form-data="pane.formData"></image-form>
+                <object-form :ref="`${pane.type}Ref`" collapse-panel="处理结果" :form-data="pane.formData"></object-form>
               </template>
               <template #编辑记录>
                 <el-table :columns="recordColumns" :data="pane.editRecord" :pagination="false" rowKey="dataIndex">
@@ -155,7 +161,7 @@
 </template>
 
 <script lang="ts" setup>
-import {reactive, ref, onMounted} from 'vue'
+import {reactive, ref, onMounted, getCurrentInstance} from 'vue'
 import request from "@/utils/axios/index";
 import {ElMessage, ElMessageBox} from "element-plus";
 import {
@@ -167,7 +173,7 @@ import {
   FolderAdd,
   Folder,
   Location,
-  Close, MoreFilled, Platform, Reading, VideoCamera, SwitchButton, Picture, Monitor
+  Close, MoreFilled, Platform, Reading, VideoCamera, SwitchButton, Picture, Monitor, Download
 } from "@element-plus/icons-vue";
 
 import Map from "ol/Map";
@@ -177,6 +183,7 @@ import View from "ol/View";
 import CollapsePanel from "@/components/CollapsePanel/index.vue"
 import LandslideForm from "@/views/vision/earth/landslide-form.vue";
 import ImageForm from "@/views/vision/computer/image-form.vue";
+import ObjectForm from "@/views/vision/computer/object-form.vue";
 import {ALGORITHM_URL} from "@/utils/axios/service";
 import * as tf from "@tensorflow/tfjs";
 
@@ -184,6 +191,8 @@ import * as tf from "@tensorflow/tfjs";
 defineOptions({
   name: 'image-processing'
 })
+const instance = getCurrentInstance();
+
 /** 全局类型*/
 const type = ref(null || '')
 
@@ -332,7 +341,8 @@ const INITIAL_DATA = {
   remark: '',
   pid: null,
 }
-const formData = ref({...INITIAL_DATA})
+// const formData = ref({...INITIAL_DATA})
+const formData = ref()
 
 const recordColumns = [
   {
@@ -390,6 +400,8 @@ const webcamRef = ref()
 const canvasRef = ref()
 const imgUrl = ref()
 const isOpenWebcam = ref(false)
+const frontDisabled = ref(false)
+// const frontModel = ref()  # 用ref会或报错，不清楚原因
 const detecting = ref(false)
 const detectionFrame = ref()
 const names = ['person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train', 'truck', 'boat', 'traffic light',
@@ -469,7 +481,7 @@ function handleCreate(e) {
     //   ElMessage.warning({message: '请选择支持要素类型为点的图层创建！', duration: 1500})
     //   return false
     // }
-    type.value = 'imageProcessing'
+    type.value = 'image'
     propertyShow.value = true
     propertyTitle.value = '图像处理创建'
     const newTabActiveKey = `N-${newTabIndex.value++}`;
@@ -478,7 +490,7 @@ function handleCreate(e) {
       tab: propertyTitle.value,
       key: newTabActiveKey,
       collapse: JSON.parse(JSON.stringify(imageCollapse.value)),
-      formData: {folderId: nodeKey.value, menuType: type.value, pointCode: ''},
+      formData: {type: type.value},
       editRecord: [],
       propertyOkShow: true,
       type: type.value
@@ -496,7 +508,7 @@ function handleCreate(e) {
       tab: propertyTitle.value,
       key: newTabActiveKey,
       collapse: JSON.parse(JSON.stringify(objectCollapse.value)),
-      formData: {folderId: nodeKey.value, menuType: type.value, pointCode: ''},
+      formData: {type: type.value},
       editRecord: [],
       propertyOkShow: true,
       type: type.value
@@ -590,58 +602,35 @@ function handleNodeItem(e, title, nodeItemKey) {
 
 const changeImgUrl = (imageUrl) => {
   if(imageUrl === 0) {
-    imgUrl.value = new URL('@/assets/images/object_detection/street.jpg', import.meta.url).href
+    // imgUrl.value = new URL('@/assets/images/object_detection/street.jpg', import.meta.url).href
+    imgUrl.value = new URL('@/assets/images/object_detection/image1.jpg', import.meta.url).href
   }
 }
-const clearCanvas = () => {
-  canvasRef.value.getContext('2d').clearRect(0, 0, canvasRef.value.width, canvasRef.value.height)
-}
 
-const openWebcam = () =>{
-  clearCanvas()
-  // if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {}
-  navigator.getUserMedia = navigator.getUserMedia ||
-      navigator.webkitGetUserMedia || navigator.mozGetUserMedia ||
-      navigator.msGetUserMedia
-  // console.log('navigator.getUserMedia', navigator.getUserMedia)
-
-  navigator.getUserMedia(
-      {
-        video: true
-      },
-      (stream) => {
-        // this.stream = stream
-        webcamRef.value.srcObject = stream
-        // console.log('webcamRef', webcamRef.value)
-        webcamRef.value.play()
-        isOpenWebcam.value = true
-      },
-      (err) => {
-        console.error(err)
-      }
-  )
-}
-
-const closeWebcam = () => {
-  webcamRef.value.srcObject.getTracks()[0].stop()
-  webcamRef.value.srcObject = null
-  isOpenWebcam.value = false
-  clearCanvas()
-}
-const handleProcessing = (e) => {
+const frontDetection = async () =>{
+  // const MODEL_URL = `/models/yolo/${e}_web_model/model.json`
+  const MODEL_URL = '/models/yolo/yolov5s_web_model/model.json'
+  // const GOOGLE_CLOUD_STORAGE_DIR = 'https://storage.googleapis.com/tfjs-models/savedmodel/';
+  // const MODEL_URL = GOOGLE_CLOUD_STORAGE_DIR + 'ssdlite_mobilenet_v2/model.json';
+  const frontModel = await tf.loadGraphModel(MODEL_URL) as any
+  // console.log('frontModel1', frontModel)
   if (isOpenWebcam.value) {
     detectionFrame.value = webcamRef.value
   } else {
     detectionFrame.value = imgRef.value
   }
   const threshold = 0.25
-  let [modelWidth, modelHeight] = model.value.inputs[0].shape.slice(1, 3)
-  // console.log('tf.browser.fromPixels(c)', tf.browser.fromPixels(c))
-  const input = tf.tidy(() => {
-    return tf.image.resizeBilinear(tf.browser.fromPixels(detectionFrame.value), [modelWidth, modelHeight])
+  let [modelWidth, modelHeight] = frontModel.inputs[0].shape.slice(1, 3)
+  const pixels = tf.browser.fromPixels(detectionFrame.value);
+  // console.log('pixels', pixels)
+  const input:any = tf.tidy(() => {
+    return tf.image.resizeBilinear(pixels, [modelWidth, modelHeight])
         .div(255.0).expandDims(0)
   })
-  model.value.executeAsync(input).then(res => {
+  // const input = pixels.reshape([1, ...pixels.shape])
+  console.log('input', input)
+  await frontModel.executeAsync(input).then(res => {
+    // console.log('res', res)
     const [boxes, scores, classes, valid_detections] = res
     const boxes_data = boxes.dataSync()
     const scores_data = scores.dataSync()
@@ -650,6 +639,8 @@ const handleProcessing = (e) => {
     renderBoxes(canvasRef.value, threshold, boxes_data, scores_data, classes_data)
     tf.dispose(res)
   })
+  // const res = await frontModel.executeAsync(input)
+  // console.log('res', res)
 }
 
 const renderBoxes = (canvasRef, threshold, boxes_data, scores_data, classes_data) => {
@@ -693,6 +684,42 @@ const renderBoxes = (canvasRef, threshold, boxes_data, scores_data, classes_data
   }
 }
 
+const clearCanvas = () => {
+  canvasRef.value.getContext('2d').clearRect(0, 0, canvasRef.value.width, canvasRef.value.height)
+}
+
+const openWebcam = () =>{
+  clearCanvas()
+  // if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {}
+  navigator.getUserMedia = navigator.getUserMedia ||
+      navigator.webkitGetUserMedia || navigator.mozGetUserMedia ||
+      navigator.msGetUserMedia
+  // console.log('navigator.getUserMedia', navigator.getUserMedia)
+
+  navigator.getUserMedia(
+      {
+        video: true
+      },
+      (stream) => {
+        // this.stream = stream
+        webcamRef.value.srcObject = stream
+        // console.log('webcamRef', webcamRef.value)
+        webcamRef.value.play()
+        isOpenWebcam.value = true
+      },
+      (err) => {
+        console.error(err)
+      }
+  )
+}
+
+const closeWebcam = () => {
+  webcamRef.value.srcObject.getTracks()[0].stop()
+  webcamRef.value.srcObject = null
+  isOpenWebcam.value = false
+  clearCanvas()
+}
+
 const realTimeDetection = () =>  {
   detecting.value= true
   imgUrl.value = ALGORITHM_URL + '/video_feed'
@@ -702,8 +729,17 @@ const stopRealTimeDetection = () => {
   imgUrl.value = new URL('@/assets/images/object_detection/street.jpg', import.meta.url).href
 }
 
-// const handleProcessing = (paneKey, index, type) => {
-// }
+const handleProcessing = (paneKey, index, type) => {
+  console.log('propertyPanes.value', propertyPanes.value[0].formData)
+  let data = {
+    filename: propertyPanes.value[0].formData.picture
+  }
+  console.log('data', data)
+  request.post({url:'/objectDetection', baseUrl:'ALGORITHM_URL', data: data}).then(res=>{
+    console.log('res', res)
+  })
+
+}
 
 function handlePropertyOk1(paneKey, index, type) {
   // console.log('this.propertyPanes[index]', this.propertyPanes[index])
@@ -759,6 +795,7 @@ const handlePropertyOk = (paneKey, index, type) => {
     ElMessage.error({message: '表单校验失败', duration: 1500})
   }
 }
+
 
 const handleInputSearch = (e) => {
   console.log('e', e)
@@ -901,6 +938,7 @@ function getParentKey(key, tree) {
 
 onMounted(() => {
   // getTreeData()
+  // loadGraphModel(0)
 })
 </script>
 

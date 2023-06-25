@@ -4,9 +4,6 @@
       <el-form-item label="名称" prop="fileName">
         <el-input v-model="formData.fileName"/>
       </el-form-item>
-      <el-form-item label="名称" prop="fileName">
-        <el-input v-model="formData.fileName"/>
-      </el-form-item>
       <el-form-item label="输出名称" prop="resultName">
         <el-input v-model="formData.resultName"/>
       </el-form-item>

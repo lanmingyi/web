@@ -3,7 +3,8 @@
 </template>
 
 <script>
-import { getFileAccessHttpUrl } from '@api/manage'
+// import { getFileAccessHttpUrl } from '@api/manage'
+const getFileAccessHttpUrl = ''
 const axios = require('axios')
 var Tiff = require('tiff.js');
 Tiff.initialize({ TOTAL_MEMORY: 19777216 * 10 })

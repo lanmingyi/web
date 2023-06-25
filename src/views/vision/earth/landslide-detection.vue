@@ -58,7 +58,7 @@ import PictureChooseOne from '@/components/ComputerVision/PictureChooseOne'
 import FileUpload from '@/components/ComputerVision/FileUpload'
 import ImageProcessingModal from '@/components/ComputerVision/ImageProcessingModal'
 import request from "@/utils/axios";
-import tiff from '@/components/ComputerVision/tiff.vue'
+import tiff from '@/components/ComputerVision/tiff'
 
 defineOptions({
   name: 'LandslideDetection'

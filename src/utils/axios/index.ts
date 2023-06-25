@@ -1,11 +1,11 @@
-import {service} from './service'
+import {service, serviceFunction} from './service'
 import {config} from './config'
 import {getToken} from "@/utils/cache/cookies"
 
 const {default_headers} = config
 const token = getToken()
 
-const request = <T>(option: any): Promise<T> => {
+const request1 = <T>(option: any): Promise<T> => {
     const {url, method, params, data, headersType, responseType} = option
     return service({
         url: url,
@@ -16,6 +16,24 @@ const request = <T>(option: any): Promise<T> => {
         headers: {
             'Content-Type': headersType || default_headers,
             'X-Access-Token': token
+        }
+    })
+}
+
+const request = <T>(option: any): Promise<T> => {
+    // console.log('option', option)
+    const {url, method, params, data, headersType, responseType, baseUrl='SERVER_URL'} = option
+    // console.log('baseUrl', baseUrl)
+    const service= serviceFunction(baseUrl)
+    return service({
+        url: url,
+        method,
+        params,
+        data,
+        responseType: responseType,
+        headers: {
+            'Content-Type': headersType || default_headers,
+            // 'X-Access-Token': token
         }
     })
 }
