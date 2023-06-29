@@ -14,7 +14,7 @@ import {ElMessage} from 'element-plus'
 import {getToken} from "@/utils/cache/cookies";
 
 const {result_code, base_url} = config
-const token = getToken()
+// const token = getToken()
 
 // export const PATH_URL = base_url[import.meta.env.VITE_BASE_API]
 export const SERVER_URL = import.meta.env.VITE_BASE_API
@@ -34,8 +34,8 @@ const service: AxiosInstance = axios.create({
 // request拦截器
 service.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
-        if(token){
-            config.headers['X-Access-Token'] = token  // 让每个请求携带自定义token，请根据实际情况自行修改
+        if(getToken()){
+            config.headers['X-Access-Token'] = getToken()  // 让每个请求携带自定义token，请根据实际情况自行修改
         }
         if (config.method === 'post' && (config.headers as AxiosRequestHeaders)['Content-Type'] === 'application/x-www-form-urlencoded') {
             config.data = qs.stringify(config.data)
@@ -92,13 +92,13 @@ const serviceFunction = (baseUrl) =>{
     service.interceptors.request.use(
         (config: InternalAxiosRequestConfig) => {
             if(baseUrl === 'SERVER_URL'){
-                if(token){
-                    config.headers['X-Access-Token'] = token  // 让每个请求携带自定义token，请根据实际情况自行修改
+                if(getToken()){
+                    config.headers['X-Access-Token'] = getToken()  // 让每个请求携带自定义token，请根据实际情况自行修改
                 }
             }
             if (config.method === 'post' && (config.headers as AxiosRequestHeaders)['Content-Type'] === 'application/x-www-form-urlencoded') {
                 config.data = qs.stringify(config.data)
-                console.log('config.data', config.data)
+                // console.log('config.data', config.data)
             }
             // ;(config.headers as AxiosRequestHeaders)['Token'] = 'test test'
             // get参数编码
@@ -128,6 +128,7 @@ const serviceFunction = (baseUrl) =>{
 // response 拦截器
     service.interceptors.response.use(
         (response: AxiosResponse<any>) => {
+            console.log('response', response)
             if (response.config.responseType === 'blob') {
                 // 如果是文件流，直接过
                 return response

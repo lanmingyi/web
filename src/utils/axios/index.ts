@@ -2,8 +2,8 @@ import {service, serviceFunction} from './service'
 import {config} from './config'
 import {getToken} from "@/utils/cache/cookies"
 
-const {default_headers} = config
 const token = getToken()
+const {default_headers} = config
 
 const request1 = <T>(option: any): Promise<T> => {
     const {url, method, params, data, headersType, responseType} = option
@@ -23,7 +23,6 @@ const request1 = <T>(option: any): Promise<T> => {
 const request = <T>(option: any): Promise<T> => {
     // console.log('option', option)
     const {url, method, params, data, headersType, responseType, baseUrl='SERVER_URL'} = option
-    // console.log('baseUrl', baseUrl)
     const service= serviceFunction(baseUrl)
     return service({
         url: url,

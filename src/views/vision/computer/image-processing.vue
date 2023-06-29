@@ -81,12 +81,12 @@
     <!--    中心-->
     <div class="center-class">
       <div class="center-content">
-        <img id='imgId' ref='imgRef' :src='imgUrl' width='640' height='480'/>
+        <img id='imageId' ref='imageRef' :src='imageUrl' width='640' height='480'/>
         <video ref='webcamRef' width='640' height='480'></video>
         <canvas ref='canvasRef' width='640' height='480'/>
       </div>
       <div class='center-panel'>
-        <el-button type="warning" @click="changeImgUrl(0)" :icon="Picture">
+        <el-button type="warning" @click="changeImageUrl(0)" :icon="Picture">
           默认图像
         </el-button>
 <!--        <el-button type='primary' @click='loadGraphModel(0)' :icon="Download">-->
@@ -100,6 +100,9 @@
         </el-button>
         <el-button type="danger" @click="closeWebcam" :icon="SwitchButton">
           关闭摄像头
+        </el-button>
+        <el-button v-if="!detecting" type="primary" @click="poseDetection" :icon="Monitor">
+          姿态估计
         </el-button>
         <el-button v-if="!detecting" type="primary" @click="realTimeDetection" :icon="Monitor">
           实时检测
@@ -121,18 +124,6 @@
                @edit="handlePropertyTabEdit" closable>
         <el-tab-pane v-for="(pane, index) in propertyPanes" :name="pane.key" :label="pane.tab">
           <div class="property-form">
-            <collapse-panel v-if="pane.type==='image'" :active-names="imageCollapseActiveNames" :data-list="pane.collapse">
-              <template #基础信息>
-                <image-form collapse-panel="基础信息" :form-data="pane.formData"></image-form>
-              </template>
-              <template #处理结果>
-                <image-form collapse-panel="处理结果" :form-data="pane.formData"></image-form>
-              </template>
-              <template #编辑记录>
-                <el-table :columns="recordColumns" :data="pane.editRecord" :pagination="false" rowKey="dataIndex">
-                </el-table>
-              </template>
-            </collapse-panel>
             <collapse-panel v-if="pane.type==='object'" :active-names="objectCollapseActiveNames"
                             :data-list="pane.collapse">
               <template #基础信息>
@@ -211,11 +202,7 @@ const replaceFields = {label: "folderName"}
 const nodeKey = ref(null)
 const searchValue = ref()
 const createList = ref([
-  {command: '1', menu: '图像处理', icon: 'Reading'},
-  {command: '2', menu: '目标检测', icon: 'Reading'},
-  {command: '3', menu: '创建线路', icon: 'Reading'},
-  {command: '4', menu: '创建图层', icon: 'Reading'},
-  {command: '5', menu: '创建文件夹', icon: 'FolderAdd'},
+  {command: '1', menu: '目标检测与分割', icon: 'Reading'},
 ])
 const foldList = ref([
   {command: '1', menu: '全部折叠'},
@@ -377,7 +364,7 @@ const imageCollapse = ref([
 ])
 const imageCollapseActiveNames = ref(['1', '2'])
 
-/** 目标检测*/
+/** 目标检测与分割*/
 const objectCollapse = ref([
   {name: '1', title: '基础信息', slot: '基础信息', show: true},
   {name: '2', title: '处理结果', slot: '处理结果', show: true},
@@ -395,10 +382,10 @@ const url = reactive({
 })
 
 /** 中心内容*/
-const imgRef = ref()
+const imageRef = ref()
 const webcamRef = ref()
 const canvasRef = ref()
-const imgUrl = ref()
+const imageUrl = ref()
 const isOpenWebcam = ref(false)
 const frontDisabled = ref(false)
 // const frontModel = ref()  # 用ref会或报错，不清楚原因
@@ -481,34 +468,16 @@ function handleCreate(e) {
     //   ElMessage.warning({message: '请选择支持要素类型为点的图层创建！', duration: 1500})
     //   return false
     // }
-    type.value = 'image'
-    propertyShow.value = true
-    propertyTitle.value = '图像处理创建'
-    const newTabActiveKey = `N-${newTabIndex.value++}`;
-    // changeCollapse('', false)
-    propertyPanes.value.push({
-      tab: propertyTitle.value,
-      key: newTabActiveKey,
-      collapse: JSON.parse(JSON.stringify(imageCollapse.value)),
-      formData: {type: type.value},
-      editRecord: [],
-      propertyOkShow: true,
-      type: type.value
-    })
-    propertyTabActiveKey.value = newTabActiveKey
-    // console.log('propertyPanes', this.propertyPanes)
-  }
-  if (key === '2') {
     type.value = 'object'
     propertyShow.value = true
-    propertyTitle.value = '目标检测创建'
+    propertyTitle.value = '目标检测与分割创建'
     const newTabActiveKey = `N-${newTabIndex.value++}`;
     // changeCollapse('', false)
     propertyPanes.value.push({
       tab: propertyTitle.value,
       key: newTabActiveKey,
       collapse: JSON.parse(JSON.stringify(objectCollapse.value)),
-      formData: {type: type.value},
+      formData: {type: type.value, objectType: 'detection'},
       editRecord: [],
       propertyOkShow: true,
       type: type.value
@@ -548,16 +517,17 @@ function handleNodeItem(e, title, nodeItemKey) {
         propertyShow.value = true
         propertyTitle.value = '文件夹详情'
         formData.value = res.data
-        let hasPaneKey1 = hasPaneKey(`D${nodeItemKey}`)
+        let hasPaneKey1 = hasPaneKey(`D-${nodeItemKey}`)
         if (hasPaneKey1) {
-          ElMessage.warning({message: '请勿重复操作数据！', duration: 1500})
+          // ElMessage.warning({message: '请勿重复操作数据！', duration: 1500})
+          propertyTabActiveKey.value = `D-${nodeItemKey}`
           return
         }
         propertyPanes.value.push({
-          tab: `${title} 详情`, key: `D${nodeItemKey}`, formData: res.data,
+          tab: `${title} 详情`, key: `D-${nodeItemKey}`, formData: res.data,
           editRecord: res.data.logs, editRecordShow: true, propertyOkShow: false
         })
-        propertyTabActiveKey.value = `D${nodeItemKey}`
+        propertyTabActiveKey.value = `D-${nodeItemKey}`
       }
     });
   }
@@ -567,16 +537,17 @@ function handleNodeItem(e, title, nodeItemKey) {
         propertyShow.value = true
         propertyTitle.value = '文件夹编辑'
         formData.value = res.data
-        let hasPaneKey1 = hasPaneKey(`E${nodeItemKey}`)
+        let hasPaneKey1 = hasPaneKey(`E-${nodeItemKey}`)
         if (hasPaneKey1) {
-          ElMessage.warning({message: '请勿重复操作数据！', duration: 1500})
+          // ElMessage.warning({message: '请勿重复操作数据！', duration: 1500})
+          propertyTabActiveKey.value = `E-${nodeItemKey}`
           return
         }
         propertyPanes.value.push({
-          tab: `${title} 编辑`, key: `E${nodeItemKey}`, formData: res.data,
+          tab: `${title} 编辑`, key: `E-${nodeItemKey}`, formData: res.data,
           editRecord: res.data.logs, editRecordShow: true, propertyOkShow: true
         })
-        propertyTabActiveKey.value = `E${nodeItemKey}`
+        propertyTabActiveKey.value = `E-${nodeItemKey}`
       }
     });
   }
@@ -600,10 +571,10 @@ function handleNodeItem(e, title, nodeItemKey) {
   }
 }
 
-const changeImgUrl = (imageUrl) => {
+const changeImageUrl = (imageUrl) => {
   if(imageUrl === 0) {
-    // imgUrl.value = new URL('@/assets/images/object_detection/street.jpg', import.meta.url).href
-    imgUrl.value = new URL('@/assets/images/object_detection/image1.jpg', import.meta.url).href
+    // imageUrl.value = new URL('@/assets/images/object_detection/street.jpg', import.meta.url).href
+    imageUrl.value = new URL('@/assets/images/object_detection/image1.jpg', import.meta.url).href
   }
 }
 
@@ -617,7 +588,7 @@ const frontDetection = async () =>{
   if (isOpenWebcam.value) {
     detectionFrame.value = webcamRef.value
   } else {
-    detectionFrame.value = imgRef.value
+    detectionFrame.value = imageRef.value
   }
   const threshold = 0.25
   let [modelWidth, modelHeight] = frontModel.inputs[0].shape.slice(1, 3)
@@ -719,26 +690,32 @@ const closeWebcam = () => {
   isOpenWebcam.value = false
   clearCanvas()
 }
+const poseDetection = () =>{
+  detecting.value= true
+  imageUrl.value = ALGORITHM_URL + '/video_feed'
+}
 
 const realTimeDetection = () =>  {
   detecting.value= true
-  imgUrl.value = ALGORITHM_URL + '/video_feed'
+  imageUrl.value = ALGORITHM_URL + '/video_feed'
 }
 const stopRealTimeDetection = () => {
   detecting.value = false
-  imgUrl.value = new URL('@/assets/images/object_detection/street.jpg', import.meta.url).href
+  imageUrl.value = new URL('@/assets/images/object_detection/street.jpg', import.meta.url).href
 }
 
 const handleProcessing = (paneKey, index, type) => {
-  console.log('propertyPanes.value', propertyPanes.value[0].formData)
+  // console.log('type', type)
+  // console.log('propertyPanes.value', propertyPanes.value[0].formData)
+  let url = propertyPanes.value[0].formData.objectType === 'detection' ? '/detect/yolov5' : '/detect/maskRcnn'
   let data = {
     filename: propertyPanes.value[0].formData.picture
   }
-  console.log('data', data)
-  request.post({url:'/objectDetection', baseUrl:'ALGORITHM_URL', data: data}).then(res=>{
-    console.log('res', res)
+  request.post({url:url, baseUrl:'ALGORITHM_URL', data: data}).then(res=>{
+    // console.log('res', res)
+    propertyPanes.value[0].formData.resultUrl = res.resultUrl
+    imageUrl.value = res.resultUrl
   })
-
 }
 
 function handlePropertyOk1(paneKey, index, type) {

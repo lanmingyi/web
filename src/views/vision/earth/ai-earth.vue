@@ -79,7 +79,14 @@
     </div>
 
     <!--    地图-->
-    <div class="map-class" id='map'>
+    <div v-if="imageUrl === '' " class="map-class" id='map'>
+    </div>
+    <div v-else class="center-class">
+      <div class="center-content">
+        <img id='imageId' ref='imageRef' :src='imageUrl' width='640' height='480'/>
+        <video ref='webcamRef' width='640' height='480'></video>
+        <canvas ref='canvasRef' width='640' height='480'/>
+      </div>
     </div>
 
     <!--    属性-->
@@ -162,10 +169,6 @@ const nodeKey = ref(null)
 const searchValue = ref()
 const createList = ref([
   {command: '1', menu: '滑坡检测', icon: 'Reading'},
-  {command: '2', menu: '创建区域', icon: 'Reading'},
-  {command: '3', menu: '创建线路', icon: 'Reading'},
-  {command: '4', menu: '创建图层', icon: 'Reading'},
-  {command: '5', menu: '创建文件夹', icon: 'FolderAdd'},
 ])
 const foldList = ref([
   {command: '1', menu: '全部折叠'},
@@ -188,106 +191,48 @@ const operateList = ref([
 treeData.value = [
   {
     "uuid": "BCB5C74B9C86485F8623A8A02A9F204F",
-    "creatorId": "ewsd0001",
-    "creator": "超级管理员",
-    "createTime": "2023-06-03 09:15:26",
-    "modifierId": "ewsd0001",
-    "modifier": "超级管理员",
-    "modifyTime": "2023-06-05 13:04:10",
-    "creatorOrgId": 4,
     "pid": "",
     "folderName": "Landsat",
-    "sort": 0,
-    "remark": "1",
-    "levelId": 1,
     "children": [
       {
         "uuid": "F9AF1DA5DF21495DBA1B552FA01E1ABC",
-        "creatorId": "ewsd0001",
-        "creator": "超级管理员",
-        "createTime": "2023-06-03 10:36:55",
-        "modifierId": "ewsd0001",
-        "modifier": "超级管理员",
-        "modifyTime": "2023-06-03 16:52:24",
-        "creatorOrgId": 4,
         "pid": "BCB5C74B9C86485F8623A8A02A9F204F",
         "folderName": "Landsat5 C2 L2",
-        "sort": 2,
-        "remark": "1",
-        "levelId": 2,
-        "children": [],
         "hasChildren": false,
         "type": "folder",
         "slots": {
           "icon": "folder"
         },
-        "logs": null
       },
       {
         "uuid": "E57DD42B708E45F39DC1112CEB5BADA8",
-        "creatorId": "ewsd0001",
-        "creator": "超级管理员",
-        "createTime": "2023-06-03 10:37:42",
-        "modifierId": "ewsd0001",
-        "modifier": "超级管理员",
-        "modifyTime": "2023-06-03 16:52:31",
-        "creatorOrgId": 4,
         "pid": "BCB5C74B9C86485F8623A8A02A9F204F",
         "folderName": "Landsat7 C2 L2",
-        "sort": 3,
-        "remark": "1",
-        "levelId": 2,
-        "children": [],
         "hasChildren": false,
         "type": "folder",
         "slots": {
           "icon": "folder"
         },
-        "logs": null
       },
       {
         "uuid": "073D474368A248008EE32E88D52A558B",
-        "creatorId": "ewsd0001",
-        "creator": "超级管理员",
-        "createTime": "2023-06-03 10:27:10",
-        "modifierId": "ewsd0001",
-        "modifier": "超级管理员",
-        "modifyTime": "2023-06-03 16:52:41",
-        "creatorOrgId": 4,
         "pid": "BCB5C74B9C86485F8623A8A02A9F204F",
         "folderName": "Landsat8 C2 L2",
-        "sort": 4,
-        "remark": "1",
-        "levelId": 2,
-        "children": [],
         "hasChildren": false,
         "type": "folder",
         "slots": {
           "icon": "folder"
         },
-        "logs": null
       },
       {
         "uuid": "FD743F68B9324898B535DB59D9EA2596",
-        "creatorId": "ewsd0001",
-        "creator": "超级管理员",
-        "createTime": "2023-06-03 10:36:21",
-        "modifierId": "ewsd0001",
-        "modifier": "超级管理员",
-        "modifyTime": "2023-06-03 16:53:23",
-        "creatorOrgId": 4,
         "pid": "BCB5C74B9C86485F8623A8A02A9F204F",
         "folderName": "Landsat9 C2 L2",
-        "sort": 5,
-        "remark": "1",
-        "levelId": 2,
-        "children": [],
         "hasChildren": false,
         "type": "folder",
         "slots": {
           "icon": "folder"
         },
-        "logs": null
       }
     ],
     "hasChildren": true,
@@ -295,59 +240,27 @@ treeData.value = [
     "slots": {
       "icon": "folder"
     },
-    "logs": null
   },
   {
     "uuid": "shandong",
-    "creatorId": null,
-    "creator": null,
-    "createTime": null,
-    "modifierId": null,
-    "modifier": null,
-    "modifyTime": null,
-    "creatorOrgId": null,
     "pid": null,
     "folderName": "Sentinel",
-    "sort": 1,
-    "remark": null,
-    "levelId": 1,
     "children": [
       {
         "uuid": "yantai",
-        "creatorId": null,
-        "creator": null,
-        "createTime": null,
-        "modifierId": null,
-        "modifier": null,
-        "modifyTime": null,
-        "creatorOrgId": null,
         "pid": "shandong",
         "folderName": "Sentinel-1 SAR GRD",
-        "sort": 1,
-        "remark": null,
-        "levelId": 2,
         "children": [
           {
             "uuid": "kaifaqu",
-            "creatorId": null,
-            "creator": null,
-            "createTime": null,
-            "modifierId": null,
-            "modifier": null,
-            "modifyTime": null,
-            "creatorOrgId": null,
             "pid": "yantai",
             "folderName": "Sentinel-2 L2A",
             "sort": 1,
-            "remark": null,
-            "levelId": 3,
-            "children": [],
             "hasChildren": true,
             "type": "folder",
             "slots": {
               "icon": "folder"
             },
-            "logs": null
           }
         ],
         "hasChildren": true,
@@ -355,51 +268,26 @@ treeData.value = [
         "slots": {
           "icon": "folder"
         },
-        "logs": null
       },
       {
         "uuid": "qingdao",
-        "creatorId": null,
-        "creator": null,
-        "createTime": null,
-        "modifierId": null,
-        "modifier": null,
-        "modifyTime": null,
-        "creatorOrgId": null,
         "pid": "shandong",
         "folderName": "Sentinel-3 OLCI",
-        "sort": 2,
-        "remark": null,
-        "levelId": 2,
-        "children": [],
         "hasChildren": false,
         "type": "folder",
         "slots": {
           "icon": "folder"
         },
-        "logs": null
       },
       {
         "uuid": "qingdao",
-        "creatorId": null,
-        "creator": null,
-        "createTime": null,
-        "modifierId": null,
-        "modifier": null,
-        "modifyTime": null,
-        "creatorOrgId": null,
         "pid": "shandong",
         "folderName": "Sentinel-5p OFFL",
-        "sort": 2,
-        "remark": null,
-        "levelId": 2,
-        "children": [],
         "hasChildren": false,
         "type": "folder",
         "slots": {
           "icon": "folder"
         },
-        "logs": null
       }
     ],
     "hasChildren": true,
@@ -407,7 +295,6 @@ treeData.value = [
     "slots": {
       "icon": "folder"
     },
-    "logs": null
   }
 ]
 
@@ -477,6 +364,8 @@ const url = reactive({
 
 /** 地图*/
 const map = ref()
+const imageUrl = ref('')
+const imageRef = ref()
 
 const initMap = () => {
   // const projection = olProj.get('EPSG:3857')
@@ -603,22 +492,10 @@ function handleCreate(e) {
       tab: propertyTitle.value,
       key: newTabActiveKey,
       collapse: JSON.parse(JSON.stringify(landslideCollapse.value)),
-      formData: {folderId: nodeKey.value, menuType: type.value, pointCode: ''},
+      formData: {folderId: nodeKey.value, menuType: type.value, },
       editRecord: [],
       propertyOkShow: true,
       type: type.value
-    })
-    propertyTabActiveKey.value = newTabActiveKey
-    // console.log('propertyPanes', this.propertyPanes)
-  }
-  if (key === '5') {
-    propertyShow.value = true
-    propertyTitle.value = '文件夹创建'
-    formData.value.pid = nodeKey.value
-    const newTabActiveKey = `newTab${newTabIndex.value++}`;
-    propertyPanes.value.push({
-      tab: '文件夹创建', key: newTabActiveKey, formData: {}, editRecord: [],
-      editRecordShow: false, propertyOkShow: true
     })
     propertyTabActiveKey.value = newTabActiveKey
     // console.log('propertyPanes', this.propertyPanes)
@@ -643,16 +520,16 @@ function handleNodeItem(e, title, nodeItemKey) {
         propertyShow.value = true
         propertyTitle.value = '文件夹详情'
         formData.value = res.data
-        let hasPaneKey1 = hasPaneKey(`D${nodeItemKey}`)
+        let hasPaneKey1 = hasPaneKey(`D-${nodeItemKey}`)
         if (hasPaneKey1) {
-          ElMessage.warning({message: '请勿重复操作数据！', duration: 1500})
+          propertyTabActiveKey.value = `D-${nodeItemKey}`
           return
         }
         propertyPanes.value.push({
-          tab: `${title} 详情`, key: `D${nodeItemKey}`, formData: res.data,
+          tab: `${title} 详情`, key: `D-${nodeItemKey}`, formData: res.data,
           editRecord: res.data.logs, editRecordShow: true, propertyOkShow: false
         })
-        propertyTabActiveKey.value = `D${nodeItemKey}`
+        propertyTabActiveKey.value = `D-${nodeItemKey}`
       }
     });
   }
@@ -662,16 +539,16 @@ function handleNodeItem(e, title, nodeItemKey) {
         propertyShow.value = true
         propertyTitle.value = '文件夹编辑'
         formData.value = res.data
-        let hasPaneKey1 = hasPaneKey(`E${nodeItemKey}`)
+        let hasPaneKey1 = hasPaneKey(`E-${nodeItemKey}`)
         if (hasPaneKey1) {
-          ElMessage.warning({message: '请勿重复操作数据！', duration: 1500})
+          propertyTabActiveKey.value = `E-${nodeItemKey}`
           return
         }
         propertyPanes.value.push({
-          tab: `${title} 编辑`, key: `E${nodeItemKey}`, formData: res.data,
+          tab: `${title} 编辑`, key: `E-${nodeItemKey}`, formData: res.data,
           editRecord: res.data.logs, editRecordShow: true, propertyOkShow: true
         })
-        propertyTabActiveKey.value = `E${nodeItemKey}`
+        propertyTabActiveKey.value = `E-${nodeItemKey}`
       }
     });
   }
@@ -694,9 +571,18 @@ function handleNodeItem(e, title, nodeItemKey) {
     )
   }
 }
-const handleProcessing = (paneKey, index, type) =>{
-
-
+const handleProcessing = (paneKey, index, type) => {
+  // console.log('type', type)
+  // console.log('propertyPanes.value', propertyPanes.value[0].formData)
+  let url = '/detect/daUnet'
+  let data = {
+    filename: propertyPanes.value[0].formData.picture
+  }
+  request.post({url:url, baseUrl:'ALGORITHM_URL', data: data}).then(res=>{
+    console.log('res', res)
+    propertyPanes.value[0].formData.resultUrl = res.resultUrl
+    imageUrl.value = res.resultUrl
+  })
 }
 
 function handlePropertyOk(paneKey, index, type) {
@@ -939,7 +825,28 @@ onMounted(() => {
 .map-class {
   width: calc(100vw - 360px);
 }
+.center-class {
+  width: calc(100vw - 360px - 360px);
+  height: 100%;
+}
 
+.center-content {
+  position: relative;
+  margin-top: 100px;
+  margin-left: 100px;
+}
+
+.center-content canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.center-content video {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
 
 .property-class {
   position: absolute;

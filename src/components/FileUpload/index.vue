@@ -18,6 +18,7 @@
   >
 <!--    <el-icon><Plus/></el-icon>-->
     <el-button v-if="fileList.length < 6" :loading="loading" :icon="Upload" >上传</el-button>
+<!--    <tiff :path="imgPath" :types="imgType" :size='imgSize'></tiff>-->
   </el-upload>
   <el-dialog v-model="previewVisible" @close="handleClose">
     <img alt="example" style="width: 100%" :src="previewImage"/>
