@@ -173,7 +173,7 @@ import {XYZ} from "ol/source";
 import View from "ol/View";
 import CollapsePanel from "@/components/CollapsePanel/index.vue"
 import LandslideForm from "@/views/vision/earth/landslide-form.vue";
-import ImageForm from "@/views/vision/computer/image-form.vue";
+// import ImageForm from "@/views/vision/computer/image-form.vue";
 import ObjectForm from "@/views/vision/computer/object-form.vue";
 import {ALGORITHM_URL} from "@/utils/axios/service";
 import * as tf from "@tensorflow/tfjs";
