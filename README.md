@@ -1,18 +1,135 @@
-# Vue 3 + TypeScript + Vite
+明成科技 （BrightComplete） 计算机视觉开发平台
+====
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+当前研发版本： 1.0.0（发布日期：20240101）
 
-## Recommended IDE Setup
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+Overview
+----
 
-## Type Support For `.vue` Imports in TS
+前端
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
 
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
+> 强大的计算机视觉开发平台，既能快速提高效率，节省成本，同时又不失灵活性
 
-1. Disable the built-in TypeScript Extension
-   1. Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-   2. Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
+## 项目源码
+
+| 仓库 | 前端源码 | 后端源码 | 算法源码 |
+
+| github | [web](https://github.com/lanmingyi/web)  | [server](https://github.com/lanmingyi/server) |
+[algorithm](https://github.com/lanmingyi/algorithm) |
+
+##### 项目说明
+
+| 项目名            | 说明       | 
+|----------------|----------|
+| `web`          | vue3前端   | 
+| `server`       | java后台   | 
+| `algorithm` | python算法 | 
+
+#### 项目功能
+
+- 计算机视觉
+- 地球视觉
+- 预警系统
+- 一张图
+- 高级表格
+- 文档管理
+- 在线开发
+- 报表设计
+- 统计报表
+- 常见案例
+- 系统管理
+- 系统监控
+- 消息中心
+
+详细介绍
+-
+<p align="center">
+<b>计算机视觉</b><br>
+<table align="center">
+<tr>
+	<td align="center"><img src="public/demo/processing1.png" width=300><br>图像处理</td>
+	<td align="center"><img src="public/demo/object_detection1.png" width=300><br>目标检测</td>
+</tr>
+<tr>
+
+[//]: # (	<td align="center"><img src="public/demo/face_detection1.png" width=300><br>人脸识别</td>)
+
+  <td align="center"><img src="public/demo/pose_detection1.png" width=300><br>姿态估计</td>
+  <td align="center"><img src="public/demo/stylize1.png" width=300><br>风格迁移</td>
+</tr>
+</table>
+</p>
+
+<p align="center">
+<b>地球视觉</b><br>
+<table align="center">
+<tr>
+	<td align="center"><img src="public/demo/landslide_detection1.png" width=300><br>滑坡检测</td>
+</tr>
+
+</table>
+</p>
+
+
+技术支持
+----
+
+遇到问题可在项目上提[Issues](https://github.com/lanmingyi/web/issues/new)
+
+官方支持：
+
+
+项目下载和运行
+----
+
+- 拉取项目代码
+
+```bash
+git clone git@github.com:lanmingyi/web.git
+cd  web
+```
+
+- 安装依赖
+```
+npm install
+或 yarn install
+```
+
+- 开发模式运行
+```
+npm run dev 
+或 yarn run dev
+```
+
+- 编译项目
+```
+npm run build
+或 yarn run build
+```
+
+[//]: # (Docker镜像启动前端)
+
+----
+
+
+
+其他说明
+----
+
+```ecmascript 6
+
+```
+
+附属文档
+----
+
+
+- 待补充...
+
+备注
+----
+> 
+
+
