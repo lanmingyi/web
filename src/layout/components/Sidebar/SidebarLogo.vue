@@ -2,11 +2,11 @@
   <div class="sidebar-logo-container" :class="{ collapse: props.collapse }">
     <transition name="sidebar-logo-fade">
       <router-link v-if="props.collapse" key="collapse" to="/">
-<!--        <img src="@/assets/layout/logo.png" class="sidebar-logo" />-->
+        <img src="@/assets/layout/logo.png" class="sidebar-logo"/>
       </router-link>
       <router-link v-else key="expand" to="/">
-<!--        <img src="@/assets/layout/logo.png" class="sidebar-logo-text" />-->
-<!--      <div style="color:white; font-size: 30px">明成科技</div>-->
+        <img src="@/assets/layout/logo.png" class="sidebar-logo-text"/>
+        <div style="color:white; font-size: 30px">明成科技</div>
       </router-link>
     </transition>
   </div>
@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 const props = defineProps({
-  collapse:{
+  collapse: {
     type: Boolean,
     default: true,
   }
@@ -31,9 +31,11 @@ const props = defineProps({
   background-color: var(--web-sidebarlogo-bg-color);
   text-align: center;
   overflow: hidden;
+
   .sidebar-logo {
     display: none;
   }
+
   .sidebar-logo-text {
     height: 100%;
     vertical-align: middle;
@@ -47,6 +49,7 @@ const props = defineProps({
     vertical-align: middle;
     display: inline-block;
   }
+
   .sidebar-logo-text {
     display: none;
   }
