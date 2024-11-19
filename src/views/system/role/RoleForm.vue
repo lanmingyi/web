@@ -251,6 +251,8 @@ const confirmClick = async (formEl: FormInstance | undefined) => {
 
   request.post<any>({url: "/sys/permission/saveRolePermission", data: datas}).then(res => {
     ElMessage.success(res.message)
+    dialogVisible.value = false
+    emit('close')
   })
   const fileds = ['id', 'roleName', 'roleCode']
 

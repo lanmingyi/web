@@ -36,7 +36,7 @@
       </Table>
     </div>
     <RoleForm v-model:visible="drawerVisible" :data="formData" :url="url"
-              @close="getData(url.getPageSet,[])"></RoleForm>
+              @close="getData(url.getPageSet,[],'get')"></RoleForm>
 
   </div>
 </template>
@@ -100,7 +100,7 @@ const url = reactive({
 })
 
 const handleSearch = () => {
-  getData(url.getPageSet, queryParam);
+  getData(url.getPageSet, queryParam,'get');
 };
 
 const handleAdd = () => {
@@ -200,7 +200,7 @@ const handleDelete = (index: number, row: any) => {
     request.post({url: url.delete, data: {uuid: row.uuid}}).then(res => {
       if (res.statusCode === 200) {
         ElMessage.success('删除成功');
-        getData(url.getPageSet, []);
+        getData(url.getPageSet, [],'get');
       } else {
         ElMessage.error('删除失败')
       }
@@ -220,7 +220,7 @@ const handleDeleteBatch = () => {
     request.post({url: url.delete, data: {uuid: uuids.toString()}}).then(res => {
       if (res.statusCode === 200) {
         ElMessage.success('删除成功');
-        getData(url.getPageSet, []);
+        getData(url.getPageSet, [],'get');
       } else {
         ElMessage.error('删除失败')
       }
@@ -238,10 +238,12 @@ onMounted(() => {
 <style lang="scss" scoped>
 .blue {
   color: #6ca3f5;
+  cursor: pointer;
 }
 
 .red {
   color: #F56C6C;
+  cursor: pointer;
 }
 
 </style>

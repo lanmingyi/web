@@ -16,7 +16,7 @@
               </el-dropdown-menu>
             </template>
           </el-dropdown>
-<!--          <el-button type="danger">删除</el-button>-->
+          <!--          <el-button type="danger">删除</el-button>-->
         </template>
         <template #toolForm>
           <el-form-item>
@@ -39,8 +39,8 @@
           </el-form-item>
         </template>
       </ToolBar>
-      <Table :data="tableData" :columns="columns" border style="width:100%;" row-key="uuid" lazy
-             :load="(row, treeNode, resolve) => { getChildrenData(url.getChildrenData, row, resolve) }"
+      <Table :data="tableData" :columns="columns" border style="width:100%;" row-key="id" lazy
+             :load="(row, treeNode, resolve) => { getChildrenDataLazy(url.getChildrenData, row, resolve) }"
              :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
              :auto-height="true"
       >
@@ -52,7 +52,8 @@
       </Table>
     </div>
 
-    <OrganizationForm v-model:visible="dialogVisible" :data="formData" @close="getTreeData(url.getPageSet, { levelId: 1 })"></OrganizationForm>
+    <OrganizationForm v-model:visible="dialogVisible" :data="formData"
+                      @close="getTreeData(url.getPageSet, { levelId: 1 })"></OrganizationForm>
 
   </div>
 </template>
@@ -66,27 +67,23 @@ import {ref, reactive, onMounted} from 'vue';
 import {ElMessage, ElMessageBox} from 'element-plus';
 import {Delete, Edit, Search, Plus} from '@element-plus/icons-vue';
 import ToolBar from "@/components/ToolBar/index.vue";
-import Table from '@/components/Table'
+import Table from '@/components/Table/index.vue'
 import request from "@/utils/axios"
 import {useTable} from '@/hooks/useTable'
 import {useForm} from "@/hooks/useForm";
 import OrganizationForm from './OrganizationForm.vue'
 
-const {tableData, pagination, getTreeData, getChildrenData,} = useTable()
+// const {tableData, pagination, getTreeData, getChildrenData,} = useTable()
+const {tableData, pagination, getTreeData, getChildrenDataLazy} = useTable()
 
 const columns: TableColumnsList = [
-  {label: "机构名称", prop: "text", width: 200},
-  {label: "机构编码", prop: "code", align: "center", width: 100},
-  {label: "自定义机构编码", prop: "customerCode", align: "center", width: 200},
-  {label: "联系人", prop: "leader", align: "center", width: 200},
-  {label: "地址", prop: "address", align: "center",},
-  {label: "是否标注", prop: "isTagging", align: "center", width: 120},
-  {label: "电话", prop: "telphone", align: "center", width: 200},
-  {label: "授权码", prop: "authorizationCode", align: "center",},
-  {label: "管理角色", prop: "managementRole", align: "center", width: 200},
-  {label: "机构类型", prop: "organizationType", align: "center", width: 100},
-  {label: "创建人", prop: "creator", align: "center", width: 100},
-  {label: "备注", prop: "remark", align: "center", width: 100},
+  {label: "机构名称", prop: "departName", width: 200},
+  {label: "机构编码", prop: "orgCode", align: "center", width: 100},
+  {label: "机构类别", prop: "orgCategory", align: "center", width: 200},
+  {label: "机构类型", prop: "orgType", align: "center", width: 200},
+  {label: "手机号", prop: "mobile", align: "center", width: 200},
+  {label: '状态', prop: "status", align: "center", width: 100},
+  {label: "创建人", prop: "creatorBy", align: "center", width: 100},
   {label: "操作", prop: "action", align: "center", width: 120, fixed: 'right'},
 ]
 const INITIAL_DATA = {
@@ -107,7 +104,7 @@ const INITIAL_DATA = {
 const formData = ref({...INITIAL_DATA})
 const dialogVisible = ref(false)
 const url = reactive({
-  getPageSet: '/system/organization/getListByLevelId',
+  getPageSet: '/sys/sysDepart/queryTreeList',
   getChildrenData: '/system/organization/getListByPid',
   search: '/system/organization/getPageSet',
   detail: '/system/organization/getDetailByUuid',

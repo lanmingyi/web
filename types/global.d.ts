@@ -1,49 +1,53 @@
-import type { CSSProperties } from 'vue'
+import type {CSSProperties} from 'vue'
+
 declare global {
-  interface Window {
-    onBMapCallback?: T,
-    BMapGLLib?: T,
-    BMapLib?: T,
-    BMapGL?: T,
-    BMap?: T,
-    map: T,
-  }
-  declare interface Fn<T = any> {
-    (...arg: T[]): T
-  }
+    interface Window {
+        onBMapCallback?: T,
+        BMapGLLib?: T,
+        BMapLib?: T,
+        BMapGL?: T,
+        BMap?: T,
+        map: T,
+    }
 
-  declare type Nullable<T> = T | null
+    declare interface Fn<T = any> {
+        (...arg: T[]): T
+    }
 
-  declare type ElRef<T extends HTMLElement = HTMLDivElement> = Nullable<T>
+    declare type Nullable<T> = T | null
 
-  declare type Recordable<T = any, K = string> = Record<K extends null | undefined ? string : K, T>
+    declare type ElRef<T extends HTMLElement = HTMLDivElement> = Nullable<T>
 
-  declare type ComponentRef<T> = InstanceType<T>
+    declare type Recordable<T = any, K = string> = Record<K extends null | undefined ? string : K, T>
 
-  declare type LocaleType = 'zh-CN' | 'en'
+    declare type ComponentRef<T> = InstanceType<T>
 
-  declare type AxiosHeaders =
-    | 'application/json'
-    | 'application/x-www-form-urlencoded'
-    | 'multipart/form-data'
+    declare type LocaleType = 'zh-CN' | 'en'
 
-  declare type AxiosMethod = 'get' | 'post' | 'delete' | 'put'
+    declare type AxiosHeaders =
+        | 'application/json'
+        | 'application/x-www-form-urlencoded'
+        | 'multipart/form-data'
 
-  declare type AxiosResponseType = 'arraybuffer' | 'blob' | 'document' | 'json' | 'text' | 'stream'
+    declare type AxiosMethod = 'get' | 'post' | 'delete' | 'put'
 
-  declare interface AxiosConfig {
-    params?: any
-    data?: any
-    url?: string
-    method?: AxiosMethod
-    headersType?: string
-    responseType?: AxiosResponseType
-  }
+    declare type AxiosResponseType = 'arraybuffer' | 'blob' | 'document' | 'json' | 'text' | 'stream'
 
-  declare interface IResponse<T = any> {
-    code: string
-    data: T extends any ? T : T & any
-  }
+    declare interface AxiosConfig {
+        params?: any
+        data?: any
+        url?: string
+        method?: AxiosMethod
+        headersType?: string
+        responseType?: AxiosResponseType
+    }
 
+    declare interface IResponse<T = any> {
+        code: string
+        data: T extends any ? T : T & any
+    }
+
+    interface TableColumnsList extends Array<TableColumns> {
+    }
 
 }

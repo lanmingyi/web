@@ -19,6 +19,7 @@
       "DOM"
     ],
     "skipLibCheck": true,
+    "noEmit": true,
     "noImplicitAny": false,
 //    "noUnusedLocals": false,
 //    "noUnusedParameters": false,

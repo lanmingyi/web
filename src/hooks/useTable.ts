@@ -125,9 +125,13 @@ export function useTable() {
     }
 
     function getTreeData(url, data) {
-        request.post<any>({url: url, data: data}).then(res => {
-            tableData.value = getTree(res.data);
+        request.get<any>({url: url, params: data}).then(res => {
+            // tableData.value = getTree(res.data);
+            tableData.value = res.result;
         })
+        // request.post<any>({url: url, data: data}).then(res => {
+        //     tableData.value = getTree(res.data);
+        // })
     }
 
     function getTreeDataLazy(url, params) {

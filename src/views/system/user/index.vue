@@ -47,7 +47,8 @@
         </template>
       </Table>
     </div>
-    <UserForm ref="formRef" v-model:visible="dialogVisible" :data="formData" @close="getData(url.getPageSet,[])"></UserForm>
+    <UserForm ref="formRef" v-model:visible="dialogVisible" :data="formData"
+              @close="getData(url.getPageSet,[])"></UserForm>
 
   </div>
 </template>
@@ -59,27 +60,27 @@ import {Delete, Edit, Search, Plus} from '@element-plus/icons-vue';
 import {useTable} from '@/hooks/useTable'
 import {useForm} from '@/hooks/useForm'
 import ToolBar from "@/components/ToolBar/index.vue";
-import Table from '@/components/Table'
+import Table from '@/components/Table/index.vue'
 import UserForm from "./UserForm.vue";
 import type {FormInstance} from "element-plus";
 import request from "@/utils/axios";
-import BaseSelect from "@/components/BaseSelect"
+import BaseSelect from "@/components/BaseSelect/index.vue"
 
 const {tableData, pagination, getData, changeData} = useTable()
 const {handleAdd} = useForm()
 const tableRef = ref()
 const formRef = ref()
 const columns: TableColumnsList = [
-  {label: "登录名", prop: "userNameId", align: "center", width: 120},
-  {label: "姓名", prop: "userName", align: "center", width: 100},
-  {label: "角色", prop: "userGroupName", align: "center", width: 300},
-  {label: "机构", prop: "orgName", align: "center", width: 200},
+  {label: "登录名", prop: "username", align: "center", width: 120},
+  {label: "姓名", prop: "realname", align: "center", width: 100},
+  {label: "部门", prop: "orgCodeTxt", align: "center", width: 300},
+  {label: "职务", prop: "post", align: "center", width: 200},
   // {label: "状态", prop: "status", align: "center",},
-  {label: "绑定手机号", prop: "cellphone", align: "center", width: 120},
+  {label: "绑定手机号", prop: "phone", align: "center", width: 120},
   {label: "绑定邮箱", prop: "email", align: "center", width: 200},
-  {label: "服务到期日期", prop: "date", align: "center",},
+  // {label: "服务到期日期", prop: "date", align: "center",},
   {label: "创建时间", prop: "createTime", align: "center", width: 200},
-  {label: "创建人", prop: "creator", align: "center", width: 100},
+  {label: "创建人", prop: "createBy", align: "center", width: 100},
   {label: "操作", prop: "action", align: "center", width: 120, fixed: 'right'},
 ]
 const INITIAL_DATA = {
@@ -102,7 +103,7 @@ const INITIAL_DATA = {
 
 const formData = ref({...INITIAL_DATA})
 const state = reactive({
-  formData:{
+  formData: {
     uuid: '',
     userNameId: '',
     userName: '',
@@ -125,10 +126,10 @@ const queryParam = reactive({
   userName: '',
   cellphone: '',
   email: '',
-  dict:'',
+  dict: '',
 });
 const url = reactive({
-  getPageSet: '/system/user/getPageSet',
+  getPageSet: '/sys/user/list',
   delete: "/system/user/delete",
   detail: "/system/user/getDetailByUuid",
 })
@@ -185,7 +186,7 @@ const handleDeleteBatch = () => {
 }
 
 onMounted(() => {
-  getData(url.getPageSet, []);
+  getData(url.getPageSet, [],"get");
 });
 </script>
 

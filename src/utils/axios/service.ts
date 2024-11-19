@@ -70,7 +70,7 @@ service.interceptors.response.use(
         if (response.config.responseType === 'blob') {
             // 如果是文件流，直接过
             return response
-        } else if (response.data.code === result_code || response.data.code === 0) {
+        } else if (response.data.code === result_code) {
             return response.data
         } else {
             ElMessage.error(response.data.message)
@@ -115,7 +115,7 @@ const serviceFunction = (baseUrl) =>{
                 config.params = {}
                 config.url = url
             }
-            console.log('config', config)
+            // console.log('config', config)
             return config
         },
         (error: AxiosError) => {
@@ -125,14 +125,14 @@ const serviceFunction = (baseUrl) =>{
         }
     )
 
-// response 拦截器
+    // response 拦截器
     service.interceptors.response.use(
         (response: AxiosResponse<any>) => {
-            console.log('response', response)
+            // console.log('response', response)
             if (response.config.responseType === 'blob') {
                 // 如果是文件流，直接过
                 return response
-            } else if (response.data.code === result_code || response.data.code === 0) {
+            } else if (response.data.code === result_code) {
                 return response.data
             } else {
                 ElMessage.error(response.data.message)

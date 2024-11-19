@@ -18,22 +18,23 @@ const { initTheme } = useTheme()
 /** 初始化主题 */
 initTheme()
 // const locale = zhCn
+
 const language = ref('zh-cn')
 const locale = computed(()=>(language.value === 'zh-cn' ? zhCn : en))
 const toggle = () =>{
   language.value = language.value === 'zh-cn' ? 'en' : 'zh-cn'
 }
 
-ElNotification({
-  title: "Hello",
-  message: h(
-      "a",
-      { style: "color: teal", target: "_blank", href: "https://github.com/lanmingyi/web" },
-      "web项目"
-  ),
-  duration: 0,
-  position: "bottom-right"
-})
+// ElNotification({
+//   title: "Hello",
+//   message: h(
+//       "a",
+//       { style: "color: teal", target: "_blank", href: "https://github.com/lanmingyi/web" },
+//       "web项目"
+//   ),
+//   duration: 0,
+//   position: "bottom-right"
+// })
 </script>
 
 

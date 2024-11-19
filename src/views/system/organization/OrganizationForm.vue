@@ -87,7 +87,7 @@
 import {ref, toRefs, reactive, watch, computed, nextTick} from 'vue'
 import {useBoolean} from "@/hooks/useBoolean";
 import type {FormInstance} from "element-plus"
-import request from "@/axios";
+import request from "@/utils/axios";
 import {ElMessage} from "element-plus";
 
 const props = defineProps({
