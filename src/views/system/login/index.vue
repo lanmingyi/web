@@ -104,7 +104,7 @@ const createCode = () => {
   loginForm.captcha = ""
   // 获取验证码
   getLoginCodeApi(currentTime.value).then((res) => {
-    codeUrl.value = res.result
+    codeUrl.value = res.data
   })
 }
 

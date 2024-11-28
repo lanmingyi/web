@@ -34,10 +34,10 @@ export const useUserStore = defineStore("user", () => {
         checkKey: loginData.checkKey,
       })
         .then((res) => {
-          setToken(res.result.token)
-          token.value = res.result.token
-          username.value = res.result.userInfo.username
-          userInfo.value = res.result.userInfo
+          setToken(res.data.token)
+          token.value = res.data.token
+          username.value = res.data.userInfo.username
+          userInfo.value = res.data.userInfo
           // console.log(username, userInfo)
           resolve(true)
         })
